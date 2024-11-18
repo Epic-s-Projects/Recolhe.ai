@@ -123,3 +123,37 @@ flowchart TD
     end
 
 ```
+<br><br><br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Uso" alt="Typing SVG" />
+
+``` mermaid
+flowchart TD
+    subgraph Usuario [Usuário]
+        A1[Login]
+        A2[Cadastro]
+        A3[Visualizar Home]
+        A4[Visualizar Perfil]
+        A5[Visualizar Histórico]
+        A6[Visualizar Prêmios]
+        A7[Realizar Coleta]
+        A7 --> A8[Escolher Tipo de Coleta]
+        A8 --> A9[Coleta de Óleo Usado]
+        A8 --> A10[Coleta de Eletrônicos]
+        A10 --> A11[Inserir Requisitos]
+    end
+
+    subgraph Coletor [Coletor]
+        B1[Login]
+        B2[Cadastro]
+        B3[Visualizar Home]
+        B4[Visualizar Perfil]
+        B5[Visualizar Histórico]
+        B6[Visualizar Prêmios]
+        B7[Acessar Mapa]
+        B8[Iniciar Coleta]
+        B9[Ver Casas Disponíveis]
+        B9 --> B10[Visualizar Itens da Casa]
+    end
+
+```
