@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: const LoginScreen(),
     );
   }
 }
@@ -91,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                     child: const Text(
                       'Esqueceu sua senha?',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: Colors.black, // Atualizado para preto
                       ),
                     ),
                   ),
@@ -103,6 +103,7 @@ class LoginScreen extends StatelessWidget {
                 GradientButton(
                   text: 'Login',
                   onPressed: () {},
+                  textColor: Colors.green.shade900, // Verde escuro destacado
                 ),
 
                 const SizedBox(height: 20),
@@ -131,9 +132,24 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(child: Divider(color: Colors.green)),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text("OU"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0xFF109410),
+                            Color(0xFF1AE91A),
+                          ],
+                        ).createShader(bounds),
+                        child: const Text(
+                          "OU",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.white, // Necessário para gradiente
+                          ),
+                        ),
+                      ),
                     ),
                     Expanded(child: Divider(color: Colors.green)),
                   ],
@@ -205,11 +221,13 @@ class CustomTextField extends StatelessWidget {
 class GradientButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final Color textColor;
 
   const GradientButton({
     Key? key,
     required this.text,
     required this.onPressed,
+    this.textColor = Colors.white,
   }) : super(key: key);
 
   @override
@@ -229,27 +247,19 @@ class GradientButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          primary: Colors.transparent,
+          backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: ShaderMask(
-          shaderCallback: (bounds) => const LinearGradient(
-            colors: [
-              Color(0xFF109410),
-              Color(0xFF1AE91A),
-            ],
-          ).createShader(bounds),
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: 'Mulish',
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontFamily: 'Mulish',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: textColor,
           ),
         ),
       ),
