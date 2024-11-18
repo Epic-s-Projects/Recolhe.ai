@@ -1,6 +1,8 @@
 # Recolhe.ai
 repositório destinado para o projeto final do SENAI
 
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Classe" alt="Typing SVG" />
+
 ```mermaid
 classDiagram
     class Usuario {
@@ -82,5 +84,42 @@ classDiagram
     Pontuacao --> Usuario : "cpf"
     Coletado --> Eletronico : "id_eletronico"
     Coletado --> UsuarioColetor : "cpf"
+
+```
+<br><br><br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Fluxo" alt="Typing SVG" />
+
+``` mermaid
+
+flowchart TD
+    subgraph LoginCadastro
+        A[Login] --> B{Usuário cadastrado?}
+        B -- Sim --> C[Home]
+        B -- Não --> D[Cadastro]
+        D --> E{Escolher tipo de usuário}
+        E -- Usuário comum --> C
+        E -- Coletor --> F[Home - Coletor]
+    end
+
+    subgraph HomeUsuario [Home - Usuário]
+        C --> G[Realizar Coleta]
+        C --> H[Perfil]
+        C --> I[Histórico]
+        C --> J[Prêmios]
+        G --> K{Escolher tipo de coleta}
+        K -- Óleo usado --> L[Coleta de Óleo]
+        K -- Eletrônicos --> M[Coleta de Eletrônicos]
+        M --> N[Inserir requisitos do eletrônico]
+        J --> O[Prêmios Óleo]
+        J --> P[Prêmios Eletrônicos]
+    end
+
+    subgraph HomeColetor [Home - Coletor]
+        F --> Q[Acessar Mapa]
+        F --> R[Iniciar Coleta]
+        F --> S[Ver Casas Disponíveis]
+        S --> T[Visualizar itens da casa]
+    end
 
 ```
