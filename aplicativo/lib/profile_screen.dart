@@ -1,5 +1,29 @@
 import 'package:flutter/material.dart';
 
+void main() {
+  runApp(const PerfilApp());
+}
+
+class PerfilApp extends StatelessWidget {
+  const PerfilApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const PerfilPage(),
+      theme: ThemeData(
+        primaryColor: Colors.blue, // Defina uma cor primária aqui
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.blue, // Cor de fundo da barra de navegação
+          selectedItemColor: Colors.white, // Cor do ícone selecionado
+          unselectedItemColor: Colors.black, // Cor do ícone não selecionado
+        ),
+      ),
+    );
+  }
+}
+
 class PerfilPage extends StatelessWidget {
   const PerfilPage({Key? key}) : super(key: key);
 
