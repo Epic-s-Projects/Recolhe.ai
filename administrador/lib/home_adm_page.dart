@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_coleta_page.dart';
 
 class HomeAdmPage extends StatelessWidget {
   @override
@@ -54,7 +55,7 @@ class HomeAdmPage extends StatelessWidget {
                   ),
                   CircleAvatar(
                     radius: 30,
-                    backgroundImage: AssetImage('assets/avatar.png'), // Substitua pelo caminho do avatar
+                    backgroundImage: AssetImage('assets/avatar.png'),
                   ),
                 ],
               ),
@@ -64,7 +65,12 @@ class HomeAdmPage extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Ação ao iniciar coleta
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeColetaPage(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -85,7 +91,7 @@ class HomeAdmPage extends StatelessWidget {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        // Ação ao ver itens
+                        // Ação ao clicar no botão "Ver Itens"
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -110,7 +116,7 @@ class HomeAdmPage extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Image.asset(
-                  'assets/folhas.png', // Substitua pelo caminho da imagem da folhagem
+                  'assets/folhas.png', // Substitua pelo caminho correto
                   fit: BoxFit.cover,
                 ),
               ),
