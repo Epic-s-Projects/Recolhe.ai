@@ -1,3 +1,4 @@
+import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
 import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -157,24 +158,33 @@ class _HomePageState extends State<HomePage> {
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white54,
       type: BottomNavigationBarType.fixed,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 50), // Tamanho ajustado
+      items: [
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home, size: 50),
           label: 'Início',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 50), // Tamanho ajustado
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.person, size: 50),
           label: 'Perfil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: 50), // Tamanho ajustado
+          icon: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  CadastroEnderecoPage()),
+              );
+            },
+            child: const Icon(Icons.assignment, size: 50),
+          ),
           label: 'Tarefas',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag, size: 50), // Tamanho ajustado
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_bag, size: 50),
           label: 'Loja',
         ),
       ],
     );
   }
+
 }
