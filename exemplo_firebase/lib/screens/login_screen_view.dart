@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
+import 'package:exemplo_firebase/screens/set_icon_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -121,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GradientButton(
                     text: 'Login',
                     onPressed: _validarLogin,
-                    textColor: Colors.green.shade900,
+                    textColor: Colors.white,
                   ),
 
                   const SizedBox(height: 20),
@@ -170,25 +171,36 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (user != null) {
-          // Se o login for bem-sucedido, busque o nome no Firestore
+          // Se o login for bem-sucedido, busque o documento no Firestore
           var userDocument = await FirebaseFirestore.instance
               .collection('users') // Sua coleção de usuários
               .doc(user.uid) // Usa o UID do usuário logado
               .get();
 
           if (userDocument.exists) {
-            // Pega o /dados do usuário
-            String name = userDocument['nome'];
-            String imagem = userDocument['imagem'];
-            // Redireciona para a tela inicial passando o nome
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(name: name, imagem:imagem),
-              ),
-            );
+            // Verifica se o campo 'imagem' existe e está preenchido
+            String? imagem = userDocument.data()?['imagem'];
+            String name = userDocument.data()?['nome'] ?? "Usuário";
+
+            if (imagem == null || imagem.isEmpty) {
+              // Redireciona para a página de configuração de ícone
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SetIconScreen(userId: user.uid, name: name),
+                ),
+              );
+            } else {
+              // Redireciona para a página inicial
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(name: name, imagem: imagem),
+                ),
+              );
+            }
           } else {
-            // Caso o documento não exista
+            // Documento do usuário não encontrado
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(
@@ -199,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Usuário ou senha inválidos"),
+              content: Text("Usuário ou senha inválidos."),
             ),
           );
         }
