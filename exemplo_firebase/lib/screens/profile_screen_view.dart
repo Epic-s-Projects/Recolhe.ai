@@ -1,3 +1,4 @@
+import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -18,12 +19,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  AuthService _authService = new AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFE6BEA8),
-        title: const Icon(Icons.add_circle),
       ),
       body: Column(
         children: [
@@ -38,14 +40,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 10),
                   // Avatar e Nome
                   CircleAvatar(
-                    radius: 50,
+                    radius: 120,
                     backgroundColor: Colors.white,
                     child: widget.imagem.isNotEmpty
                         ? ClipOval(
                             child: Image.network(widget.imagem,
                                 fit: BoxFit.cover, width: 300, height: 300))
                         : const Icon(Icons.person,
-                            size: 80, color: Color(0xFF7B2CBF)),
+                            size: 50, color: Color(0xFF7B2CBF)),
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -59,13 +61,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 20),
                   // Informações com ícones
                   infoTile(Icons.email, widget.email),
-                  infoTile(Icons.cake, widget.cpf),
+                  infoTile(Icons.person, widget.cpf),
                   infoTile(Icons.location_on,
                       'R. Catatu dos Santos\nBarbados\n1090\n13486-229'),
                   const SizedBox(height: 20),
                   // Botão de sair
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      await _authService
+                          .signOut(); // Chama o método para fazer logout.
+                      Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/login',
+                          (route) =>
+                              false); // Redireciona para a página de login.
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       shape: RoundedRectangleBorder(

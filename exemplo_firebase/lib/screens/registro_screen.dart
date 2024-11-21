@@ -12,7 +12,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -93,7 +93,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                     icon: Icons.person,
                     hintText: 'Nome',
                     validator: (value) =>
-                    value!.isEmpty ? 'Informe seu nome' : null,
+                        value!.isEmpty ? 'Informe seu nome' : null,
                   ),
                   const SizedBox(height: 12),
                   CustomTextField(
@@ -101,7 +101,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                     icon: Icons.email,
                     hintText: 'Email',
                     validator: (value) =>
-                    value!.isEmpty ? 'Informe seu email' : null,
+                        value!.isEmpty ? 'Informe seu email' : null,
                   ),
                   const SizedBox(height: 12),
                   CustomTextField(
@@ -129,7 +129,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                     icon: Icons.badge,
                     hintText: 'CPF',
                     validator: (value) =>
-                    value!.isEmpty ? 'Informe seu CPF' : null,
+                        value!.isEmpty ? 'Informe seu CPF' : null,
                   ),
                   const SizedBox(height: 24),
 

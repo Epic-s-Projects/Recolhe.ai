@@ -13,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Firebase Aplication")),
       body: Container(
-        color: Color.fromARGB(255, 255, 174, 0),
+        color: const Color.fromARGB(255, 255, 174, 0),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Center(

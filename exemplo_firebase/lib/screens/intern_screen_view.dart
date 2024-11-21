@@ -44,14 +44,35 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.white,
-            child: widget.imagem.isNotEmpty
-                ? ClipOval(
-                    child: Image.network(widget.imagem,
-                        fit: BoxFit.cover, width: 50, height: 100))
-                : const Icon(Icons.person, size: 80, color: Color(0xFF7B2CBF)),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(
+                    name: widget.name,
+                    cpf: widget.cpf,
+                    email: widget.email,
+                    imagem: widget.imagem,
+                  ),
+                ),
+              );
+            },
+            child: CircleAvatar(
+              radius: 45,
+              backgroundColor: Colors.white,
+              child: widget.imagem.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(
+                        widget.imagem,
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                      ),
+                    )
+                  : const Icon(Icons.person,
+                      size: 30, color: Color(0xFF7B2CBF)),
+            ),
           ),
         ],
       ),
@@ -104,7 +125,7 @@ class _HomePageState extends State<HomePage> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -112,7 +133,7 @@ class _HomePageState extends State<HomePage> {
           icon: const Icon(Icons.add, color: Colors.white, size: 20),
           label: const Text(
             'Realize sua coleta',
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),
       ],
@@ -122,25 +143,61 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCards() {
     return ListView(
       children: List.generate(
-        3, // Número de cards
+        9, // Número de cards
         (index) => Card(
-          margin: const EdgeInsets.symmetric(vertical: 30),
+          shadowColor: const Color.fromARGB(255, 0, 0, 0),
+          color: const Color.fromRGBO(218, 194, 162, 1),
+          margin: const EdgeInsets.symmetric(
+              vertical: 10), // Espaçamento entre cards
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          child: ListTile(
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(30),
-              child: Image.asset(
-                'assets/folhas2.png', // Substitua pela imagem real
-                width: 80,
-                height: 80,
-                fit: BoxFit.cover,
-              ),
+          elevation: 5, // Adiciona sombra para destacar
+          child: Padding(
+            padding: const EdgeInsets.all(16.0), // Espaçamento interno do card
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    'assets/folhas2.png', // Substitua pela imagem real
+                    width: 100,
+                    height: 100, // Altura e largura da imagem
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(width: 10), // Espaço entre imagem e texto
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Produto ${index + 1}',
+                        style: const TextStyle(
+                          fontSize: 30, // Tamanho da fonte maior para título
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'DATA DE Criação\nDATA DE COLETA',
+                        style: TextStyle(
+                            fontSize: 14), // Ajuste no tamanho da fonte
+                      ),
+                    ],
+                  ),
+                ),
+                const Row(
+                  children: [
+                    Icon(
+                      Icons.add,
+                      color: Colors.green,
+                      size: 50,
+                    ),
+                  ],
+                ),
+              ],
             ),
-            title: Text('Produto ${index + 1}'),
-            subtitle: const Text('DATA DE Criação\nDATA DE COLETA'),
-            trailing: const Icon(Icons.add, color: Colors.green, size: 30),
           ),
         ),
       ),
