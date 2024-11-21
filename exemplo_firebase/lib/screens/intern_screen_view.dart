@@ -1,13 +1,27 @@
+import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
+import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String name;
+  final String imagem;
+
+  HomePage({super.key, required this.name, required this.imagem});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final AuthService _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,25 +29,26 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 223, 209, 186),
         elevation: 0,
-        title: const Text(
-          'Olá João!',
+        title: Text(
+          'Olá, ${widget.name}!',
           style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 56, 128, 59)),
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 56, 128, 59),
+          ),
         ),
+
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(
-                right: 20.0), // Adicionando espaço à direita
-            child: IconButton(
-              icon: const Icon(Icons.person, size: 40, color: Colors.white),
-              onPressed: () {
-                // Ação ao clicar no ícone
-              },
-            ),
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.white,
+            child: widget.imagem.isNotEmpty
+                ? ClipOval(child: Image.network(widget.imagem, fit: BoxFit.cover, width: 50, height: 100))
+                : Icon(Icons.person, size: 80, color: Color(0xFF7B2CBF)),
           ),
         ],
+
+
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50.0),
@@ -81,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       icon:
-                      const Icon(Icons.add, color: Colors.white, size: 20),
+                          const Icon(Icons.add, color: Colors.white, size: 20),
                       label: const Text(
                         'Realize sua coleta',
                         style: TextStyle(fontSize: 16, color: Colors.white),
@@ -120,17 +135,17 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: days
             .map((day) => CircleAvatar(
-          radius: 20, // Aumentado para maior visibilidade
-          backgroundColor: day['color'],
-          child: Text(
-            day['day'],
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14, // Tamanho ajustado para proporcionalidade
-            ),
-          ),
-        ))
+                  radius: 20, // Aumentado para maior visibilidade
+                  backgroundColor: day['color'],
+                  child: Text(
+                    day['day'],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14, // Tamanho ajustado para proporcionalidade
+                    ),
+                  ),
+                ))
             .toList(),
       ),
     );
@@ -143,24 +158,33 @@ class _HomePageState extends State<HomePage> {
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white54,
       type: BottomNavigationBarType.fixed,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 50), // Tamanho ajustado
+      items: [
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.home, size: 50),
           label: 'Início',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 50), // Tamanho ajustado
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.person, size: 50),
           label: 'Perfil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: 50), // Tamanho ajustado
+          icon: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) =>  CadastroEnderecoPage()),
+              );
+            },
+            child: const Icon(Icons.assignment, size: 50),
+          ),
           label: 'Tarefas',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag, size: 50), // Tamanho ajustado
+        const BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_bag, size: 50),
           label: 'Loja',
         ),
       ],
     );
   }
+
 }

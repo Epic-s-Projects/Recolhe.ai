@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
+import 'package:exemplo_firebase/screens/set_icon_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -51,12 +53,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.green,
                       ),
                       ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFF109410),
-                            Color(0xFF1AE91A),
-                          ],
-                        ).createShader(bounds),
+                        shaderCallback: (bounds) =>
+                            const LinearGradient(
+                              colors: [
+                                Color(0xFF109410),
+                                Color(0xFF1AE91A),
+                              ],
+                            ).createShader(bounds),
                         child: const Text(
                           'Recolhe.ai',
                           style: TextStyle(
@@ -119,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   GradientButton(
                     text: 'Login',
                     onPressed: _validarLogin,
-                    textColor: Colors.green.shade900,
+                    textColor: Colors.white,
                   ),
 
                   const SizedBox(height: 20),
@@ -161,22 +164,54 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
+        // Realiza o login com o email e senha
         User? user = await _authService.signInWithEmail(
           _emailController.text,
           _passwordController.text,
         );
+
         if (user != null) {
-          // Redirecionar após login bem-sucedido
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ),
-          );
+          // Se o login for bem-sucedido, busque o documento no Firestore
+          var userDocument = await FirebaseFirestore.instance
+              .collection('users') // Sua coleção de usuários
+              .doc(user.uid) // Usa o UID do usuário logado
+              .get();
+
+          if (userDocument.exists) {
+            // Verifica se o campo 'imagem' existe e está preenchido
+            String? imagem = userDocument.data()?['imagem'];
+            String name = userDocument.data()?['nome'] ?? "Usuário";
+
+            if (imagem == null || imagem.isEmpty) {
+              // Redireciona para a página de configuração de ícone
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SetIconScreen(userId: user.uid, name: name),
+                ),
+              );
+            } else {
+              // Redireciona para a página inicial
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(name: name, imagem: imagem),
+                ),
+              );
+            }
+          } else {
+            // Documento do usuário não encontrado
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    "Documento do usuário não encontrado no Firestore."),
+              ),
+            );
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Usuário ou senha inválidos"),
+              content: Text("Usuário ou senha inválidos."),
             ),
           );
         }
