@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import '../service/auth_service.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -52,13 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.green,
                       ),
                       ShaderMask(
-                        shaderCallback: (bounds) =>
-                            const LinearGradient(
-                              colors: [
-                                Color(0xFF109410),
-                                Color(0xFF1AE91A),
-                              ],
-                            ).createShader(bounds),
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0xFF109410),
+                            Color(0xFF1AE91A),
+                          ],
+                        ).createShader(bounds),
                         child: const Text(
                           'Recolhe.ai',
                           style: TextStyle(
@@ -179,20 +177,23 @@ class _LoginScreenState extends State<LoginScreen> {
           if (userDocument.exists) {
             // Pega o /dados do usuário
             String name = userDocument['nome'];
+            String cpf = userDocument['cpf'];
+            String email = userDocument['email'];
             String imagem = userDocument['imagem'];
             // Redireciona para a tela inicial passando o nome
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => HomePage(name: name, imagem:imagem),
+                builder: (context) => HomePage(
+                    name: name, cpf: cpf, email: email, imagem: imagem),
               ),
             );
           } else {
             // Caso o documento não exista
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text(
-                    "Documento do usuário não encontrado no Firestore."),
+                content:
+                    Text("Documento do usuário não encontrado no Firestore."),
               ),
             );
           }
@@ -246,7 +247,7 @@ class CustomTextField extends StatelessWidget {
         obscureText: isPassword,
         validator: validator,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Color(0xFF109410)),
+          prefixIcon: Icon(icon, color: const Color(0xFF109410)),
           hintText: hintText,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
