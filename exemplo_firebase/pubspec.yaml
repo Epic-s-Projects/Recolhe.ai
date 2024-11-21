@@ -1,0 +1,36 @@
+name: exemplo_firebase
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  cloud_firestore: ^5.0.0
+  firebase_auth: ^5.0.0
+  firebase_core: ^3.0.0
+  firebase_messaging: ^15.0.0
+  local_auth: ^2.0.0
+  flutter_secure_storage: ^4.2.1
+  geolocator: ^13.0.1
+  gradient_widgets: ^0.6.0
+  flutter_map: ^4.0.0
+  latlong2: ^0.8.1
+  flutter:
+    sdk: flutter
+  quickalert: ^1.1.0
+  intl: ^0.18.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/

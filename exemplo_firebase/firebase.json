@@ -1,0 +1,21 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "recolheaiapp",
+          "appId": "1:455526120204:android:3de4928c5afe08ac7aa729",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "recolheaiapp",
+          "configurations": {
+            "android": "1:455526120204:android:3de4928c5afe08ac7aa729"
+          }
+        }
+      }
+    }
+  }
+}
