@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -51,12 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.green,
                       ),
                       ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFF109410),
-                            Color(0xFF1AE91A),
-                          ],
-                        ).createShader(bounds),
+                        shaderCallback: (bounds) =>
+                            const LinearGradient(
+                              colors: [
+                                Color(0xFF109410),
+                                Color(0xFF1AE91A),
+                              ],
+                            ).createShader(bounds),
                         child: const Text(
                           'Recolhe.ai',
                           style: TextStyle(
@@ -161,18 +163,39 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
+        // Realiza o login com o email e senha
         User? user = await _authService.signInWithEmail(
           _emailController.text,
           _passwordController.text,
         );
+
         if (user != null) {
-          // Redirecionar após login bem-sucedido
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ),
-          );
+          // Se o login for bem-sucedido, busque o nome no Firestore
+          var userDocument = await FirebaseFirestore.instance
+              .collection('users') // Sua coleção de usuários
+              .doc(user.uid) // Usa o UID do usuário logado
+              .get();
+
+          if (userDocument.exists) {
+            // Pega o /dados do usuário
+            String name = userDocument['nome'];
+            String imagem = userDocument['imagem'];
+            // Redireciona para a tela inicial passando o nome
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(name: name, imagem:imagem),
+              ),
+            );
+          } else {
+            // Caso o documento não exista
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                    "Documento do usuário não encontrado no Firestore."),
+              ),
+            );
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
