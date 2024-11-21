@@ -64,26 +64,40 @@ class HomeColetaPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      elevation: 2,
-                      child: ListTile(
-                        leading: Container(
-                          width: 48,
-                          height: 48,
-                          color: Colors.grey[300], // Placeholder for the image
-                          child: Icon(Icons.image, color: Colors.grey),
-                        ),
-                        title: Text(
-                          'CASA',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailsScreen(
+                              productName: 'Produto',
+                              creationDate: 'DATA DE Criação',
+                              collectionDate: 'DATA DE COLETA',
+                            ),
                           ),
+                        );
+                      },
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        subtitle: Text('Endereço\nPessoa'),
-                        trailing: Icon(Icons.close, color: Colors.black),
+                        elevation: 2,
+                        child: ListTile(
+                          leading: Container(
+                            width: 48,
+                            height: 48,
+                            color: Colors.grey[300], // Placeholder for the image
+                            child: Icon(Icons.image, color: Colors.grey),
+                          ),
+                          title: Text(
+                            'CASA',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text('Endereço\nPessoa'),
+                          trailing: Icon(Icons.close, color: Colors.black),
+                        ),
                       ),
                     ),
                     Spacer(),
@@ -158,6 +172,72 @@ class HomeColetaPage extends StatelessWidget {
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+class ProductDetailsScreen extends StatelessWidget {
+  final String productName;
+  final String creationDate;
+  final String collectionDate;
+
+  ProductDetailsScreen({
+    required this.productName,
+    required this.creationDate,
+    required this.collectionDate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF109410),
+        title: Text('Detalhes do Produto'),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF4D6A5), // Cor superior
+              Color(0xFFF4A261), // Cor inferior
+            ],
+          ),
+        ),
+        child: Center(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            margin: const EdgeInsets.all(16),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    productName,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Data de Criação: $creationDate',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    'Data de Coleta: $collectionDate',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
