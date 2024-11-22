@@ -4,6 +4,7 @@ import 'package:exemplo_firebase/screens/registro_screen.dart';
 import 'package:exemplo_firebase/screens/set_icon_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../service/auth_service.dart';
 
@@ -243,6 +244,7 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool isPassword;
   final String? Function(String?) validator;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     Key? key,
@@ -251,6 +253,7 @@ class CustomTextField extends StatelessWidget {
     required this.hintText,
     required this.validator,
     this.isPassword = false,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -267,6 +270,7 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         obscureText: isPassword,
         validator: validator,
+        inputFormatters: inputFormatters,
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: const Color(0xFF109410)),
           hintText: hintText,

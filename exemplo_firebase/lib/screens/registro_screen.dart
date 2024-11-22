@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../service/auth_service.dart';
+import '../controllers/register_controller.dart';
+import 'login_screen_view.dart';
 
 class RegistroScreen extends StatefulWidget {
   const RegistroScreen({super.key});
@@ -13,11 +14,13 @@ class _RegistroScreenState extends State<RegistroScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final AuthService _authService = AuthService();
+  final AuthController _authController = AuthController();
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +50,7 @@ class _RegistroScreenState extends State<RegistroScreen> {
                   Align(
                     alignment: Alignment.topLeft,
                     child: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => Navigator.pop(context),
                       icon: const Icon(
                         Icons.arrow_back,
                         color: Colors.green,
@@ -136,129 +137,22 @@ class _RegistroScreenState extends State<RegistroScreen> {
                   // Botão de Cadastro
                   GradientButton(
                     text: 'Cadastrar',
-                    onPressed: _registrar,
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _authController.registrar(
+                          context: context,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          confirmPassword: _confirmPasswordController.text,
+                          name: _nameController.text,
+                          cpf: _cpfController.text,
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _registrar() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        // Registrar usuário com informações adicionais
-        final user = await _authService.registerWithEmail(
-          _emailController.text,
-          _passwordController.text,
-          _nameController.text,
-          _cpfController.text,
-        );
-
-        if (user != null) {
-          // Navegar para a tela de login após o registro
-          Navigator.pushNamed(context, '/login');
-        } else {
-          throw 'Erro ao registrar. Tente novamente.';
-        }
-      } catch (e) {
-        // Mostrar mensagem de erro em caso de falha
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao registrar: $e'),
-          ),
-        );
-      }
-    }
-  }
-}
-
-// Widget para campos de entrada com ícone e borda em gradiente
-class CustomTextField extends StatelessWidget {
-  final IconData icon;
-  final String hintText;
-  final bool isPassword;
-  final TextEditingController controller;
-  final String? Function(String?)? validator;
-
-  const CustomTextField({
-    Key? key,
-    required this.icon,
-    required this.hintText,
-    this.isPassword = false,
-    required this.controller,
-    this.validator,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          width: 2,
-          color: const Color(0xFF109410),
-        ),
-      ),
-      child: TextFormField(
-        obscureText: isPassword,
-        controller: controller,
-        validator: validator,
-        decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: const Color(0xFF109410)),
-          hintText: hintText,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
-        ),
-      ),
-    );
-  }
-}
-
-// Widget para botão de cadastro com gradiente
-class GradientButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
-
-  const GradientButton({
-    Key? key,
-    required this.text,
-    required this.onPressed,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 50,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF109410),
-            Color(0xFF1AE91A),
-          ],
-        ),
-      ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Mulish',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
         ),
       ),
