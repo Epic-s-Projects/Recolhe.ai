@@ -115,28 +115,6 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                       ),
                       Spacer(),
                       // Bottom Button
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF1A1D10),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 32, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {},
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.delete, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text(
-                              'Realize sua coleta',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
                       SizedBox(height: 16),
                     ],
                   ),
