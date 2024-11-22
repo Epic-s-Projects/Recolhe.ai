@@ -1,5 +1,5 @@
 import 'package:exemplo_firebase/screens/profile_screen_view.dart';
-import 'package:exemplo_firebase/service/auth_service.dart';
+// import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final AuthService _authService = AuthService();
+  // final AuthService _authService = AuthService();
   bool showCards = false; // Controle para exibir imagem ou cards
 
   @override
