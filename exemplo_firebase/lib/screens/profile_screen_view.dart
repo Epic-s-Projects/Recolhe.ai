@@ -1,18 +1,11 @@
 import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
-class ProfileScreen extends StatefulWidget {
-  final String name;
-  final String cpf;
-  final String email;
-  final String imagem;
+import '../controllers/user_data.dart';
 
-  const ProfileScreen(
-      {super.key,
-      required this.name,
-      required this.cpf,
-      required this.email,
-      required this.imagem});
+class ProfileScreen extends StatefulWidget {
+
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -20,6 +13,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   AuthService _authService = new AuthService();
+  final user = UserSession();
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +34,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 10),
                   // Avatar e Nome
                   CircleAvatar(
-                    radius: 120,
+                    radius: 90,
                     backgroundColor: Colors.white,
-                    child: widget.imagem.isNotEmpty
+                    child: user.imagem!.isNotEmpty
                         ? ClipOval(
-                            child: Image.network(widget.imagem,
+                            child: Image.network(user.imagem!,
                                 fit: BoxFit.cover, width: 300, height: 300))
                         : const Icon(Icons.person,
                             size: 50, color: Color(0xFF7B2CBF)),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    widget.name,
+                    user.name!,
                     style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -60,8 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 20),
                   // Informações com ícones
-                  infoTile(Icons.email, widget.email),
-                  infoTile(Icons.person, widget.cpf),
+                  infoTile(Icons.email, user.email!),
+                  infoTile(Icons.person, user.cpf!),
                   infoTile(Icons.location_on,
                       'R. Catatu dos Santos\nBarbados\n1090\n13486-229'),
                   const SizedBox(height: 20),

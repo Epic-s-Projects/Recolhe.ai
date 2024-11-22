@@ -3,18 +3,12 @@ import 'package:exemplo_firebase/screens/selection_screen_view.dart';
 // import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
+import '../controllers/user_data.dart';
+
 class HomePage extends StatefulWidget {
-  final String name;
-  final String cpf;
-  final String email;
-  final String imagem;
 
   const HomePage(
-      {super.key,
-      required this.name,
-      required this.imagem,
-      required this.cpf,
-      required this.email});
+      {super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -23,6 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // final AuthService _authService = AuthService();
   bool showCards = false; // Controle para exibir imagem ou cards
+  final user = UserSession();
 
   @override
   void initState() {
@@ -37,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color.fromARGB(255, 223, 209, 186),
         elevation: 0,
         title: Text(
-          'Olá, ${widget.name}!',
+          'Olá, ${user.name}!',
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -50,30 +45,29 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfileScreen(
-                    name: widget.name,
-                    cpf: widget.cpf,
-                    email: widget.email,
-                    imagem: widget.imagem,
-                  ),
+                  builder: (context) => ProfileScreen(),
                 ),
               );
             },
             child: CircleAvatar(
               radius: 45,
               backgroundColor: Colors.white,
-              child: widget.imagem.isNotEmpty
+              child: (user.imagem != null && user.imagem!.isNotEmpty)
                   ? ClipOval(
-                      child: Image.network(
-                        widget.imagem,
-                        fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
-                      ),
-                    )
-                  : const Icon(Icons.person,
-                      size: 30, color: Color(0xFF7B2CBF)),
+                child: Image.network(
+                  user.imagem!,
+                  fit: BoxFit.cover,
+                  width: 60,
+                  height: 60,
+                ),
+              )
+                  : const Icon(
+                Icons.person,
+                size: 30,
+                color: Color(0xFF7B2CBF),
+              ),
             ),
+
           ),
         ],
       ),
@@ -262,11 +256,7 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfileScreen(
-                    name: widget.name,
-                    email: widget.email,
-                    cpf: widget.cpf,
-                    imagem: widget.imagem),
+                builder: (context) => ProfileScreen(),
               ),
             );
             break;

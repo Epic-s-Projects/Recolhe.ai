@@ -5,16 +5,10 @@ import 'intern_screen_view.dart';
 
 class SetIconScreen extends StatefulWidget {
   final String userId;
-  final String name;
-  final String email;
-  final String cpf;
 
   const SetIconScreen(
       {super.key,
-      required this.userId,
-      required this.name,
-      required this.email,
-      required this.cpf});
+      required this.userId});
 
   @override
   State<SetIconScreen> createState() => _SetIconScreenState();
@@ -153,12 +147,7 @@ class _SetIconScreenState extends State<SetIconScreen> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomePage(
-                                name: widget.name,
-                                email: widget.email,
-                                cpf: widget.cpf,
-                                imagem: imageUrls[selectedIndex!],
-                              ),
+                              builder: (context) => HomePage(),
                             ),
                           );
                         }

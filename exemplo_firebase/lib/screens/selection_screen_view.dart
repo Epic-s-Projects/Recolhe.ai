@@ -1,8 +1,12 @@
 import 'package:exemplo_firebase/controllers/selection_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../controllers/user_data.dart';
+
 class SelectionScreenView extends StatelessWidget {
   final SelectionController controller = SelectionController();
+  final user = UserSession();
+
 
   SelectionScreenView({super.key});
 
@@ -21,25 +25,38 @@ class SelectionScreenView extends StatelessWidget {
             ),
           ),
           // Texto "Olá, João!" e bolinha de perfil
-          const Positioned(
+          Positioned(
             top: 50,
             left: 20,
             child: Text(
-              'Olá, João!',
-              style: TextStyle(
+              'Olá, ${user.name}!',
+              style: const TextStyle(
                 fontSize: 30,
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          const Positioned(
+          Positioned(
             top: 40,
             right: 20,
             child: CircleAvatar(
-              backgroundImage: AssetImage(
-                  'assets/user_avatar.png'), // Substitua pela imagem do avatar
-              radius: 35,
+              radius: 45,
+              backgroundColor: Colors.white,
+              child: (user.imagem != null && user.imagem!.isNotEmpty)
+                  ? ClipOval(
+                child: Image.network(
+                  user.imagem!,
+                  fit: BoxFit.cover,
+                  width: 60,
+                  height: 60,
+                ),
+              )
+                  : const Icon(
+                Icons.person,
+                size: 30,
+                color: Color(0xFF7B2CBF),
+              ),
             ),
           ),
           Positioned(

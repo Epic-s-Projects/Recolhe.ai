@@ -3,13 +3,11 @@ import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:flutter/material.dart';
 
-class OilRegisterScreen extends StatefulWidget {
-/*   final String imagem; */
+import '../controllers/user_data.dart';
 
-  const OilRegisterScreen({
-    super.key,
-    /* required this.imagem */
-  });
+class OilRegisterScreen extends StatefulWidget {
+
+  const OilRegisterScreen({super.key,});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -19,6 +17,7 @@ class OilRegisterScreen extends StatefulWidget {
 class _OilRegisterScreenState extends State<OilRegisterScreen> {
   // Instância do Controller
   final OilRegisterControllers _controller = OilRegisterControllers();
+  final user = UserSession();
 
   @override
   Widget build(BuildContext context) {
@@ -44,20 +43,20 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
               },
             ),
           ),
-          /*    Positioned(
+              Positioned(
             top: 40,
             right: 20,
             child: CircleAvatar(
               radius: 35,
               backgroundColor: Colors.white,
-              child: widget.imagem.isNotEmpty
+              child: user.imagem!.isNotEmpty
                   ? ClipOval(
-                      child: Image.network(widget.imagem,
+                      child: Image.network(user.imagem!,
                           fit: BoxFit.cover, width: 300, height: 300))
                   : const Icon(Icons.person,
                       size: 50, color: Color(0xFF7B2CBF)),
             ),
-          ), */
+          ),
 
           Center(
             child: Column(
@@ -150,12 +149,7 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HomePage(
-                          name: '',
-                          imagem: '',
-                          cpf: '',
-                          email: '',
-                        ),
+                        builder: (context) => HomePage(),
                       ),
                     );
 
