@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_coleta_page.dart';
+import 'home_coleta_page.dart'; // Página já criada anteriormente
+import 'area_coleta_page.dart'; // Nova página de Área de Coleta
 
 class HomeAdmPage extends StatelessWidget {
   @override
@@ -63,12 +64,14 @@ class HomeAdmPage extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
+                    // Botão "Iniciar Coleta"
                     ElevatedButton(
                       onPressed: () {
+                        // Navegar para a página de área de coleta
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomeColetaPage(),
+                            builder: (context) => AreaColetaPage(),
                           ),
                         );
                       },
@@ -89,9 +92,16 @@ class HomeAdmPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    // Botão "Ver Itens"
                     ElevatedButton(
                       onPressed: () {
-                        // Ação ao clicar no botão "Ver Itens"
+                        // Navegar para a página "Ver Itens"
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeColetaPage(),
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
