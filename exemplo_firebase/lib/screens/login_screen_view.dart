@@ -188,12 +188,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (userSession.imagem == null || userSession.imagem!.isEmpty) {
               // Redireciona para a página de configuração de ícone
-              // Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => SetIconScreen(userId: user.uid, name:,),
-              //   ),
-              // );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SetIconScreen(userId: user.uid),
+                ),
+              );
             } else {
               // Redireciona para a página inicial
               Navigator.pushReplacement(
