@@ -11,6 +11,7 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
+
       User? user = result.user;
       return user;
     } catch (e) {
@@ -20,8 +21,8 @@ class AuthService {
   }
 
   // Cadastro de novo usuário com informações extras
-  Future<User?> registerWithEmail(String email, String password, String name,
-      String cpf) async {
+  Future<User?> registerWithEmail(
+      String email, String password, String name, String cpf) async {
     try {
       // Criar o usuário no Firebase Authentication
       UserCredential result = await _auth.createUserWithEmailAndPassword(

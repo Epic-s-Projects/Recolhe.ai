@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
-class TelaQuantidadeController {
+class OilRegisterControllers {
   // Variável para armazenar a quantidade de óleo
   int oilAmount = 0;
 

@@ -1,3 +1,4 @@
+import 'package:aplicativo/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,9 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const LoginScreen(),
+      home: HomePage(),
     );
   }
 }
@@ -70,14 +71,14 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 40),
 
                 // Campo de entrada de Email
-                CustomTextField(
+                const CustomTextField(
                   icon: Icons.email,
                   hintText: 'Email',
                 ),
                 const SizedBox(height: 20),
 
                 // Campo de entrada de Senha
-                CustomTextField(
+                const CustomTextField(
                   icon: Icons.lock,
                   hintText: 'Senha',
                   isPassword: true,
@@ -131,7 +132,7 @@ class LoginScreen extends StatelessWidget {
                 // Divisor com "OU"
                 Row(
                   children: [
-                    Expanded(child: Divider(color: Colors.green)),
+                    const Expanded(child: Divider(color: Colors.green)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: ShaderMask(
@@ -151,7 +152,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Expanded(child: Divider(color: Colors.green)),
+                    const Expanded(child: Divider(color: Colors.green)),
                   ],
                 ),
 
@@ -162,12 +163,14 @@ class LoginScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.g_mobiledata, size: 48, color: Color(0xFF109410)),
+                      icon: const Icon(Icons.g_mobiledata,
+                          size: 48, color: Color(0xFF109410)),
                       onPressed: () {},
                     ),
                     const SizedBox(width: 16),
                     IconButton(
-                      icon: const Icon(Icons.grid_3x3, size: 48, color: Color(0xFF109410)),
+                      icon: const Icon(Icons.grid_3x3,
+                          size: 48, color: Color(0xFF109410)),
                       onPressed: () {},
                     ),
                   ],
@@ -207,7 +210,7 @@ class CustomTextField extends StatelessWidget {
       child: TextField(
         obscureText: isPassword,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Color(0xFF109410)),
+          prefixIcon: Icon(icon, color: const Color(0xFF109410)),
           hintText: hintText,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 16),

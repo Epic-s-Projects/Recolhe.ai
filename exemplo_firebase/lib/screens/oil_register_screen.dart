@@ -1,15 +1,24 @@
+import 'package:exemplo_firebase/controllers/oil_register_controller.dart';
+import 'package:exemplo_firebase/screens/historic_screen_view.dart';
+import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:flutter/material.dart';
-import 'package:testpaginas/Controller/TelaQuantidadeController.dart';// Importa o Controller
-import 'package:testpaginas/View/TelaHistoricoView.dart';
 
-class TelaQuantidadePage extends StatefulWidget {
+class OilRegisterScreen extends StatefulWidget {
+/*   final String imagem; */
+
+  const OilRegisterScreen({
+    super.key,
+    /* required this.imagem */
+  });
+
   @override
-  _TelaQuantidadePageState createState() => _TelaQuantidadePageState();
+  // ignore: library_private_types_in_public_api
+  _OilRegisterScreenState createState() => _OilRegisterScreenState();
 }
 
-class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
+class _OilRegisterScreenState extends State<OilRegisterScreen> {
   // Instância do Controller
-  TelaQuantidadeController _controller = TelaQuantidadeController();
+  final OilRegisterControllers _controller = OilRegisterControllers();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +27,7 @@ class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
         children: [
           // Fundo com a imagem
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/background.png'),
                 fit: BoxFit.cover,
@@ -29,25 +38,32 @@ class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
             top: 50,
             left: 20,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.green, size: 50),
+              icon: const Icon(Icons.arrow_back, color: Colors.green, size: 50),
               onPressed: () {
                 Navigator.pop(context); // Volta para a página anterior
               },
             ),
           ),
-          Positioned(
+          /*    Positioned(
             top: 40,
             right: 20,
             child: CircleAvatar(
-              backgroundImage: AssetImage('assets/user_avatar.png'),
               radius: 35,
+              backgroundColor: Colors.white,
+              child: widget.imagem.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(widget.imagem,
+                          fit: BoxFit.cover, width: 300, height: 300))
+                  : const Icon(Icons.person,
+                      size: 50, color: Color(0xFF7B2CBF)),
             ),
-          ),
+          ), */
+
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                   "Óleo usado",
                   style: TextStyle(
                     fontSize: 40,
@@ -55,17 +71,17 @@ class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Image.asset(
                   'assets/icongalao2.png',
                   width: 450,
                   height: 200,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       "Óleo usado (ml):",
                       style: TextStyle(
                         fontSize: 24,
@@ -73,31 +89,35 @@ class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          _controller.decrement(); // Chama o método de decremento no Controller
+                          _controller
+                              .decrement(); // Chama o método de decremento no Controller
                         });
                       },
                       child: Container(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Colors.red.shade700,
-                          borderRadius: BorderRadius.horizontal(left: Radius.circular(10)),
+                          borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(10)),
                         ),
-                        child: Icon(Icons.remove, size: 30, color: Colors.white),
+                        child: const Icon(Icons.remove,
+                            size: 30, color: Colors.white),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         '${_controller.getOilAmount()}', // Exibe a quantidade de óleo usando o Controller
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -107,33 +127,50 @@ class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          _controller.increment(); // Chama o método de incremento no Controller
+                          _controller
+                              .increment(); // Chama o método de incremento no Controller
                         });
                       },
                       child: Container(
-                        padding: EdgeInsets.all(15),
+                        padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Colors.green.shade700,
-                          borderRadius: BorderRadius.horizontal(right: Radius.circular(10)),
+                          borderRadius: const BorderRadius.horizontal(
+                              right: Radius.circular(10)),
                         ),
-                        child: Icon(Icons.add, size: 30, color: Colors.white),
+                        child: const Icon(Icons.add,
+                            size: 30, color: Colors.white),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 130),
+                const SizedBox(height: 130),
                 ElevatedButton.icon(
                   onPressed: () {
-                    print("Avançar pressionado com ${_controller.getOilAmount()} ml de óleo usado.");
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(
+                          name: '',
+                          imagem: '',
+                          cpf: '',
+                          email: '',
+                        ),
+                      ),
+                    );
+
+                    print(
+                        "Avançar pressionado com ${_controller.getOilAmount()} ml de óleo usado.");
                   },
-                  icon: Icon(Icons.delete, color: Colors.white),
-                  label: Text(
+                  icon: const Icon(Icons.delete, color: Colors.white),
+                  label: const Text(
                     "Avançar",
                     style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black.withOpacity(0.6),
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 25),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 25),
                   ),
                 ),
               ],
@@ -151,7 +188,7 @@ class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           iconSize: 45,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: '',
@@ -181,7 +218,7 @@ class _TelaQuantidadePageState extends State<TelaQuantidadePage> {
                 print("Histórico pressionado");
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TelaHistoricoView()),
+                  MaterialPageRoute(builder: (context) => HistoricScreenView()),
                 );
                 break;
               case 3:

@@ -1,14 +1,13 @@
+import 'package:exemplo_firebase/screens/historic_screen_view.dart';
+import 'package:exemplo_firebase/screens/oil_register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:testpaginas/View/TelaQuantidadeView.dart'; // Importa a tela de quantidade de óleo
-import 'package:testpaginas/View/TelaHistoricoView.dart'; // Importa a tela de histórico
 
-
-class SelecaoController {
+class SelectionController {
   // Navegar para a página de coleta de óleo usado
   void navigateToOilUsed(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => TelaQuantidadePage()),
+      MaterialPageRoute(builder: (context) => const OilRegisterScreen()),
     );
   }
 
@@ -30,7 +29,7 @@ class SelecaoController {
         print("Histórico pressionado");
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => TelaHistoricoView()),
+          MaterialPageRoute(builder: (context) => HistoricScreenView()),
         );
         break;
       case 3:
