@@ -1,10 +1,20 @@
 import 'package:exemplo_firebase/controllers/selection_controller.dart';
 import 'package:flutter/material.dart';
 
-class SelectionScreenView extends StatelessWidget {
-  final SelectionController controller = SelectionController();
+class SelectionScreenView extends StatefulWidget {
+  final String imagem;
 
-  SelectionScreenView({super.key});
+  const SelectionScreenView({
+    super.key,
+    required this.imagem,
+  });
+
+  @override
+  State<SelectionScreenView> createState() => _SelectionScreenViewState();
+}
+
+class _SelectionScreenViewState extends State<SelectionScreenView> {
+  final SelectionController controller = SelectionController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,23 +41,33 @@ class SelectionScreenView extends StatelessWidget {
               child: const Icon(Icons.arrow_back),
             ),
           ),
-          const Positioned(
+          Positioned(
             top: 40,
             right: 20,
             child: CircleAvatar(
-              backgroundImage: AssetImage(
-                  'assets/user_avatar.png'), // Substitua pela imagem do avatar
-              radius: 35,
+              radius: 45,
+              backgroundColor: Colors.white,
+              child: widget.imagem.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(
+                        widget.imagem,
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                      ),
+                    )
+                  : const Icon(Icons.person,
+                      size: 30, color: Color(0xFF7B2CBF)),
             ),
           ),
           Positioned(
             top: MediaQuery.of(context).size.height * 0.2, // Ajusta a altura
             left: 0,
             right: 0,
-            child: Text(
+            child: const Text(
               'Selecione o tipo de coleta:',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 40,
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
