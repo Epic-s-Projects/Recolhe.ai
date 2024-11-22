@@ -68,26 +68,26 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>?> getUserData() async {
-    try {
-      // Obtém o UID do usuário logado
-      User? user = _auth.currentUser;
-      if (user != null) {
-        String uid = user.uid;
-
-        // Busca os dados do usuário no Firestore
-        DocumentSnapshot userDoc = await _firestore
-            .collection('users') // Coleção onde os dados estão armazenados
-            .doc(uid) // Documento com o UID do usuário
-            .get();
-
-        if (userDoc.exists) {
-          return userDoc.data() as Map<String, dynamic>;
-        }
-      }
-    } catch (e) {
-      print("Erro ao buscar dados do usuário: ${e.toString()}");
-    }
-    return null;
-  }
+  // Future<Map<String, dynamic>?> getUserData() async {
+  //   try {
+  //     // Obtém o UID do usuário logado
+  //     User? user = _auth.currentUser;
+  //     if (user != null) {
+  //       String uid = user.uid;
+  //
+  //       // Busca os dados do usuário no Firestore
+  //       DocumentSnapshot userDoc = await _firestore
+  //           .collection('users') // Coleção onde os dados estão armazenados
+  //           .doc(uid) // Documento com o UID do usuário
+  //           .get();
+  //
+  //       if (userDoc.exists) {
+  //         return userDoc.data() as Map<String, dynamic>;
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("Erro ao buscar dados do usuário: ${e.toString()}");
+  //   }
+  //   return null;
+  // }
 }

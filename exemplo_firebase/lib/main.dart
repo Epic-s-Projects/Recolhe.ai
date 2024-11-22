@@ -1,12 +1,7 @@
 import 'package:exemplo_firebase/firebase_options.dart';
-import 'package:exemplo_firebase/screens/home_screen_view.dart';
 import 'package:exemplo_firebase/screens/initial_screen_view.dart';
-import 'package:exemplo_firebase/screens/registro_screen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-import 'screens/login_screen_view.dart';
 
 void main () async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +18,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
-      routes: {
-        '/home': (context) => const HomeScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/cadastro': (context) => const RegistroScreen()
-      },
+      home: SplashScreen()
     );
   }
 }
