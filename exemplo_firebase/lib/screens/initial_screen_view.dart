@@ -42,15 +42,14 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 300,
               ),
             ),
-
             // Posicionar a segunda imagem um pouco acima da base
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(
-                    bottom: 20), // Ajusta a posição vertical
+                ), // Ajusta a posição vertical
                 child: Image.asset(
-                  'assets/folhas.png', // Substitua pelo caminho correto
+                  'assets/folhas.png', //
                   width: MediaQuery.of(context).size.width,
                   fit: BoxFit.cover,
                 ),
