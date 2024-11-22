@@ -1,6 +1,5 @@
 import 'package:exemplo_firebase/screens/profile_screen_view.dart';
 import 'package:exemplo_firebase/screens/selection_screen_view.dart';
-// import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,25 +8,21 @@ class HomePage extends StatefulWidget {
   final String email;
   final String imagem;
 
-  const HomePage(
-      {super.key,
-      required this.name,
-      required this.imagem,
-      required this.cpf,
-      required this.email});
+  const HomePage({
+    super.key,
+    required this.name,
+    required this.imagem,
+    required this.cpf,
+    required this.email,
+  });
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  // final AuthService _authService = AuthService();
   bool showCards = false; // Controle para exibir imagem ou cards
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  int _selectedIndex = 0; // Controle para identificar a aba selecionada
 
   @override
   Widget build(BuildContext context) {
@@ -46,19 +41,7 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(
-                    name: widget.name,
-                    cpf: widget.cpf,
-                    email: widget.email,
-                    imagem: widget.imagem,
-                  ),
-                ),
-              );
-            },
+            onTap: () => _navigateToProfile(),
             child: CircleAvatar(
               radius: 45,
               backgroundColor: Colors.white,
@@ -87,15 +70,57 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 30),
             Expanded(
               child: Center(
-                child: showCards
-                    ? _buildCards() // Exibe os cards se o botão for pressionado
-                    : _buildImageAndText(), // Exibe a imagem e o texto principal
+                child: showCards ? _buildCards() : _buildImageAndText(),
               ),
             ),
           ],
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  void _onBottomNavigationTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        // Mantém o usuário na HomePage
+        break;
+      case 1:
+        _navigateToProfile();
+        break;
+      case 2:
+        _navigateToSelectionScreen();
+        break;
+      case 3:
+        // Adicionar navegação futura para a Loja
+        break;
+    }
+  }
+
+  void _navigateToProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfileScreen(
+          name: widget.name,
+          email: widget.email,
+          cpf: widget.cpf,
+          imagem: widget.imagem,
+        ),
+      ),
+    );
+  }
+
+  void _navigateToSelectionScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SelectionScreenView(),
+      ),
     );
   }
 
@@ -119,17 +144,7 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: 60),
         ElevatedButton.icon(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SelectionScreenView(),
-              ),
-            );
-            // setState(() {
-            //   showCards = true; // Altera o estado para exibir os cards
-            // });
-          },
+          onPressed: _navigateToSelectionScreen,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
@@ -148,70 +163,61 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCards() {
-    return ListView(
-      children: List.generate(
-        9, // Número de cards
-        (index) => Card(
-          shadowColor: const Color.fromARGB(255, 0, 0, 0),
-          color: const Color.fromRGBO(218, 194, 162, 1),
-          margin: const EdgeInsets.symmetric(
-              vertical: 10), // Espaçamento entre cards
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 5, // Adiciona sombra para destacar
-          child: Padding(
-            padding: const EdgeInsets.all(16.0), // Espaçamento interno do card
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.asset(
-                    'assets/folhas2.png', // Substitua pela imagem real
-                    width: 100,
-                    height: 100, // Altura e largura da imagem
-                    fit: BoxFit.cover,
-                  ),
+    return ListView.builder(
+      itemCount: 9,
+      itemBuilder: (context, index) => Card(
+        shadowColor: const Color.fromARGB(255, 0, 0, 0),
+        color: const Color.fromRGBO(218, 194, 162, 1),
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        elevation: 5,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  'assets/folhas2.png',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(width: 10), // Espaço entre imagem e texto
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Produto ${index + 1}',
-                        style: const TextStyle(
-                          fontSize: 30, // Tamanho da fonte maior para título
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'DATA DE Criação\nDATA DE COLETA',
-                        style: TextStyle(
-                            fontSize: 14), // Ajuste no tamanho da fonte
-                      ),
-                    ],
-                  ),
-                ),
-                const Row(
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.add,
-                      color: Colors.green,
-                      size: 50,
+                    Text(
+                      'Produto ${index + 1}',
+                      style: const TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'DATA DE Criação\nDATA DE COLETA',
+                      style: TextStyle(fontSize: 14),
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              const Icon(
+                Icons.add,
+                color: Colors.green,
+                size: 50,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // Widget para os dias da semana
   Widget _buildWeekDays() {
     final List<Map<String, dynamic>> days = [
       {"day": "S", "color": Colors.blue},
@@ -233,14 +239,14 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: days
             .map((day) => CircleAvatar(
-                  radius: 20, // Aumentado para maior visibilidade
+                  radius: 20,
                   backgroundColor: day['color'],
                   child: Text(
                     day['day'],
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14, // Tamanho ajustado para proporcionalidade
+                      fontSize: 14,
                     ),
                   ),
                 ))
@@ -249,44 +255,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget para a BottomNavigationBar
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       backgroundColor: const Color.fromARGB(255, 46, 50, 46),
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white54,
       type: BottomNavigationBarType.fixed,
-      onTap: (index) {
-        switch (index) {
-          case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfileScreen(
-                    name: widget.name,
-                    email: widget.email,
-                    cpf: widget.cpf,
-                    imagem: widget.imagem),
-              ),
-            );
-            break;
-        }
-      },
+      currentIndex: _selectedIndex,
+      onTap: _onBottomNavigationTap,
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 50), // Ícone ajustado
+          icon: Icon(Icons.home, size: 30),
           label: 'Início',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 50), // Ícone ajustado
+          icon: Icon(Icons.person, size: 30),
           label: 'Perfil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: 50), // Ícone ajustado
+          icon: Icon(Icons.assignment, size: 30),
           label: 'Tarefas',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag, size: 50), // Ícone ajustado
+          icon: Icon(Icons.shopping_bag, size: 30),
           label: 'Loja',
         ),
       ],

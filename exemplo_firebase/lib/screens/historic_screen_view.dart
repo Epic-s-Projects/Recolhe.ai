@@ -42,18 +42,7 @@ class HistoricScreenView extends StatelessWidget {
             ),
           ),
           // Texto de saudação
-          const Positioned(
-            top: 50,
-            left: 100,
-            child: Text(
-              "Olá, João!",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-          ),
+
           // Conteúdo principal
           Positioned.fill(
             child: Row(
@@ -66,7 +55,7 @@ class HistoricScreenView extends StatelessWidget {
                     children: [
                       // Título da seção
                       Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 50),
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: Text(
                           "Históricos",
                           style: TextStyle(
@@ -78,7 +67,7 @@ class HistoricScreenView extends StatelessWidget {
                       ),
                       // Área limitada para ScrollView
                       SizedBox(
-                        height: 400, // Altura fixa do ScrollView
+                        height: 600, // Altura fixa do ScrollView
                         child: SingleChildScrollView(
                           child: Column(
                             children: [

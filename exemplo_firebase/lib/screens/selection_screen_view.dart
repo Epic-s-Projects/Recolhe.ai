@@ -21,16 +21,14 @@ class SelectionScreenView extends StatelessWidget {
             ),
           ),
           // Texto "Olá, João!" e bolinha de perfil
-          const Positioned(
+          Positioned(
             top: 50,
             left: 20,
-            child: Text(
-              'Olá, João!',
-              style: TextStyle(
-                fontSize: 30,
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pop(context); // Volta para a tela anterior
+              },
+              child: const Icon(Icons.arrow_back),
             ),
           ),
           const Positioned(
@@ -46,10 +44,10 @@ class SelectionScreenView extends StatelessWidget {
             top: MediaQuery.of(context).size.height * 0.2, // Ajusta a altura
             left: 0,
             right: 0,
-            child: const Text(
+            child: Text(
               'Selecione o tipo de coleta:',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 40,
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
