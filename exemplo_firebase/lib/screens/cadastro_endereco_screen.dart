@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CadastroEnderecoPage extends StatefulWidget {
-
-  CadastroEnderecoPage({super.key});
+  const CadastroEnderecoPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CadastroEnderecoPageState createState() => _CadastroEnderecoPageState();
 }
 
@@ -20,8 +20,8 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
   final TextEditingController _ruaController = TextEditingController();
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
-  final TextEditingController _longitudeController = TextEditingController();
-  final TextEditingController _latitudeController = TextEditingController();
+  // final TextEditingController _longitudeController = TextEditingController();
+  // final TextEditingController _latitudeController = TextEditingController();
 
   // Método para buscar endereço pelo CEP
   Future<void> _buscarEnderecoPorCEP(String cep) async {
@@ -80,14 +80,14 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
         // Obtém o UID do usuário autenticado
         User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
-          String uid = user.uid;  // Pega o UID do usuário autenticado
+          String uid = user.uid; // Pega o UID do usuário autenticado
 
           // Salva o endereço na subcoleção 'endereco' dentro do documento do usuário
           await FirebaseFirestore.instance
               .collection("users")
-              .doc(uid)  // Usa o UID do usuário autenticado
-              .collection("endereco")  // Subcoleção 'endereco'
-              .add(endereco);  // Adiciona os dados
+              .doc(uid) // Usa o UID do usuário autenticado
+              .collection("endereco") // Subcoleção 'endereco'
+              .add(endereco); // Adiciona os dados
 
           // Exibe uma mensagem de sucesso
           ScaffoldMessenger.of(context).showSnackBar(
@@ -111,7 +111,6 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
       }
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +151,7 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) =>
-                value == null || value.isEmpty ? "Informe a rua" : null,
+                    value == null || value.isEmpty ? "Informe a rua" : null,
               ),
               const SizedBox(height: 16.0),
               TextFormField(
@@ -162,7 +161,7 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) =>
-                value == null || value.isEmpty ? "Informe o bairro" : null,
+                    value == null || value.isEmpty ? "Informe o bairro" : null,
               ),
               const SizedBox(height: 16.0),
               TextFormField(
@@ -172,7 +171,7 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) =>
-                value == null || value.isEmpty ? "Informe o número" : null,
+                    value == null || value.isEmpty ? "Informe o número" : null,
               ),
               const SizedBox(height: 24.0),
               Center(

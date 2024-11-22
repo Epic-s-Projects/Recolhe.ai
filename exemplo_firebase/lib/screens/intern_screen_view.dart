@@ -1,4 +1,5 @@
 import 'package:exemplo_firebase/screens/profile_screen_view.dart';
+import 'package:exemplo_firebase/screens/selection_screen_view.dart';
 // import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -119,9 +120,15 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 60),
         ElevatedButton.icon(
           onPressed: () {
-            setState(() {
-              showCards = true; // Altera o estado para exibir os cards
-            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectionScreenView(),
+              ),
+            );
+            // setState(() {
+            //   showCards = true; // Altera o estado para exibir os cards
+            // });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),

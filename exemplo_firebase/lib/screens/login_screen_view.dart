@@ -176,19 +176,39 @@ class _LoginScreenState extends State<LoginScreen> {
               .get();
 
           if (userDocument.exists) {
-            // Pega o /dados do usuário
-            String name = userDocument['nome'];
-            String cpf = userDocument['cpf'];
-            String email = userDocument['email'];
-            String imagem = userDocument['imagem'];
-            // Redireciona para a tela inicial passando o nome
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomePage(
-                    name: name, cpf: cpf, email: email, imagem: imagem),
-              ),
-            );
+            // Verifica se o campo 'imagem' existe e está preenchido
+            String? imagem = userDocument.data()?['imagem'];
+            String name = userDocument.data()?['nome'] ?? "Usuário";
+            String email = userDocument.data()?['email'] ?? "";
+            String cpf = userDocument.data()?['cpf'] ?? "123";
+
+            if (imagem == null || imagem.isEmpty) {
+              // Redireciona para a página de configuração de ícone
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SetIconScreen(
+                    userId: user.uid,
+                    name: name,
+                    email: email,
+                    cpf: cpf,
+                  ),
+                ),
+              );
+            } else {
+              // Redireciona para a página inicial
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePage(
+                    name: name,
+                    imagem: imagem,
+                    cpf: '',
+                    email: '',
+                  ),
+                ),
+              );
+            }
           } else {
             // Documento do usuário não encontrado
             ScaffoldMessenger.of(context).showSnackBar(

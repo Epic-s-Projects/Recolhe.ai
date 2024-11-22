@@ -1,9 +1,10 @@
+import 'package:exemplo_firebase/controllers/historic_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:testpaginas/Controller/TelaHistoricoController.dart';
-import 'package:testpaginas/Controller/TelaQuantidadeController.dart';
 
-class TelaHistoricoView extends StatelessWidget {
-  final TelaHistoricoController controller = TelaHistoricoController();
+class HistoricScreenView extends StatelessWidget {
+  final HistoricController controller = HistoricController();
+
+  HistoricScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class TelaHistoricoView extends StatelessWidget {
         children: [
           // Fundo com a imagem
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/background.png'), // Caminho da imagem
                 fit: BoxFit.cover,
@@ -24,23 +25,24 @@ class TelaHistoricoView extends StatelessWidget {
             top: 50,
             left: 20,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.green, size: 50),
+              icon: const Icon(Icons.arrow_back, color: Colors.green, size: 50),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
           ),
           // Avatar do usuário
-          Positioned(
+          const Positioned(
             top: 40,
             right: 20,
             child: CircleAvatar(
-              backgroundImage: AssetImage('assets/user_avatar.png'), // Imagem do avatar
+              backgroundImage:
+                  AssetImage('assets/user_avatar.png'), // Imagem do avatar
               radius: 35,
             ),
           ),
           // Texto de saudação
-          Positioned(
+          const Positioned(
             top: 50,
             left: 100,
             child: Text(
@@ -81,29 +83,29 @@ class TelaHistoricoView extends StatelessWidget {
                           child: Column(
                             children: [
                               // Itens do histórico
-                              HistoryCard(
+                              const HistoryCard(
                                 date: "11/11/2024 - 13:56",
                                 type: "Somente Eletrônico",
                                 timeIcon: Icons.access_time, // Ícone de relógio
-                                icon: Icons.delete,         // Ícone de lixo
+                                icon: Icons.delete, // Ícone de lixo
                               ),
-                              SizedBox(height: 20),
-                              HistoryCard(
+                              const SizedBox(height: 20),
+                              const HistoryCard(
                                 date: "02/12/2024 - 18:47",
                                 type: "Eletrônico e Óleo",
                                 timeIcon: Icons.access_time,
-                                icon: Icons.recycling,      // Ícone de reciclagem
+                                icon: Icons.recycling, // Ícone de reciclagem
                               ),
-                              SizedBox(height: 20),
+                              const SizedBox(height: 20),
                               // Adicione mais históricos aqui para testar a rolagem
                               for (int i = 0; i < 10; i++) ...[
-                                HistoryCard(
+                                const HistoryCard(
                                   date: "02/12/2024 - 18:47",
                                   type: "Eletrônico e Óleo",
                                   timeIcon: Icons.access_time,
-                                  icon: Icons.recycling,      // Ícone de reciclagem
+                                  icon: Icons.recycling, // Ícone de reciclagem
                                 ),
-                                SizedBox(height: 20),
+                                const SizedBox(height: 20),
                               ],
                             ],
                           ),
@@ -128,7 +130,7 @@ class TelaHistoricoView extends StatelessWidget {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           iconSize: 45,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: '',
@@ -172,8 +174,8 @@ class HistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
-      padding: EdgeInsets.all(15),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.brown.shade700,
         borderRadius: BorderRadius.circular(10),
@@ -185,10 +187,10 @@ class HistoryCard extends StatelessWidget {
           Row(
             children: [
               Icon(timeIcon, color: Colors.green, size: 44), // Ícone do relógio
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               Text(
                 date,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 30,
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -196,15 +198,16 @@ class HistoryCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 40), // Espaçamento entre as linhas
+          const SizedBox(height: 40), // Espaçamento entre as linhas
           // Linha com o ícone do tipo e o texto
           Row(
             children: [
-              Icon(icon, color: Colors.green, size: 44), // Ícone ao lado do tipo
-              SizedBox(width: 20),
+              Icon(icon,
+                  color: Colors.green, size: 44), // Ícone ao lado do tipo
+              const SizedBox(width: 20),
               Text(
                 type,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 30,
                   color: Colors.white,
                 ),

@@ -6,8 +6,15 @@ import 'intern_screen_view.dart';
 class SetIconScreen extends StatefulWidget {
   final String userId;
   final String name;
+  final String email;
+  final String cpf;
 
-  const SetIconScreen({Key? key, required this.userId, required this.name}) : super(key: key);
+  const SetIconScreen(
+      {super.key,
+      required this.userId,
+      required this.name,
+      required this.email,
+      required this.cpf});
 
   @override
   State<SetIconScreen> createState() => _SetIconScreenState();
@@ -79,7 +86,8 @@ class _SetIconScreenState extends State<SetIconScreen> {
               // Grade de ícones
               Expanded(
                 child: GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: 15,
@@ -90,13 +98,15 @@ class _SetIconScreenState extends State<SetIconScreen> {
                     return GestureDetector(
                       onTap: () {
                         setState(() {
-                          selectedIndex = index; // Atualiza o índice selecionado
+                          selectedIndex =
+                              index; // Atualiza o índice selecionado
                         });
                       },
                       child: Container(
                         decoration: BoxDecoration(
                           color: selectedIndex == index
-                              ? Colors.green.shade100 // Destaque para o item selecionado
+                              ? Colors.green
+                                  .shade100 // Destaque para o item selecionado
                               : Colors.white,
                           borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(
@@ -128,27 +138,30 @@ class _SetIconScreenState extends State<SetIconScreen> {
               ),
               // Botão de confirmação
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0, vertical: 16.0),
                 child: ElevatedButton(
                   onPressed: selectedIndex != null
                       ? () async {
-                    // Atualiza o campo 'imagem' no Firestore
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(widget.userId)
-                        .update({'imagem': imageUrls[selectedIndex!]});
+                          // Atualiza o campo 'imagem' no Firestore
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(widget.userId)
+                              .update({'imagem': imageUrls[selectedIndex!]});
 
-                    // Redireciona para a HomePage após salvar a imagem
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(
-                          name: widget.name,
-                          imagem: imageUrls[selectedIndex!],
-                        ),
-                      ),
-                    );
-                  }
+                          // Redireciona para a HomePage após salvar a imagem
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomePage(
+                                name: widget.name,
+                                email: widget.email,
+                                cpf: widget.cpf,
+                                imagem: imageUrls[selectedIndex!],
+                              ),
+                            ),
+                          );
+                        }
                       : null, // Desabilita o botão se nenhuma imagem estiver selecionada
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade700,
@@ -156,7 +169,8 @@ class _SetIconScreenState extends State<SetIconScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(216.0),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 21.0, horizontal: 24.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 21.0, horizontal: 24.0),
                   ),
                   child: const Text(
                     'Confirmar Seleção',
