@@ -34,29 +34,53 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
           Column(
             children: [
               // Header
-              Container(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Olá, João!',
-                      style: TextStyle(
-                        color: Color(0xFF052E05),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [Color(0xFF109410), Color(0xFF052E05)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds),
+                      child: const Text(
+                        'Olá, João!',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // A cor base é substituída pelo gradiente
+                        ),
                       ),
                     ),
-                    CircleAvatar(
-                      backgroundColor: Colors.grey[300],
-                      radius: 18,
-                      child: Icon(Icons.person, color: Colors.black),
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.person, // Ícone de usuário
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              // Calendar
+              // Espaçamento maior entre o header e o calendário
+              const SizedBox(height: 32),
+
+              // Calendário
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -74,7 +98,10 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                 ),
               ),
 
-              // Card com informações dinâmicas
+              // Espaçamento maior entre o calendário e os cards
+              const SizedBox(height: 24),
+
+              // Cards com informações dinâmicas
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -113,9 +140,9 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                           ),
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       // Bottom Button
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -126,9 +153,9 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
-        selectedItemColor: Color(0xFF109410),
+        selectedItemColor: const Color(0xFF109410),
         unselectedItemColor: Colors.grey,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '',
@@ -161,7 +188,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
