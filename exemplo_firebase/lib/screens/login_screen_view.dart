@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
 import 'package:exemplo_firebase/screens/set_icon_screen_view.dart';
+import 'package:exemplo_firebase/screens/teste_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -185,6 +186,14 @@ class _LoginScreenState extends State<LoginScreen> {
             userSession.name = userDocument.data()?['nome'] ?? "Usuário";
             userSession.cpf = userDocument.data()?['cpf'] ?? "123";
             userSession.imagem = userDocument.data()?['imagem'];
+            userSession.userId = user.uid;
+
+            // Printando os dados do usuário no console
+            print("Nome: ${userSession.name}");
+            print("Email: ${userSession.email}");
+            print("CPF: ${userSession.cpf}");
+            print("Imagem: ${userSession.imagem}");
+            print("UserID: ${userSession.userId}");
 
             if (userSession.imagem == null || userSession.imagem!.isEmpty) {
               // Redireciona para a página de configuração de ícone
@@ -199,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const HomePage(),
+                  builder: (context) => HomePage(),
                 ),
               );
             }
@@ -207,8 +216,8 @@ class _LoginScreenState extends State<LoginScreen> {
             // Documento do usuário não encontrado
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content:
-                Text("Documento do usuário não encontrado no Firestore."),
+                content: Text(
+                    "Documento do usuário não encontrado no Firestore."),
               ),
             );
           }

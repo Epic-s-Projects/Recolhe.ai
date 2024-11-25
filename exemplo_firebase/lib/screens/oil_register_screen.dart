@@ -145,7 +145,13 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                 ),
                 const SizedBox(height: 130),
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
+                    // Exemplo: tipo de óleo
+                    const String tipo = "Óleo usado";
+                    const String status = "Em processo";
+
+                    await _controller.addRecycledData(tipo, status);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -153,8 +159,7 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                       ),
                     );
 
-                    print(
-                        "Avançar pressionado com ${_controller.getOilAmount()} ml de óleo usado.");
+                    print("Avançar pressionado com ${_controller.getOilAmount()} ml de óleo usado.");
                   },
                   icon: const Icon(Icons.delete, color: Colors.white),
                   label: const Text(
@@ -163,10 +168,10 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black.withOpacity(0.6),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 25),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 25),
                   ),
                 ),
+
               ],
             ),
           ),
