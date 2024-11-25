@@ -157,3 +157,100 @@ flowchart TD
     end
 
 ```
+
+
+# Funcionalidades
+
+# Cadastro de Novo Usuário
+
+Esta funcionalidade permite cadastrar novos usuários no sistema com informações adicionais como nome e CPF. A implementação inclui validação de campos na interface do usuário e tratamento de erros durante a criação do usuário e o armazenamento de dados no Firebase.
+
+---
+
+## Validação de Campos
+
+Antes de enviar os dados, é realizada uma validação para garantir que todos os campos obrigatórios estejam preenchidos corretamente. 
+
+### Validações Implementadas
+1. **Nome:** Não pode estar vazio.
+2. **Email:** Não pode estar vazio e deve ser um formato válido.
+3. **Senha:** Deve conter pelo menos 6 caracteres.
+4. **Confirmação de Senha:** Deve corresponder à senha informada.
+5. **CPF:** Não pode estar vazio e deve existir.
+
+Caso algum campo não seja válido, uma mensagem de erro é exibida, orientando o usuário a corrigir o problema.
+
+---
+
+## Tratamento de Erros com `try-catch`
+
+A lógica de cadastro utiliza um bloco `try-catch` para tratar erros durante o processo de registro. Isso garante que, caso ocorra uma falha, o sistema não trave e o erro possa ser identificado e exibido.
+
+### Fluxo no Bloco `try`
+1. **Criação do Usuário:** Os dados de autenticação são enviados ao Firebase Authentication.
+2. **Armazenamento no Firestore:** Após a criação bem-sucedida do usuário, as informações adicionais (nome, CPF, email, data de criação) são salvas no Firestore.
+
+### No Bloco `catch`
+- Caso ocorra um erro em qualquer etapa (autenticação ou armazenamento), o erro é capturado e registrado no console para depuração.
+- Um retorno `null` é enviado para indicar falha no processo.
+- FirebaseAuthException: Erros relacionados ao Firebase Authentication, como email já cadastrado ou senha inválida.
+- FirestoreException: Erros relacionados ao armazenamento de dados no Firestore.
+- Outros Erros Genéricos: Erros inesperados são tratados e registrados para análise.
+
+
+# Login
+Este código implementa a funcionalidade de login com Firebase Authentication e Firestore. Além disso, determina a página para onde o usuário será redirecionado após o login.
+
+1. Entrada de Dados: 
+O usuário fornece email e senha nos campos correspondentes.
+
+2. Validação: 
+Os campos de entrada possuem validação para garantir que não estejam vazios.
+
+3. Autenticação:
+O método _authService.signInWithEmail realiza a autenticação com Firebase Authentication.
+
+Caso o login seja bem-sucedido, o objeto User contendo informações do usuário autenticado é retornado.
+
+- Caso o campo imagem do firestore do usuário esteja vazio ou seja null, o usuário é redirecionado para a página de configuração de ícone (SetIconScreen). Isso força o usuário a selecionar um ícone antes de acessar outras funcionalidades.
+- Caso o campo imagem tenha um valor válido, o usuário é redirecionado diretamente para a página inicial (HomePage)
+
+**Outros Pontos:**
+1. CustomTextField:
+Um componente reutilizável para campos de entrada com validação e personalização visual.
+
+2. GradientButton:
+Um botão com estilo de gradiente e bordas arredondadas, reutilizável em diferentes telas.
+
+
+# Tela de Ícones
+O código implementa a funcionalidade de permitir que o usuário selecione um ícone e salve essa escolha no banco de dados Firestore, com as seguintes etapas:
+
+1. Exibição das Opções de Ícones:
+Uma lista de URLs é usada para exibir os ícones disponíveis.
+O índice do ícone selecionado é armazenado na variável selectedIndex.
+Seleção do Ícone:
+
+2. Quando o usuário clica em um ícone, o evento onTap é disparado.
+A seleção atualiza o estado (setState) para destacar o ícone escolhido.
+Validação da Escolha:
+
+3. O botão "Confirmar Seleção" só é habilitado se selectedIndex não for null, garantindo que o usuário escolha um ícone antes de prosseguir.
+Atualização no Firestore:
+
+4. Ao confirmar a escolha, o código usa a coleção users no Firestore.
+A imagem escolhida é atualizada no documento do usuário identificado por userId:
+
+```dart
+await FirebaseFirestore.instance
+    .collection('users')
+    .doc(widget.userId)
+    .update({'imagem': imageUrls[selectedIndex!]});
+```
+
+**Pontos Importantes**
+1. Validação e Estado:
+O botão de confirmação fica desabilitado (null) até que uma escolha válida seja feita.
+2. Firebase:
+A atualização no Firestore é feita de forma assíncrona(async), garantindo que a operação seja concluída antes de navegar para a próxima tela.
+

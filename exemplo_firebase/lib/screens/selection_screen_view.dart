@@ -24,7 +24,6 @@ class SelectionScreenView extends StatelessWidget {
               ),
             ),
           ),
-          // Texto "Olá, João!" e bolinha de perfil
           Positioned(
             top: 50,
             left: 20,
