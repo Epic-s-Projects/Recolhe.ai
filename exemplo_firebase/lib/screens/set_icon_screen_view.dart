@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../controllers/user_data.dart';
 import 'intern_screen_view.dart';
 
 class SetIconScreen extends StatefulWidget {
-  final String userId;
+  String userId;
 
-  const SetIconScreen(
-      {super.key,
-      required this.userId});
+  SetIconScreen({super.key, required this.userId});
 
   @override
   State<SetIconScreen> createState() => _SetIconScreenState();
@@ -29,8 +28,8 @@ class _SetIconScreenState extends State<SetIconScreen> {
     'https://e7.pngegg.com/pngimages/236/290/png-clipart-super-mario-illustration-mario-party-star-rush-super-mario-bros-princess-peach-luigi-mario-bros-super-mario-bros-nintendo-thumbnail.png',
     'https://e7.pngegg.com/pngimages/236/290/png-clipart-super-mario-illustration-mario-party-star-rush-super-mario-bros-princess-peach-luigi-mario-bros-super-mario-bros-nintendo-thumbnail.png',
   ];
-
   int? selectedIndex; // Índice da imagem selecionada
+  final user = UserSession();
 
   @override
   Widget build(BuildContext context) {
@@ -137,21 +136,28 @@ class _SetIconScreenState extends State<SetIconScreen> {
                 child: ElevatedButton(
                   onPressed: selectedIndex != null
                       ? () async {
-                          // Atualiza o campo 'imagem' no Firestore
-                          await FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(widget.userId)
-                              .update({'imagem': imageUrls[selectedIndex!]});
+                    // Atualiza o campo 'imagem' no Firestore
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(widget.userId)
+                        .set(
+                      {'imagem': imageUrls[selectedIndex!]},
+                      SetOptions(merge: true),
+                    );
 
-                          // Redireciona para a HomePage após salvar a imagem
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePage(),
-                            ),
-                          );
-                        }
-                      : null, // Desabilita o botão se nenhuma imagem estiver selecionada
+                    // Atualiza a imagem no UserSession
+                    user.imagem = imageUrls[selectedIndex!];
+
+                    // Redireciona para a HomePage
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(),
+                      ),
+                    );
+                  }
+                      : null,
+                  // Desabilita o botão se nenhuma imagem estiver selecionada
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade700,
                     foregroundColor: Colors.white,
