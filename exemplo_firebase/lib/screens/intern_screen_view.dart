@@ -245,62 +245,58 @@ class _HomePageState extends State<HomePage> {
 
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isCalendarExpanded = !isCalendarExpanded;
-            });
-          },
-          child: Text(
-            '${now.month}/${now.year}',
-            style: TextStyle(
-              fontSize: screenWidth * 0.05,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue, // Mudança de cor para destacar o mês
+        Container(
+          padding: EdgeInsets.all(screenWidth * 0.02),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(
+                255, 1, 131, 34), // Cor de fundo para a semana
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7, // 7 dias por semana
+              mainAxisSpacing: screenWidth * 0.02,
+              crossAxisSpacing: screenWidth * 0.02,
             ),
-          ),
-        ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7, // 7 dias por semana
-            mainAxisSpacing: screenWidth * 0.02,
-            crossAxisSpacing: screenWidth * 0.02,
-          ),
-          itemCount: weekDays.length,
-          itemBuilder: (context, index) {
-            DateTime currentDay = weekDays[index];
-            bool isToday = currentDay.day == now.day;
+            itemCount: weekDays.length,
+            itemBuilder: (context, index) {
+              DateTime currentDay = weekDays[index];
+              bool isToday = currentDay.day == now.day;
 
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedDate = currentDay;
-                  isCalendarExpanded = true; // Expandir após seleção
-                });
-              },
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(screenWidth * 0.02),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: currentDay == selectedDate
-                      ? Colors.blue
-                      : Colors.transparent,
-                ),
-                child: Text(
-                  '${currentDay.day}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedDate = currentDay;
+                    isCalendarExpanded =
+                        !isCalendarExpanded; // Expandir após seleção
+                  });
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(screenWidth * 0.02),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
                     color: currentDay == selectedDate
-                        ? Colors.white
-                        : (isToday ? Colors.red : Colors.black),
+                        ? Colors.blue
+                        : const Color.fromARGB(0, 3, 225, 33),
+                  ),
+                  child: Text(
+                    '${currentDay.day}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: currentDay == selectedDate
+                          ? const Color.fromRGBO(255, 255, 255, 1)
+                          : (isToday
+                              ? const Color.fromARGB(255, 0, 255, 47)
+                              : const Color.fromARGB(255, 255, 255, 255)),
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
         if (isCalendarExpanded) _buildFullMonthCalendar(now),
       ],
@@ -322,48 +318,125 @@ class _HomePageState extends State<HomePage> {
       (index) => firstDayOfCalendar.add(Duration(days: index)),
     );
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
-        mainAxisSpacing: screenWidth * 0.02,
-        crossAxisSpacing: screenWidth * 0.02,
+    return Container(
+      padding: EdgeInsets.all(screenWidth * 0.02),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(
+            255, 1, 131, 34), // Cor de fundo para o mês completo
+        borderRadius: BorderRadius.circular(15),
       ),
-      itemCount: monthDays.length,
-      itemBuilder: (context, index) {
-        DateTime currentDay = monthDays[index];
-        bool isToday = currentDay.day == now.day;
-        bool isCurrentMonth = currentDay.month == now.month;
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7,
+          mainAxisSpacing: screenWidth * 0.02,
+          crossAxisSpacing: screenWidth * 0.02,
+        ),
+        itemCount: monthDays.length,
+        itemBuilder: (context, index) {
+          DateTime currentDay = monthDays[index];
+          bool isToday = currentDay.day == now.day;
+          bool isCurrentMonth = currentDay.month == now.month;
 
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              selectedDate = currentDay;
-            });
-          },
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(screenWidth * 0.02),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color:
-                  currentDay == selectedDate ? Colors.blue : Colors.transparent,
-            ),
-            child: Text(
-              '${currentDay.day}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedDate = currentDay;
+              });
+            },
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(screenWidth * 0.02),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
                 color: currentDay == selectedDate
-                    ? Colors.white
-                    : (isCurrentMonth
-                        ? (isToday ? Colors.red : Colors.black)
-                        : Colors.grey),
+                    ? Colors.blue
+                    : Colors.transparent,
+              ),
+              child: Text(
+                '${currentDay.day}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: currentDay == selectedDate
+                      ? Colors.white
+                      : (isCurrentMonth
+                          ? (isToday
+                              ? const Color.fromARGB(255, 0, 255, 47)
+                              : const Color.fromARGB(255, 255, 255, 255))
+                          : Colors.grey),
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildFullMonthCalendar(DateTime now) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Define o primeiro e o último dia do mês atual
+    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+    DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    // Gera a lista de dias do mês atual
+    List<DateTime> monthDays = List.generate(
+      lastDayOfMonth.day,
+      (index) => firstDayOfMonth.add(Duration(days: index)),
+    );
+
+    return Container(
+      padding: EdgeInsets.all(screenWidth * 0.02),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(
+            212, 88, 153, 13), // Cor de fundo para o calendário
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7, // 7 dias da semana
+          mainAxisSpacing: screenWidth * 0.02,
+          crossAxisSpacing: screenWidth * 0.02,
+        ),
+        itemCount: monthDays.length,
+        itemBuilder: (context, index) {
+          DateTime currentDay = monthDays[index];
+          bool isToday = currentDay.day == now.day;
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedDate = currentDay;
+              });
+            },
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(screenWidth * 0.02),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: currentDay == selectedDate
+                    ? Colors.blue
+                    : Colors.transparent,
+              ),
+              child: Text(
+                '${currentDay.day}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: currentDay == selectedDate
+                      ? Colors.white
+                      : (isToday
+                          ? const Color.fromARGB(255, 0, 154, 57)
+                          : Colors.black),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 

@@ -8,6 +8,8 @@ class HistoricScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -22,85 +24,66 @@ class HistoricScreenView extends StatelessWidget {
           ),
           // Ícone de voltar
           Positioned(
-            top: 50,
-            left: 20,
+            top: size.height * 0.05,
+            left: size.width * 0.05,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.green, size: 50),
+              icon: Icon(Icons.arrow_back,
+                  color: Colors.green, size: size.width * 0.1),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
           ),
           // Avatar do usuário
-          const Positioned(
-            top: 40,
-            right: 20,
+          Positioned(
+            top: size.height * 0.04,
+            right: size.width * 0.05,
             child: CircleAvatar(
-              backgroundImage:
-                  AssetImage('assets/user_avatar.png'), // Imagem do avatar
-              radius: 35,
+              backgroundImage: const AssetImage('assets/user_avatar.png'),
+              radius: size.width * 0.08,
             ),
           ),
-          // Texto de saudação
-
           // Conteúdo principal
           Positioned.fill(
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Área principal com histórico
+                // Título da seção
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: size.height * 0.06),
+                  child: Center(
+                    child: Text(
+                      "Históricos",
+                      style: TextStyle(
+                        fontSize: size.width * 0.08,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade900,
+                      ),
+                    ),
+                  ),
+                ),
+                // Área de rolagem do histórico
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Título da seção
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: Text(
-                          "Históricos",
-                          style: TextStyle(
-                            fontSize: 44,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green.shade900,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * 0.05),
+                      child: Column(
+                        children: List.generate(
+                          12,
+                          (index) => Padding(
+                            padding:
+                                EdgeInsets.only(bottom: size.height * 0.02),
+                            child: const HistoryCard(
+                              date: "02/12/2024 - 18:47",
+                              type: "Eletrônico e Óleo",
+                              timeIcon: Icons.access_time,
+                              icon: Icons.recycling,
+                            ),
                           ),
                         ),
                       ),
-                      // Área limitada para ScrollView
-                      SizedBox(
-                        height: 600, // Altura fixa do ScrollView
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              // Itens do histórico
-                              const HistoryCard(
-                                date: "11/11/2024 - 13:56",
-                                type: "Somente Eletrônico",
-                                timeIcon: Icons.access_time, // Ícone de relógio
-                                icon: Icons.delete, // Ícone de lixo
-                              ),
-                              const SizedBox(height: 20),
-                              const HistoryCard(
-                                date: "02/12/2024 - 18:47",
-                                type: "Eletrônico e Óleo",
-                                timeIcon: Icons.access_time,
-                                icon: Icons.recycling, // Ícone de reciclagem
-                              ),
-                              const SizedBox(height: 20),
-                              // Adicione mais históricos aqui para testar a rolagem
-                              for (int i = 0; i < 10; i++) ...[
-                                const HistoryCard(
-                                  date: "02/12/2024 - 18:47",
-                                  type: "Eletrônico e Óleo",
-                                  timeIcon: Icons.access_time,
-                                  icon: Icons.recycling, // Ícone de reciclagem
-                                ),
-                                const SizedBox(height: 20),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -118,7 +101,7 @@ class HistoricScreenView extends StatelessWidget {
           unselectedItemColor: Colors.white,
           showSelectedLabels: false,
           showUnselectedLabels: false,
-          iconSize: 45,
+          iconSize: size.width * 0.08,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
@@ -162,12 +145,13 @@ class HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(size.width * 0.05),
       decoration: BoxDecoration(
         color: Colors.brown.shade700,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(size.width * 0.02),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,30 +159,33 @@ class HistoryCard extends StatelessWidget {
           // Linha com o ícone do relógio e a data
           Row(
             children: [
-              Icon(timeIcon, color: Colors.green, size: 44), // Ícone do relógio
-              const SizedBox(width: 20),
-              Text(
-                date,
-                style: const TextStyle(
-                  fontSize: 30,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              Icon(timeIcon, color: Colors.green, size: size.width * 0.08),
+              SizedBox(width: size.width * 0.05),
+              Expanded(
+                child: Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: size.width * 0.05,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 40), // Espaçamento entre as linhas
+          SizedBox(height: size.height * 0.02),
           // Linha com o ícone do tipo e o texto
           Row(
             children: [
-              Icon(icon,
-                  color: Colors.green, size: 44), // Ícone ao lado do tipo
-              const SizedBox(width: 20),
-              Text(
-                type,
-                style: const TextStyle(
-                  fontSize: 30,
-                  color: Colors.white,
+              Icon(icon, color: Colors.green, size: size.width * 0.08),
+              SizedBox(width: size.width * 0.05),
+              Expanded(
+                child: Text(
+                  type,
+                  style: TextStyle(
+                    fontSize: size.width * 0.05,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
