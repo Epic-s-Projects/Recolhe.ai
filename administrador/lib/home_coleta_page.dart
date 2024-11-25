@@ -1,4 +1,7 @@
+import 'package:administrador/profile_adm_page.dart';
 import 'package:flutter/material.dart';
+import 'home_adm_page.dart';
+import 'area_coleta_page.dart';
 
 class HomeColetaPage extends StatefulWidget {
   @override
@@ -6,7 +9,28 @@ class HomeColetaPage extends StatefulWidget {
 }
 
 class _HomeColetaPageState extends State<HomeColetaPage> {
-  bool showProductInfo = false; // Controla o estado do card
+  int _selectedIndex = 2;
+  bool showProductInfo = false; // Adicionei a variável para controlar o estado do card.
+
+  final List<Widget> _pages = [
+    HomeAdmPage(), // Página inicial
+    AreaColetaPage(), // Página de Área de Coleta
+    HomeColetaPage(), // Página atual
+    ProfileScreen(), // Página de Perfil
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +101,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                 ),
               ),
 
-              // Espaçamento maior entre o header e o calendário
-              const SizedBox(height: 32),
+              const SizedBox(height: 32), // Espaçamento maior
 
               // Calendário
               Container(
@@ -98,8 +121,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                 ),
               ),
 
-              // Espaçamento maior entre o calendário e os cards
-              const SizedBox(height: 24),
+              const SizedBox(height: 24), // Espaçamento maior
 
               // Cards com informações dinâmicas
               Expanded(
@@ -141,7 +163,6 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                         ),
                       ),
                       const Spacer(),
-                      // Bottom Button
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -152,25 +173,28 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF109410),
-        unselectedItemColor: Colors.grey,
+        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
+            icon: Icon(Icons.home, size: 40),
+            label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.location_on),
-            label: '',
+            icon: Icon(Icons.location_on, size: 40),
+            label: 'Área de Coleta',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.insert_drive_file),
-            label: '',
+            icon: Icon(Icons.assignment, size: 40),
+            label: 'Ver Itens',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
+            icon: Icon(Icons.person, size: 40),
+            label: 'Perfil',
           ),
         ],
       ),
