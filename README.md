@@ -245,17 +245,14 @@ O código implementa a funcionalidade de permitir que o usuário selecione um í
 1. Exibição das Opções de Ícones:
 Uma lista de URLs é usada para exibir os ícones disponíveis.
 O índice do ícone selecionado é armazenado na variável selectedIndex.
-Seleção do Ícone:
 
 2. Quando o usuário clica em um ícone, o evento onTap é disparado.
 A seleção atualiza o estado (setState) para destacar o ícone escolhido.
-Validação da Escolha:
 
 3. O botão "Confirmar Seleção" só é habilitado se selectedIndex não for null, garantindo que o usuário escolha um ícone antes de prosseguir.
-Atualização no Firestore:
 
 4. Ao confirmar a escolha, o código usa a coleção users no Firestore.
-A imagem escolhida é atualizada no documento do usuário identificado por userId:
+A imagem escolhida é atualizada no documento do usuário identificado por userId.
 
 ```dart
 await FirebaseFirestore.instance
