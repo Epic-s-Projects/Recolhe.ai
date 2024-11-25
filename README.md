@@ -254,3 +254,29 @@ O botão de confirmação fica desabilitado (null) até que uma escolha válida 
 2. Firebase:
 A atualização no Firestore é feita de forma assíncrona(async), garantindo que a operação seja concluída antes de navegar para a próxima tela.
 
+
+# Cadastro de Endereço
+O código a seguir é da página onde o usuário pode cadastrar um endereço, utilizando o `CEP` para buscar informações como rua e bairro através da `API ViaCEP`. Após o preenchimento, os dados são salvos no Firestore na subcoleção endereco dentro do documento do usuário autenticado no Firebase Authentication.
+
+1. Busca pelo CEP:
+Utiliza a API ViaCEP para buscar endereço pelo CEP fornecido.
+Preenche automaticamente os campos "Rua" e "Bairro".
+
+2. Validação de Campos:
+Valida se os campos estão preenchidos corretamente (CEP com 8 dígitos, rua, bairro e número não vazios).
+
+3. Salvar no Firestore:
+Salva os dados do endereço na subcoleção endereco do usuário autenticado.
+
+4. Mensagens de Erro e Sucesso:
+Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confirmações de sucesso após salvar.
+
+
+# Cadastrar Itens(Óleo e/ou Eletrônico) no Firebase
+
+# Traçar Rotas entre pontos(flutter_osm_plugin 1.3.5)
+
+  - https://www.youtube.com/watch?v=1tG93RjDP-E
+
+# Pontuação
+
