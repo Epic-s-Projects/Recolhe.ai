@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'home_coleta_page.dart';
+import 'area_coleta_page.dart';
+import 'home_adm_page.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -8,16 +11,34 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  int _selectedIndex = 3; // Índice inicial para a aba "Perfil"
+
+  final List<Widget> _pages = [
+    HomeAdmPage(), // Página inicial
+    AreaColetaPage(), // Página de Área de Coleta
+    HomeColetaPage(), // Página "Ver Itens"
+    ProfileScreen(), // Página de Perfil
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFE6BEA8),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Card
             Container(
               decoration: const BoxDecoration(
                 color: Color(0xFFE6BEA8), // Background da página principal
@@ -25,7 +46,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 10),
-                  // Avatar e Nome
                   CircleAvatar(
                     radius: 90,
                     backgroundColor: Colors.white,
@@ -34,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    "João Silva", // Nome fictício
+                    "João Silva",
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
@@ -42,13 +62,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Informações com ícones
                   infoTile(Icons.email, "joao.silva@email.com"),
                   infoTile(Icons.person, "123.456.789-00"),
                   infoTile(Icons.location_on,
                       'R. Catatu dos Santos\nBarbados\n1090\n13486-229'),
                   const SizedBox(height: 20),
-                  // Botão de sair
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
@@ -66,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       'Sair do aplicativo',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 22, // Alteração do tamanho da fonte
+                        fontSize: 22,
                       ),
                     ),
                   ),
@@ -81,22 +99,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white54,
         type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 40), // Tamanho ajustado
+            icon: Icon(Icons.home, size: 40),
             label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 40), // Tamanho ajustado
+            icon: Icon(Icons.location_on, size: 40),
+            label: 'Área de Coleta',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment, size: 40),
+            label: 'Ver Itens',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 40),
             label: 'Perfil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment, size: 40), // Tamanho ajustado
-            label: 'Tarefas',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag, size: 40), // Tamanho ajustado
-            label: 'Loja',
           ),
         ],
       ),
