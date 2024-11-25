@@ -1,34 +1,39 @@
+import 'package:administrador/profile_adm_page.dart';
 import 'package:flutter/material.dart';
 import 'home_coleta_page.dart'; // Página já criada anteriormente
 import 'area_coleta_page.dart'; // Nova página de Área de Coleta
 
-class HomeAdmPage extends StatelessWidget {
+class HomeAdmPage extends StatefulWidget {
+  @override
+  _HomeAdmPageState createState() => _HomeAdmPageState();
+}
+
+class _HomeAdmPageState extends State<HomeAdmPage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    HomeAdmPage(), // Página inicial
+    AreaColetaPage(), // Página de Área de Coleta
+    HomeColetaPage(), // Página "Ver Itens"
+    ProfileScreen(), // Página de Perfil
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt),
-            label: 'Itens',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.location_on),
-            label: 'Mapa',
-          ),
-        ],
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.green,
-        unselectedItemColor: Colors.grey,
-      ),
       body: Stack(
         children: [
           // Imagem de fundo
@@ -69,7 +74,6 @@ class HomeAdmPage extends StatelessWidget {
                       // Botão "Iniciar Coleta"
                       ElevatedButton(
                         onPressed: () {
-                          // Navegar para a página de área de coleta
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -97,7 +101,6 @@ class HomeAdmPage extends StatelessWidget {
                       // Botão "Ver Itens"
                       ElevatedButton(
                         onPressed: () {
-                          // Navegar para a página "Ver Itens"
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -126,6 +129,32 @@ class HomeAdmPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, size: 40),
+            label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on, size: 40),
+            label: 'Área de Coleta',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment, size: 40),
+            label: 'Ver Itens',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 40),
+            label: 'Perfil',
           ),
         ],
       ),

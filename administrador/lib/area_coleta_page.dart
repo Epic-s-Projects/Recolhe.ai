@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'home_adm_page.dart';
+import 'home_coleta_page.dart';
+import 'profile_adm_page.dart';
 
 class AreaColetaPage extends StatefulWidget {
   @override
@@ -7,6 +10,28 @@ class AreaColetaPage extends StatefulWidget {
 
 class _AreaColetaPageState extends State<AreaColetaPage> {
   bool showMapCard = false; // Controla se o card do mapa será exibido
+  int _selectedIndex = 1; // Define o índice inicial para esta página
+
+  // Lista de páginas para alternância na barra de navegação
+  final List<Widget> _pages = [
+    HomeAdmPage(),
+    AreaColetaPage(),
+    HomeColetaPage(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,25 +231,28 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF109410),
-        unselectedItemColor: Colors.grey,
+        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
+            icon: Icon(Icons.home, size: 40),
+            label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.location_on),
-            label: '',
+            icon: Icon(Icons.location_on, size: 40),
+            label: 'Área de Coleta',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.insert_drive_file),
-            label: '',
+            icon: Icon(Icons.assignment, size: 40),
+            label: 'Ver Itens',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '',
+            icon: Icon(Icons.person, size: 40),
+            label: 'Perfil',
           ),
         ],
       ),
