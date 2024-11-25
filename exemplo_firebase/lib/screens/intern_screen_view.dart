@@ -21,11 +21,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool showCards = false; // Controle para exibir imagem ou cards
-  int _selectedIndex = 0; // Controle para identificar a aba selecionada
+  bool showCards = false;
+  int _selectedIndex = 0;
+  bool isCalendarExpanded =
+      false; // Estado para controlar a expansão do calendário
+  DateTime selectedDate = DateTime.now(); // Data selecionada inicialmente
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       appBar: AppBar(
@@ -33,25 +39,25 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         title: Text(
           'Olá, ${widget.name}!',
-          style: const TextStyle(
-            fontSize: 24,
+          style: TextStyle(
+            fontSize: screenWidth * 0.06,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 56, 128, 59),
+            color: const Color.fromARGB(255, 56, 128, 59),
           ),
         ),
         actions: [
           GestureDetector(
             onTap: () => _navigateToProfile(),
             child: CircleAvatar(
-              radius: 45,
+              radius: screenWidth * 0.06,
               backgroundColor: Colors.white,
               child: widget.imagem.isNotEmpty
                   ? ClipOval(
                       child: Image.network(
                         widget.imagem,
                         fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
+                        width: screenWidth * 0.12,
+                        height: screenWidth * 0.12,
                       ),
                     )
                   : const Icon(Icons.person,
@@ -60,20 +66,23 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            _buildWeekDays(),
-            const SizedBox(height: 30),
-            Expanded(
-              child: Center(
-                child: showCards ? _buildCards() : _buildImageAndText(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: screenHeight * 0.03),
+              _buildWeekDays(),
+              SizedBox(height: screenHeight * 0.03),
+              SizedBox(
+                height: screenHeight * 0.6,
+                child: Center(
+                  child: showCards ? _buildCards() : _buildImageAndText(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -87,7 +96,6 @@ class _HomePageState extends State<HomePage> {
 
     switch (index) {
       case 0:
-        // Mantém o usuário na HomePage
         break;
       case 1:
         _navigateToProfile();
@@ -96,7 +104,6 @@ class _HomePageState extends State<HomePage> {
         _navigateToSelectionScreen();
         break;
       case 3:
-        // Adicionar navegação futura para a Loja
         break;
     }
   }
@@ -127,15 +134,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildImageAndText() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Image.asset(
           'assets/banner_inicial.png',
-          height: 400,
+          height: screenHeight * 0.4,
           fit: BoxFit.cover,
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: screenHeight * 0.02),
         const Text(
           'Você ainda não realizou nenhuma coleta!',
           style: TextStyle(
@@ -144,12 +154,13 @@ class _HomePageState extends State<HomePage> {
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 60),
+        SizedBox(height: screenHeight * 0.06),
         ElevatedButton.icon(
           onPressed: _navigateToSelectionScreen,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.08, vertical: screenHeight * 0.02),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -165,42 +176,44 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCards() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return ListView.builder(
       itemCount: 9,
       itemBuilder: (context, index) => Card(
         shadowColor: const Color.fromARGB(255, 0, 0, 0),
         color: const Color.fromRGBO(218, 194, 162, 1),
-        margin: const EdgeInsets.symmetric(vertical: 10),
+        margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         elevation: 5,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(screenWidth * 0.04),
           child: Row(
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.asset(
                   'assets/folhas2.png',
-                  width: 100,
-                  height: 100,
+                  width: screenWidth * 0.2,
+                  height: screenWidth * 0.2,
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: screenWidth * 0.03),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Produto ${index + 1}',
-                      style: const TextStyle(
-                        fontSize: 30,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.06,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: screenWidth * 0.02),
                     const Text(
                       'DATA DE Criação\nDATA DE COLETA',
                       style: TextStyle(fontSize: 14),
@@ -221,66 +234,160 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildWeekDays() {
-    final List<Map<String, dynamic>> days = [
-      {"day": "S", "color": Colors.blue},
-      {"day": "T", "color": Colors.grey},
-      {"day": "Q", "color": Colors.grey},
-      {"day": "Q", "color": Colors.orange},
-      {"day": "S", "color": Colors.grey},
-      {"day": "S", "color": Colors.grey},
-      {"day": "D", "color": Colors.grey},
-    ];
+    final screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(16, 148, 16, 1),
-        borderRadius: BorderRadius.circular(90),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: days
-            .map((day) => CircleAvatar(
-                  radius: 20,
-                  backgroundColor: day['color'],
-                  child: Text(
-                    day['day'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
+    DateTime now = DateTime.now();
+    DateTime firstDayOfWeek = now.subtract(Duration(days: now.weekday));
+
+    List<DateTime> weekDays = List.generate(7, (index) {
+      return firstDayOfWeek.add(Duration(days: index));
+    });
+
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              isCalendarExpanded = !isCalendarExpanded;
+            });
+          },
+          child: Text(
+            '${now.month}/${now.year}',
+            style: TextStyle(
+              fontSize: screenWidth * 0.05,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue, // Mudança de cor para destacar o mês
+            ),
+          ),
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7, // 7 dias por semana
+            mainAxisSpacing: screenWidth * 0.02,
+            crossAxisSpacing: screenWidth * 0.02,
+          ),
+          itemCount: weekDays.length,
+          itemBuilder: (context, index) {
+            DateTime currentDay = weekDays[index];
+            bool isToday = currentDay.day == now.day;
+
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedDate = currentDay;
+                  isCalendarExpanded = true; // Expandir após seleção
+                });
+              },
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(screenWidth * 0.02),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: currentDay == selectedDate
+                      ? Colors.blue
+                      : Colors.transparent,
+                ),
+                child: Text(
+                  '${currentDay.day}',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: currentDay == selectedDate
+                        ? Colors.white
+                        : (isToday ? Colors.red : Colors.black),
                   ),
-                ))
-            .toList(),
-      ),
+                ),
+              ),
+            );
+          },
+        ),
+        if (isCalendarExpanded) _buildFullMonthCalendar(now),
+      ],
     );
   }
 
-  Widget _buildBottomNavigationBar() {
+  Widget _buildFullMonthCalendar(DateTime now) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+    DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    int daysInMonth = lastDayOfMonth.day;
+    DateTime firstDayOfCalendar =
+        firstDayOfMonth.subtract(Duration(days: firstDayOfMonth.weekday));
+
+    List<DateTime> monthDays = List.generate(
+      (firstDayOfCalendar.day + daysInMonth),
+      (index) => firstDayOfCalendar.add(Duration(days: index)),
+    );
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 7,
+        mainAxisSpacing: screenWidth * 0.02,
+        crossAxisSpacing: screenWidth * 0.02,
+      ),
+      itemCount: monthDays.length,
+      itemBuilder: (context, index) {
+        DateTime currentDay = monthDays[index];
+        bool isToday = currentDay.day == now.day;
+        bool isCurrentMonth = currentDay.month == now.month;
+
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              selectedDate = currentDay;
+            });
+          },
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(screenWidth * 0.02),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color:
+                  currentDay == selectedDate ? Colors.blue : Colors.transparent,
+            ),
+            child: Text(
+              '${currentDay.day}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: currentDay == selectedDate
+                    ? Colors.white
+                    : (isCurrentMonth
+                        ? (isToday ? Colors.red : Colors.black)
+                        : Colors.grey),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  BottomNavigationBar _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      backgroundColor: const Color.fromARGB(255, 46, 50, 46),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white54,
-      type: BottomNavigationBarType.fixed,
+      backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       currentIndex: _selectedIndex,
       onTap: _onBottomNavigationTap,
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 30),
-          label: 'Início',
+          icon: Icon(Icons.home),
+          label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 30),
+          icon: Icon(Icons.person),
           label: 'Perfil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: 30),
-          label: 'Tarefas',
+          icon: Icon(Icons.list_alt),
+          label: 'Coletar',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag, size: 30),
-          label: 'Loja',
+          icon: Icon(Icons.settings),
+          label: 'Configurações',
         ),
       ],
     );
