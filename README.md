@@ -161,6 +161,10 @@ flowchart TD
 
 # Funcionalidades
 
+<details>
+
+<summary> Cadastro de Usuário </summary>
+
 # Cadastro de Novo Usuário
 
 Esta funcionalidade permite cadastrar novos usuários no sistema com informações adicionais como nome e CPF. A implementação inclui validação de campos na interface do usuário e tratamento de erros durante a criação do usuário e o armazenamento de dados no Firebase.
@@ -197,6 +201,12 @@ A lógica de cadastro utiliza um bloco `try-catch` para tratar erros durante o p
 - FirestoreException: Erros relacionados ao armazenamento de dados no Firestore.
 - Outros Erros Genéricos: Erros inesperados são tratados e registrados para análise.
 
+</details>
+
+
+<details>
+
+<summary> Login </summary>
 
 # Login
 Este código implementa a funcionalidade de login com Firebase Authentication e Firestore. Além disso, determina a página para onde o usuário será redirecionado após o login.
@@ -222,6 +232,12 @@ Um componente reutilizável para campos de entrada com validação e personaliza
 2. GradientButton:
 Um botão com estilo de gradiente e bordas arredondadas, reutilizável em diferentes telas.
 
+</details>
+
+
+<details>
+
+<summary> Seleção de Ícone </summary>
 
 # Tela de Ícones
 O código implementa a funcionalidade de permitir que o usuário selecione um ícone e salve essa escolha no banco de dados Firestore, com as seguintes etapas:
@@ -254,6 +270,12 @@ O botão de confirmação fica desabilitado (null) até que uma escolha válida 
 2. Firebase:
 A atualização no Firestore é feita de forma assíncrona(async), garantindo que a operação seja concluída antes de navegar para a próxima tela.
 
+</details>
+
+
+<details>
+
+<summary> Cadastro de Endereço </summary>
 
 # Cadastro de Endereço
 O código a seguir é da página onde o usuário pode cadastrar um endereço, utilizando o `CEP` para buscar informações como rua e bairro através da `API ViaCEP`. Após o preenchimento, os dados são salvos no Firestore na subcoleção endereco dentro do documento do usuário autenticado no Firebase Authentication.
@@ -271,12 +293,33 @@ Salva os dados do endereço na subcoleção endereco do usuário autenticado.
 4. Mensagens de Erro e Sucesso:
 Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confirmações de sucesso após salvar.
 
+</details>
+
+
+<details>
+
+<summary> Cadastro de Itens </summary>
 
 # Cadastrar Itens(Óleo e/ou Eletrônico) no Firebase
+
+</details>
+
+<details>
+
+<summary> Traçar Rotas </summary>
 
 # Traçar Rotas entre pontos(flutter_osm_plugin 1.3.5)
 
   - https://www.youtube.com/watch?v=1tG93RjDP-E
 
+</details>
+
+
+<details>
+
+<summary> Pontuação </summary>
+
 # Pontuação
+
+</details>
 
