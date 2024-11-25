@@ -1,32 +1,40 @@
-import 'package:exemplo_firebase/screens/profile_screen_view.dart';
-import 'package:exemplo_firebase/screens/selection_screen_view.dart';
-// import 'package:exemplo_firebase/service/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../controllers/user_data.dart';
+import 'profile_screen_view.dart';
+import 'selection_screen_view.dart';
 
 class HomePage extends StatefulWidget {
-  final String name;
-  final String cpf;
-  final String email;
-  final String imagem;
-
-  const HomePage(
-      {super.key,
-      required this.name,
-      required this.imagem,
-      required this.cpf,
-      required this.email});
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  // final AuthService _authService = AuthService();
   bool showCards = false; // Controle para exibir imagem ou cards
+  final user = UserSession();
 
   @override
   void initState() {
     super.initState();
+    fetchUserData(); // Carrega os dados do usuário no início
+  }
+
+  Future<void> fetchUserData() async {
+    // Busca os dados do Firestore
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.userId)
+        .get();
+
+    if (doc.exists) {
+      final data = doc.data()!;
+      setState(() {
+        user.imagem = data['imagem'] ?? '';
+        user.name = data['name'] ?? 'Usuário'; // Atualiza outros dados se necessário
+      });
+    }
   }
 
   @override
@@ -37,7 +45,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color.fromARGB(255, 223, 209, 186),
         elevation: 0,
         title: Text(
-          'Olá, ${widget.name}!',
+          'Olá, ${user.name}!',
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -50,29 +58,27 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfileScreen(
-                    name: widget.name,
-                    cpf: widget.cpf,
-                    email: widget.email,
-                    imagem: widget.imagem,
-                  ),
+                  builder: (context) => const ProfileScreen(),
                 ),
               );
             },
             child: CircleAvatar(
               radius: 45,
               backgroundColor: Colors.white,
-              child: widget.imagem.isNotEmpty
+              child: (user.imagem != null && user.imagem!.isNotEmpty)
                   ? ClipOval(
-                      child: Image.network(
-                        widget.imagem,
-                        fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
-                      ),
-                    )
-                  : const Icon(Icons.person,
-                      size: 30, color: Color(0xFF7B2CBF)),
+                child: Image.network(
+                  user.imagem!,
+                  fit: BoxFit.cover,
+                  width: 60,
+                  height: 60,
+                ),
+              )
+                  : const Icon(
+                Icons.person,
+                size: 30,
+                color: Color(0xFF7B2CBF),
+              ),
             ),
           ),
         ],
@@ -126,9 +132,6 @@ class _HomePageState extends State<HomePage> {
                 builder: (context) => SelectionScreenView(),
               ),
             );
-            // setState(() {
-            //   showCards = true; // Altera o estado para exibir os cards
-            // });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),
@@ -151,29 +154,28 @@ class _HomePageState extends State<HomePage> {
     return ListView(
       children: List.generate(
         9, // Número de cards
-        (index) => Card(
+            (index) => Card(
           shadowColor: const Color.fromARGB(255, 0, 0, 0),
           color: const Color.fromRGBO(218, 194, 162, 1),
-          margin: const EdgeInsets.symmetric(
-              vertical: 10), // Espaçamento entre cards
+          margin: const EdgeInsets.symmetric(vertical: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          elevation: 5, // Adiciona sombra para destacar
+          elevation: 5,
           child: Padding(
-            padding: const EdgeInsets.all(16.0), // Espaçamento interno do card
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.asset(
-                    'assets/folhas2.png', // Substitua pela imagem real
+                    'assets/folhas2.png',
                     width: 100,
-                    height: 100, // Altura e largura da imagem
+                    height: 100,
                     fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(width: 10), // Espaço entre imagem e texto
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,15 +183,14 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         'Produto ${index + 1}',
                         style: const TextStyle(
-                          fontSize: 30, // Tamanho da fonte maior para título
+                          fontSize: 30,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       const Text(
                         'DATA DE Criação\nDATA DE COLETA',
-                        style: TextStyle(
-                            fontSize: 14), // Ajuste no tamanho da fonte
+                        style: TextStyle(fontSize: 14),
                       ),
                     ],
                   ),
@@ -211,7 +212,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Widget para os dias da semana
   Widget _buildWeekDays() {
     final List<Map<String, dynamic>> days = [
       {"day": "S", "color": Colors.blue},
@@ -233,23 +233,22 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: days
             .map((day) => CircleAvatar(
-                  radius: 20, // Aumentado para maior visibilidade
-                  backgroundColor: day['color'],
-                  child: Text(
-                    day['day'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14, // Tamanho ajustado para proporcionalidade
-                    ),
-                  ),
-                ))
+          radius: 20,
+          backgroundColor: day['color'],
+          child: Text(
+            day['day'],
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+        ))
             .toList(),
       ),
     );
   }
 
-  // Widget para a BottomNavigationBar
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       backgroundColor: const Color.fromARGB(255, 46, 50, 46),
@@ -262,11 +261,7 @@ class _HomePageState extends State<HomePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfileScreen(
-                    name: widget.name,
-                    email: widget.email,
-                    cpf: widget.cpf,
-                    imagem: widget.imagem),
+                builder: (context) => const ProfileScreen(),
               ),
             );
             break;
@@ -274,19 +269,19 @@ class _HomePageState extends State<HomePage> {
       },
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 50), // Ícone ajustado
+          icon: Icon(Icons.home, size: 50),
           label: 'Início',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 50), // Ícone ajustado
+          icon: Icon(Icons.person, size: 50),
           label: 'Perfil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: 50), // Ícone ajustado
+          icon: Icon(Icons.assignment, size: 50),
           label: 'Tarefas',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag, size: 50), // Ícone ajustado
+          icon: Icon(Icons.shopping_bag, size: 50),
           label: 'Loja',
         ),
       ],

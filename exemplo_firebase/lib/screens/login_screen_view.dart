@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../controllers/user_data.dart';
 import '../service/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -53,12 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.green,
                       ),
                       ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFF109410),
-                            Color(0xFF1AE91A),
-                          ],
-                        ).createShader(bounds),
+                        shaderCallback: (bounds) =>
+                            const LinearGradient(
+                              colors: [
+                                Color(0xFF109410),
+                                Color(0xFF1AE91A),
+                              ],
+                            ).createShader(bounds),
                         child: const Text(
                           'Recolhe.ai',
                           style: TextStyle(
@@ -177,23 +179,19 @@ class _LoginScreenState extends State<LoginScreen> {
               .get();
 
           if (userDocument.exists) {
-            // Verifica se o campo 'imagem' existe e está preenchido
-            String? imagem = userDocument.data()?['imagem'];
-            String name = userDocument.data()?['nome'] ?? "Usuário";
-            String email = userDocument.data()?['email'] ?? "";
-            String cpf = userDocument.data()?['cpf'] ?? "123";
+            // Atualiza o UserSession com os dados do usuário
+            final userSession = UserSession();
+            userSession.email = user.email;
+            userSession.name = userDocument.data()?['nome'] ?? "Usuário";
+            userSession.cpf = userDocument.data()?['cpf'] ?? "123";
+            userSession.imagem = userDocument.data()?['imagem'];
 
-            if (imagem == null || imagem.isEmpty) {
+            if (userSession.imagem == null || userSession.imagem!.isEmpty) {
               // Redireciona para a página de configuração de ícone
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SetIconScreen(
-                    userId: user.uid,
-                    name: name,
-                    email: email,
-                    cpf: cpf,
-                  ),
+                  builder: (context) => SetIconScreen(userId: user.uid),
                 ),
               );
             } else {
@@ -201,12 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HomePage(
-                    name: name,
-                    imagem: imagem,
-                    cpf: '',
-                    email: '',
-                  ),
+                  builder: (context) => const HomePage(),
                 ),
               );
             }
@@ -215,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content:
-                    Text("Documento do usuário não encontrado no Firestore."),
+                Text("Documento do usuário não encontrado no Firestore."),
               ),
             );
           }
