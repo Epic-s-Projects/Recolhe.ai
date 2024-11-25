@@ -322,11 +322,11 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
 
 
-Página ADM (Pré Cadastro)
-Design Cards()
-Histórico de Cards()
-Testes()
-Apresentação()
-Integração entre ADM e Locais
-Apenas um endereço por pessoa e cadastrar longitude e latitude também
-Responsividade
+- Página ADM (Pré Cadastro)
+- Design Cards()
+- Histórico de Cards()
+- Testes()
+- Apresentação()
+- Integração entre ADM e Locais
+- Apenas um endereço por pessoa e cadastrar longitude e latitude também
+- Responsividade
