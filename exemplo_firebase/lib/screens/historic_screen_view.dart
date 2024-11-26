@@ -75,7 +75,14 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
         leading: IconButton(
           icon: Icon(
               Icons.arrow_back, color: Colors.green, size: size.width * 0.08),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            );// Volta para a página anterior
+          },
         ),
         title: Text(
           'Olá, ${user.name}!',
