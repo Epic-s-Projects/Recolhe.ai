@@ -1,5 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../screens/login_screen_view.dart';
 
 class AuthService {
   // construir login do usuario
@@ -48,13 +52,21 @@ class AuthService {
   }
 
 
-  // logout do usuario
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     try {
-      return await _auth.signOut();
+      await _auth.signOut();
+      // Após o logout, redireciona para a LoginScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
     } catch (e) {
       print(e.toString());
-      return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao sair: $e')),
+      );
     }
   }
 }

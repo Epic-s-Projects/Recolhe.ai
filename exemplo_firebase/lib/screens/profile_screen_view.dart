@@ -1,9 +1,10 @@
+import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
-import '../controllers/user_data.dart';
-
 class ProfileScreen extends StatefulWidget {
+
 
   const ProfileScreen({super.key});
 
@@ -12,117 +13,98 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  AuthService _authService = new AuthService();
+  AuthService _authService = AuthService();
   final user = UserSession();
 
   @override
   Widget build(BuildContext context) {
+    // Obter as dimensões da tela
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFE6BEA8),
-      ),
-      body: Column(
-        children: [
-          // Card
-          Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFE6BEA8), // Background da página principal
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  // Avatar e Nome
-                  CircleAvatar(
-                    radius: 90,
-                    backgroundColor: Colors.white,
-                    child: user.imagem!.isNotEmpty
-                        ? ClipOval(
-                            child: Image.network(user.imagem!,
-                                fit: BoxFit.cover, width: 300, height: 300))
-                        : const Icon(Icons.person,
-                            size: 50, color: Color(0xFF7B2CBF)),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    user.name!,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  // Informações com ícones
-                  infoTile(Icons.email, user.email!),
-                  infoTile(Icons.person, user.cpf!),
-                  infoTile(Icons.location_on,
-                      'R. Catatu dos Santos\nBarbados\n1090\n13486-229'),
-                  const SizedBox(height: 20),
-                  // Botão de sair
-                  ElevatedButton(
-                    onPressed: () async {
-                      await _authService
-                          .signOut(); // Chama o método para fazer logout.
-                      Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/login',
-                          (route) =>
-                              false); // Redireciona para a página de login.
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 80, vertical: 20),
-                    ),
-                    child: const Text(
-                      'Sair do aplicativo',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22, // Alteração do tamanho da fonte
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      appBar: CustomAppBar(user: user,showBackButton: true, ),
+      extendBodyBehindAppBar: true, // Faz o AppBar sobrepor o conteúdo
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/background.png'), // Caminho da imagem
+            fit: BoxFit.cover, // Faz a imagem ocupar toda a tela
           ),
-          // Barra de navegação
-          BottomNavigationBar(
-            backgroundColor: const Color.fromARGB(255, 46, 50, 46),
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white54,
-            type: BottomNavigationBarType.fixed,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home, size: 40), // Tamanho ajustado
-                label: 'Início',
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 80), // Espaço para o AppBar
+              // Avatar e Nome
+              CircleAvatar(
+                radius: screenWidth * 0.2, // Tamanho do avatar responsivo
+                backgroundColor: Colors.white,
+                child: user.imagem!.isNotEmpty
+                    ? ClipOval(
+                  child: Image.network(
+                    user.imagem!,
+                    fit: BoxFit.cover,
+                    width: screenWidth * 0.4, // Responsivo
+                    height: screenWidth * 0.4, // Responsivo
+                  ),
+                )
+                    : const Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Color(0xFF7B2CBF),
+                ),
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person, size: 40), // Tamanho ajustado
-                label: 'Perfil',
+              Text(
+                user.name!,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.08, // Responsivo
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.assignment, size: 40), // Tamanho ajustado
-                label: 'Tarefas',
+              // Informações com ícones
+              infoTile(Icons.email, user.email!),
+              infoTile(Icons.person, user.cpf!),
+              infoTile(
+                Icons.location_on,
+                'R. Catatu dos Santos\nBarbados\n1090\n13486-229',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_bag, size: 40), // Tamanho ajustado
-                label: 'Loja',
-              )
+              const SizedBox(height: 20), // Espaçamento antes do botão
+              ElevatedButton(
+                onPressed: () async {
+                  await _authService.signOut(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.2,
+                    vertical: screenHeight * 0.02,
+                  ),
+                ),
+                child: const Text(
+                  'Sair do aplicativo',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                  ),
+                ),
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget infoTile(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Row(
         children: [
           Icon(icon, color: Colors.green, size: 50),
@@ -131,7 +113,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                color: Colors.grey.shade800,
+                color:
+                Colors.grey.shade800.withOpacity(0.8), // Opacidade no fundo
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -141,8 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 25),
-          Icon(Icons.edit, color: Colors.grey),
+          const Icon(Icons.edit, color: Colors.grey),
         ],
       ),
     );

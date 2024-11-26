@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
+import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:flutter/material.dart';
 import '../controllers/user_data.dart';
 import 'profile_screen_view.dart';
@@ -6,6 +8,7 @@ import 'selection_screen_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
+  
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -14,6 +17,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool showCards = false; // Controle para exibir imagem ou cards
   final user = UserSession();
+  int _selectedIndex = 0; // Para o BottomNavigationBar
+  DateTime selectedDate = DateTime.now(); // Data selecionada no calendário
+  bool isCalendarExpanded = false; // Estado do calendário expandido
+
 
   @override
   void initState() {
@@ -22,12 +29,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchUserData() async {
-    // Busca os dados do Firestore
     try {
       final doc = await FirebaseFirestore.instance
           .collection('users')
-          .doc(user
-              .userId) // Certifica-se de que está pegando o ID do usuário autenticado
+          .doc(user.userId)
           .get();
 
       if (doc.exists) {
@@ -37,14 +42,6 @@ class _HomePageState extends State<HomePage> {
         user.cpf = data['cpf'] ?? '123';
         user.imagem = data['imagem'] ?? '';
 
-        // Printando os dados para verificar
-        print("Nome: ${user.name}");
-        print("Email: ${user.email}");
-        print("CPF: ${user.cpf}");
-        print("Imagem: ${user.imagem}");
-        print("UserID: ${user.userId}");
-
-        // Agora verifica se há itens "Em processo" na coleção "reciclado"
         final recicladoCollection = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.userId)
@@ -53,14 +50,8 @@ class _HomePageState extends State<HomePage> {
             .get();
 
         setState(() {
-          // Se houver documentos na subcoleção "reciclado" com status "Em processo", define showCards como true
           showCards = recicladoCollection.docs.isNotEmpty;
         });
-
-        // Printar o valor de showCards para verificar
-        print("Show Cards: $showCards");
-      } else {
-        print("Documento do usuário não encontrado no Firestore.");
       }
     } catch (e) {
       print("Erro ao buscar dados do usuário: $e");
@@ -69,6 +60,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       appBar: AppBar(
@@ -76,10 +76,10 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         title: Text(
           'Olá, ${user.name}!',
-          style: const TextStyle(
-            fontSize: 24,
+          style: TextStyle(
+            fontSize: screenWidth * 0.06,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 56, 128, 59),
+            color: const Color.fromARGB(255, 56, 128, 59),
           ),
         ),
         actions: [
@@ -93,128 +93,270 @@ class _HomePageState extends State<HomePage> {
               );
             },
             child: CircleAvatar(
-              radius: 45,
+              radius: screenWidth * 0.06,
               backgroundColor: Colors.white,
               child: (user.imagem != null && user.imagem!.isNotEmpty)
                   ? ClipOval(
-                      child: Image.network(
-                        user.imagem!,
-                        fit: BoxFit.cover,
-                        width: 60,
-                        height: 60,
-                      ),
-                    )
+                child: Image.network(
+                  user.imagem!,
+                  fit: BoxFit.cover,
+                  width: screenWidth * 0.12,
+                  height: screenWidth * 0.12,
+                ),
+              )
                   : const Icon(
-                      Icons.person,
-                      size: 30,
-                      color: Color(0xFF7B2CBF),
-                    ),
+                Icons.person,
+                size: 30,
+                color: Color(0xFF7B2CBF),
+              ),
             ),
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 30),
-            _buildWeekDays(),
-            const SizedBox(height: 30),
-            Expanded(
-              child: Center(
-                child: showCards
-                    ? _buildCards() // Exibe os cards se houver itens "Em processo"
-                    : _buildImageAndText(), // Exibe a imagem e o texto principal
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: screenHeight * 0.03),
+              _buildWeekDays(screenWidth),
+              SizedBox(height: screenHeight * 0.03),
+              SizedBox(
+                height: screenHeight * 0.6,
+                child: Center(
+                  child: showCards
+                      ? _buildCards(screenWidth)
+                      : _buildImageAndText(screenWidth, screenHeight),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
-  Widget _buildCards() {
+  Widget _buildImageAndText(double screenWidth, double screenHeight) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          'assets/banner_inicial.png',
+          height: screenHeight * 0.4,
+          fit: BoxFit.cover,
+        ),
+        SizedBox(height: screenHeight * 0.02),
+        const Text(
+          'Você ainda não realizou nenhuma coleta!',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black54,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: screenHeight * 0.06),
+
+      ],
+    );
+  }
+
+  Widget _buildWeekDays(double screenWidth) {
+    DateTime now = DateTime.now();
+    DateTime firstDayOfWeek = now.subtract(Duration(days: now.weekday));
+
+    List<DateTime> weekDays = List.generate(7, (index) {
+      return firstDayOfWeek.add(Duration(days: index));
+    });
+
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(screenWidth * 0.02),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 1, 131, 34),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: screenWidth * 0.02,
+              crossAxisSpacing: screenWidth * 0.02,
+            ),
+            itemCount: weekDays.length,
+            itemBuilder: (context, index) {
+              DateTime currentDay = weekDays[index];
+              bool isToday = currentDay.day == now.day;
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedDate = currentDay;
+                    isCalendarExpanded = !isCalendarExpanded;
+                  });
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(screenWidth * 0.02),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: currentDay == selectedDate ? Colors.blue : Colors
+                        .transparent,
+                  ),
+                  child: Text(
+                    '${currentDay.day}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isToday
+                          ? const Color.fromARGB(255, 0, 255, 47)
+                          : Colors.white,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        if (isCalendarExpanded) _buildFullMonthCalendar(now, screenWidth),
+      ],
+    );
+  }
+
+  Widget _buildFullMonthCalendar(DateTime now, double screenWidth) {
+    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+    DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    List<DateTime> monthDays = List.generate(
+      lastDayOfMonth.day,
+          (index) => firstDayOfMonth.add(Duration(days: index)),
+    );
+
+    return Container(
+      padding: EdgeInsets.all(screenWidth * 0.02),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 1, 131, 34),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7,
+          mainAxisSpacing: screenWidth * 0.02,
+          crossAxisSpacing: screenWidth * 0.02,
+        ),
+        itemCount: monthDays.length,
+        itemBuilder: (context, index) {
+          DateTime currentDay = monthDays[index];
+          bool isToday = currentDay.day == now.day;
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedDate = currentDay;
+              });
+            },
+            child: Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(screenWidth * 0.02),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: currentDay == selectedDate ? Colors.blue : Colors
+                    .transparent,
+              ),
+              child: Text(
+                '${currentDay.day}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: currentDay == selectedDate ? Colors.white : (isToday
+                      ? const Color.fromARGB(255, 0, 154, 57)
+                      : Colors.black),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCards(double screenWidth) {
     if (user.userId == null) {
-      // Certifica-se que o UserID está disponível
-      return const CircularProgressIndicator();
+      return const Center(child: CircularProgressIndicator());
     }
 
-    // Adiciona um filtro para trazer apenas os documentos com o status "Em processo"
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.userId)
-          .collection('reciclado')
-          .where(
-          'status', isEqualTo: 'Em processo') // Filtra por status "Em processo"
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        }
+    return Column(
+      children: [
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.userId)
+                .collection('reciclado')
+                .where('status', isEqualTo: 'Em processo')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return _buildImageAndText();
-        }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return _buildImageAndText(
+                  screenWidth,
+                  MediaQuery
+                      .of(context)
+                      .size
+                      .height,
+                );
+              }
 
-        final docs = snapshot.data!.docs;
+              final docs = snapshot.data!.docs;
 
-        return Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
+              return ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final data = docs[index].data() as Map<String, dynamic>;
                   return Card(
                     shadowColor: const Color.fromARGB(255, 0, 0, 0),
                     color: const Color.fromRGBO(218, 194, 162, 1),
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                     elevation: 5,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: EdgeInsets.all(screenWidth * 0.04),
                       child: Row(
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
                               'assets/folhas2.png',
-                              width: 100,
-                              height: 100,
+                              width: screenWidth * 0.2,
+                              height: screenWidth * 0.2,
                               fit: BoxFit.cover,
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          SizedBox(width: screenWidth * 0.03),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Tipo: ${data['tipo'] ?? 'N/A'}',
-                                  style: const TextStyle(
-                                    fontSize: 20,
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.06,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                SizedBox(height: screenWidth * 0.02),
                                 Text(
                                   'Quantidade: ${data['qtd'] ?? 'N/A'}',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Status: ${data['status'] ?? 'N/A'}',
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Data: ${data['timestamp'] ?? 'N/A'}',
-                                  style: const TextStyle(fontSize: 16),
+                                  style: const TextStyle(fontSize: 14),
                                 ),
                               ],
                             ),
@@ -224,60 +366,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
                 },
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectionScreenView(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(149, 5, 23, 5),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 30, vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
-              icon: const Icon(Icons.add, color: Colors.white, size: 20),
-              label: const Text(
-                'Realize sua coleta',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        );
-      },
-    );
-  }
-
-
-
-    Widget _buildImageAndText() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          'assets/banner_inicial.png',
-          height: 400,
-          fit: BoxFit.cover,
+              );
+            },
+          ),
         ),
         const SizedBox(height: 20),
-        const Text(
-          'Você ainda não realizou nenhuma coleta!',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black54,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 60),
         ElevatedButton.icon(
           onPressed: () {
             Navigator.push(
@@ -289,7 +382,7 @@ class _HomePageState extends State<HomePage> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -305,83 +398,77 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-
-
-
-
-  Widget _buildBottomNavigationBar() {
+  BottomNavigationBar _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      backgroundColor: const Color.fromARGB(255, 46, 50, 46),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white54,
-      type: BottomNavigationBarType.fixed,
+      backgroundColor: const Color.fromARGB(255, 223, 209, 186),
+      // Fundo da barra
+      currentIndex: _selectedIndex,
+      // Índice selecionado
+      selectedItemColor: const Color(0xFF38803B),
+      // Cor do item selecionado
+      unselectedItemColor: Colors.black54,
+      // Cor dos itens não selecionados
       onTap: (index) {
-        switch (index) {
-          case 1:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ProfileScreen(),
-              ),
-            );
-            break;
+        if (index != _selectedIndex) {
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          // Navegação baseada no índice
+          switch (index) {
+            case 0: // Botão "Home"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+              );
+              break;
+            case 1: // Botão "Perfil"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+              break;
+            case 2: // Botão "Coletar"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HistoricScreenView(),
+                ),
+              );
+              break;
+            case 3: // Botão "Configurações"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CadastroEnderecoPage(),
+                ),
+              );
+              break;
+          }
         }
       },
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 50),
-          label: 'Início',
+          icon: Icon(Icons.home),
+          label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 50),
+          icon: Icon(Icons.person),
           label: 'Perfil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: 50),
-          label: 'Tarefas',
+          icon: Icon(Icons.list_alt),
+          label: 'Coletar',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.shopping_bag, size: 50),
-          label: 'Loja',
+          icon: Icon(Icons.settings),
+          label: 'Configurações',
         ),
       ],
     );
   }
-}
-
-Widget _buildWeekDays() {
-  final List<Map<String, dynamic>> days = [
-    {"day": "S", "color": Colors.blue},
-    {"day": "T", "color": Colors.grey},
-    {"day": "Q", "color": Colors.grey},
-    {"day": "Q", "color": Colors.orange},
-    {"day": "S", "color": Colors.grey},
-    {"day": "S", "color": Colors.grey},
-    {"day": "D", "color": Colors.grey},
-  ];
-
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-    decoration: BoxDecoration(
-      color: const Color.fromRGBO(16, 148, 16, 1),
-      borderRadius: BorderRadius.circular(90),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: days
-          .map((day) => CircleAvatar(
-                radius: 20,
-                backgroundColor: day['color'],
-                child: Text(
-                  day['day'],
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ))
-          .toList(),
-    ),
-  );
 }

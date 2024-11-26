@@ -6,26 +6,28 @@ import 'package:flutter/material.dart';
 import '../controllers/user_data.dart';
 
 class OilRegisterScreen extends StatefulWidget {
-
-  const OilRegisterScreen({super.key,});
+  const OilRegisterScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _OilRegisterScreenState createState() => _OilRegisterScreenState();
 }
 
 class _OilRegisterScreenState extends State<OilRegisterScreen> {
-  // Instância do Controller
   final OilRegisterControllers _controller = OilRegisterControllers();
   final user = UserSession();
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Stack(
         children: [
           // Fundo com a imagem
           Container(
+            width: screenWidth,
+            height: screenHeight,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/background.png'),
@@ -33,199 +35,180 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
               ),
             ),
           ),
+          // Botão de voltar
           Positioned(
-            top: 50,
-            left: 20,
+            top: screenHeight * 0.05,
+            left: screenWidth * 0.05,
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.green, size: 50),
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.green,
+                size: screenWidth * 0.1,
+              ),
               onPressed: () {
-                Navigator.pop(context); // Volta para a página anterior
+                Navigator.pop(context);
               },
             ),
           ),
-              Positioned(
-            top: 40,
-            right: 20,
+          // Avatar do usuário
+          Positioned(
+            top: screenHeight * 0.05,
+            right: screenWidth * 0.05,
             child: CircleAvatar(
-              radius: 35,
+              radius: screenWidth * 0.1,
               backgroundColor: Colors.white,
               child: user.imagem!.isNotEmpty
                   ? ClipOval(
-                      child: Image.network(user.imagem!,
-                          fit: BoxFit.cover, width: 300, height: 300))
-                  : const Icon(Icons.person,
-                      size: 50, color: Color(0xFF7B2CBF)),
+                child: Image.network(
+                  user.imagem!,
+                  fit: BoxFit.cover,
+                  width: screenWidth * 0.2,
+                  height: screenWidth * 0.2,
+                ),
+              )
+                  : Icon(
+                Icons.person,
+                size: screenWidth * 0.1,
+                color: const Color(0xFF7B2CBF),
+              ),
             ),
           ),
-
+          // Conteúdo central
           Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  "Óleo usado",
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Óleo usado",
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.08,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                Image.asset(
-                  'assets/icongalao2.png',
-                  width: 450,
-                  height: 200,
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Óleo usado (ml):",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _controller
-                              .decrement(); // Chama o método de decremento no Controller
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade700,
-                          borderRadius: const BorderRadius.horizontal(
-                              left: Radius.circular(10)),
-                        ),
-                        child: const Icon(Icons.remove,
-                            size: 30, color: Colors.white),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        '${_controller.getOilAmount()}', // Exibe a quantidade de óleo usando o Controller
-                        style: const TextStyle(
-                          fontSize: 30,
+                  SizedBox(height: screenHeight * 0.03),
+                  Image.asset(
+                    'assets/icongalao2.png',
+                    width: screenWidth * 0.6,
+                    height: screenHeight * 0.25,
+                  ),
+                  SizedBox(height: screenHeight * 0.03),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Óleo usado (ml):",
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.04,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _controller
-                              .increment(); // Chama o método de incremento no Controller
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade700,
-                          borderRadius: const BorderRadius.horizontal(
-                              right: Radius.circular(10)),
+                      SizedBox(width: screenWidth * 0.03),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _controller.decrement();
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(screenWidth * 0.03),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade700,
+                            borderRadius: BorderRadius.horizontal(
+                              left: Radius.circular(screenWidth * 0.02),
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.remove,
+                            size: screenWidth * 0.07,
+                            color: Colors.white,
+                          ),
                         ),
-                        child: const Icon(Icons.add,
-                            size: 30, color: Colors.white),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.05,
+                          vertical: screenHeight * 0.01,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius:
+                          BorderRadius.circular(screenWidth * 0.02),
+                        ),
+                        child: Text(
+                          '${_controller.getOilAmount()}',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.07,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _controller.increment();
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(screenWidth * 0.03),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade700,
+                            borderRadius: BorderRadius.horizontal(
+                              right: Radius.circular(screenWidth * 0.02),
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            size: screenWidth * 0.07,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: screenHeight * 0.2),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      const String tipo = "Óleo usado";
+                      const String status = "Em processo";
+
+                      await _controller.addRecycledData(tipo, status);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                      size: screenWidth * 0.06,
+                    ),
+                    label: Text(
+                      "Avançar",
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                        color: Colors.white,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 130),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    // Exemplo: tipo de óleo
-                    const String tipo = "Óleo usado";
-                    const String status = "Em processo";
-
-                    await _controller.addRecycledData(tipo, status);
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black.withOpacity(0.6),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.1,
+                        vertical: screenHeight * 0.02,
                       ),
-                    );
-
-                    print("Avançar pressionado com ${_controller.getOilAmount()} ml de óleo usado.");
-                  },
-                  icon: const Icon(Icons.delete, color: Colors.white),
-                  label: const Text(
-                    "Avançar",
-                    style: TextStyle(fontSize: 24, color: Colors.white),
+                    ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black.withOpacity(0.6),
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 25),
-                  ),
-                ),
-
-              ],
+                ],
+              ),
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: Container(
-        color: Colors.black.withOpacity(0.8),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.green,
-          unselectedItemColor: Colors.white,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          iconSize: 45,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.card_giftcard),
-              label: '',
-            ),
-          ],
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                print("Home pressionado");
-                break;
-              case 1:
-                print("Usuário pressionado");
-                break;
-              case 2:
-                print("Histórico pressionado");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HistoricScreenView()),
-                );
-                break;
-              case 3:
-                print("Recompensa pressionado");
-                break;
-            }
-          },
-        ),
       ),
     );
   }
