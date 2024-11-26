@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:flutter/material.dart';
@@ -63,48 +64,10 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 223, 209, 186),
-        elevation: 0,
-        title: Text(
-          'Olá, ${user.name}!',
-          style: TextStyle(
-            fontSize: screenWidth * 0.06,
-            fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 56, 128, 59),
-          ),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              );
-            },
-            child: CircleAvatar(
-              radius: screenWidth * 0.06,
-              backgroundColor: Colors.white,
-              child: (user.imagem != null && user.imagem!.isNotEmpty)
-                  ? ClipOval(
-                      child: Image.network(
-                        user.imagem!,
-                        fit: BoxFit.cover,
-                        width: screenWidth * 0.12,
-                        height: screenWidth * 0.12,
-                      ),
-                    )
-                  : const Icon(
-                      Icons.person,
-                      size: 30,
-                      color: Color(0xFF7B2CBF),
-                    ),
-            ),
-          ),
-        ],
-      ),
+      appBar: (CustomAppBar(
+        user: UserSession(),
+        showBackButton: true,
+      )),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
@@ -328,7 +291,6 @@ class _HomePageState extends State<HomePage> {
                 .collection('users')
                 .doc(user.userId)
                 .collection('reciclado')
-                .where('status', isEqualTo: 'Em processo')
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -338,7 +300,7 @@ class _HomePageState extends State<HomePage> {
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return _buildImageAndText(
                   screenWidth,
-                  MediaQuery.of(context).size.height * 0.02,
+                  MediaQuery.of(context).size.height,
                 );
               }
 
@@ -349,8 +311,24 @@ class _HomePageState extends State<HomePage> {
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final data = docs[index].data() as Map<String, dynamic>;
+                  final timestamp = data['timestamp'] != null
+                      ? DateTime.fromMillisecondsSinceEpoch(
+                          data['timestamp'].millisecondsSinceEpoch)
+                      : null;
+
+                  final formattedDateDay = timestamp != null
+                      ? timestamp.day.toString().padLeft(2, '0')
+                      : '??';
+
+                  final formattedDateMonthYear = timestamp != null
+                      ? '${_getMonthName(timestamp.month)} ${timestamp.year}'
+                      : 'Data Indisponível';
+
+                  final status = data['status'] ?? 'Não Iniciado';
+                  final progressColor = _getProgressColor(status);
+                  final progressValue = _getProgressValue(status);
+
                   return Card(
-                    shadowColor: const Color.fromARGB(255, 0, 0, 0),
                     color: const Color.fromRGBO(218, 194, 162, 1),
                     margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
                     shape: RoundedRectangleBorder(
@@ -358,19 +336,19 @@ class _HomePageState extends State<HomePage> {
                     ),
                     elevation: 5,
                     child: Padding(
-                      padding: EdgeInsets.all(screenWidth * 0.04),
+                      padding: EdgeInsets.all(screenWidth * 0.05),
                       child: Row(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                             child: Image.asset(
                               'assets/folhas2.png',
-                              width: screenWidth * 0.2,
-                              height: screenWidth * 0.2,
+                              width: screenWidth * 0.25,
+                              height: screenWidth * 0.25,
                               fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(width: screenWidth * 0.03),
+                          SizedBox(width: screenWidth * 0.04),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -378,14 +356,77 @@ class _HomePageState extends State<HomePage> {
                                 Text(
                                   'Tipo: ${data['tipo'] ?? 'N/A'}',
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.06,
+                                    fontSize: screenWidth * 0.05,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
                                 ),
                                 SizedBox(height: screenWidth * 0.02),
-                                Text(
-                                  'Quantidade: ${data['qtd'] ?? 'N/A'}',
-                                  style: const TextStyle(fontSize: 14),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${data['qtd'] ?? '0'}',
+                                      style: TextStyle(
+                                        fontSize: screenWidth * 0.06,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      'ML',
+                                      style: TextStyle(
+                                        fontSize: screenWidth * 0.04,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: screenWidth * 0.02),
+                                Row(
+                                  children: [
+                                    Text(
+                                      formattedDateDay,
+                                      style: TextStyle(
+                                        fontSize: screenWidth * 0.06,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(
+                                      child: Text(
+                                        formattedDateMonthYear,
+                                        style: TextStyle(
+                                          fontSize: screenWidth * 0.04,
+                                          color: Colors.black54,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: screenWidth * 0.03),
+                                Column(
+                                  children: [
+                                    Text(
+                                      status,
+                                      style: TextStyle(
+                                        fontSize: screenWidth * 0.045,
+                                        fontWeight: FontWeight.bold,
+                                        color: progressColor,
+                                      ),
+                                    ),
+                                    SizedBox(height: screenWidth * 0.02),
+                                    LinearProgressIndicator(
+                                      value: progressValue,
+                                      color: progressColor,
+                                      backgroundColor: const Color.fromARGB(
+                                          255, 220, 220, 220),
+                                      minHeight: screenWidth * 0.02,
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -424,6 +465,46 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
+  }
+
+  Color _getProgressColor(String status) {
+    switch (status) {
+      case 'Em Processo':
+        return Colors.amber;
+      case 'Concluído':
+        return Colors.green;
+      default:
+        return Colors.blue;
+    }
+  }
+
+  double _getProgressValue(String status) {
+    switch (status) {
+      case 'Em Processo':
+        return 0.5;
+      case 'Concluído':
+        return 1.0;
+      default:
+        return 0.0;
+    }
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro'
+    ];
+    return months[month - 1];
   }
 
   BottomNavigationBar _buildBottomNavigationBar() {
