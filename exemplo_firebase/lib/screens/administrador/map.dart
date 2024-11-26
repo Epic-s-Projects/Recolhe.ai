@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -11,41 +12,57 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final String googleApiKey = "AIzaSyCptI-V7_XzK4wNMlHAwPRcwQK-chI-rRQ"; // Insira sua chave da API aqui.
-  final List<Map<String, TextEditingController>> points = [];
   List<LatLng> routePoints = []; // Coordenadas para a rota
-  List<LatLng> userPoints = []; // Coordenadas dos pontos inseridos pelo usuário
+  List<LatLng> userPoints = []; // Coordenadas dos endereços do Firebase
 
   @override
   void initState() {
     super.initState();
-    _addNewPoint(); // Adiciona o primeiro ponto automaticamente
+    _fetchCoordinatesAndDrawRoute(); // Busca os dados ao iniciar
   }
 
-  // Adiciona um novo ponto com campos de entrada
-  void _addNewPoint() {
-    points.add({
-      "cep": TextEditingController(),
-      "numero": TextEditingController(),
-    });
-    setState(() {});
-  }
-
-  // Obtém as coordenadas de todos os pontos e traça uma rota real
-  Future<void> _fetchCoordinatesAndDrawRoute() async {
-    if (points.isEmpty) return;
+  // Busca todos os endereços cadastrados no Firebase Firestore
+  Future<List<Map<String, dynamic>>> fetchAllAddresses() async {
+    List<Map<String, dynamic>> allAddresses = [];
 
     try {
+      QuerySnapshot usersSnapshot =
+      await FirebaseFirestore.instance.collection("users").get();
+
+      for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
+        QuerySnapshot enderecoSnapshot =
+        await userDoc.reference.collection("endereco").get();
+
+        for (QueryDocumentSnapshot enderecoDoc in enderecoSnapshot.docs) {
+          allAddresses.add({
+            ...enderecoDoc.data() as Map<String, dynamic>,
+          });
+        }
+      }
+    } catch (e) {
+      print("Erro ao buscar endereços: $e");
+    }
+
+    return allAddresses;
+  }
+
+  // Obtém as coordenadas dos endereços do Firestore e traça a rota
+  Future<void> _fetchCoordinatesAndDrawRoute() async {
+    try {
+      // Passo 1: Obter endereços do Firestore
+      List<Map<String, dynamic>> addresses = await fetchAllAddresses();
+
       List<String> locations = [];
-      List<LatLng> userCoordinates = [];
+      List<LatLng> coordinates = [];
 
-      for (var point in points) {
-        final cep = point['cep']!.text;
-        final numero = point['numero']!.text;
+      // Passo 2: Converter endereços em coordenadas
+      for (var address in addresses) {
+        final rua = address['rua'] ?? '';
+        final bairro = address['bairro'] ?? '';
+        final numero = address['numero'] ?? '';
+        final cep = address['cep'] ?? '';
 
-        if (cep.isEmpty || numero.isEmpty) return;
-
-        // Combina CEP e número para buscar o endereço completo
-        final query = "$cep $numero, Brasil";
+        final query = "$rua $numero, $bairro, $cep, Brasil";
         final url = Uri.parse(
             'https://maps.googleapis.com/maps/api/geocode/json?address=$query&key=$googleApiKey');
 
@@ -53,10 +70,11 @@ class _MapPageState extends State<MapPage> {
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
+
           if (data['results'].isNotEmpty) {
             final location = data['results'][0]['geometry']['location'];
             final latLng = LatLng(location['lat'], location['lng']);
-            userCoordinates.add(latLng);
+            coordinates.add(latLng);
             locations.add(query);
           }
         }
@@ -64,13 +82,13 @@ class _MapPageState extends State<MapPage> {
 
       if (locations.length < 2) {
         setState(() {
-          userPoints = userCoordinates;
+          userPoints = coordinates;
           routePoints = [];
         });
         return;
       }
 
-      // Obter a rota entre os pontos usando a API Directions
+      // Passo 3: Obter a rota entre os pontos
       final waypoints = locations.skip(1).take(locations.length - 2).join('|');
       final url = Uri.parse(
           'https://maps.googleapis.com/maps/api/directions/json?origin=${locations.first}&destination=${locations.last}&waypoints=$waypoints&key=$googleApiKey');
@@ -84,15 +102,14 @@ class _MapPageState extends State<MapPage> {
           final points = data['routes'][0]['overview_polyline']['points'];
           final polyline = _decodePolyline(points);
 
-          // Atualiza os pontos do mapa com os marcadores e a rota
           setState(() {
-            userPoints = userCoordinates;
+            userPoints = coordinates;
             routePoints = polyline;
           });
         }
       }
     } catch (e) {
-      // Caso ocorra algum erro, ele será tratado silenciosamente
+      print("Erro ao buscar coordenadas e traçar rota: $e");
     }
   }
 
@@ -132,59 +149,10 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Rotas com Pontos"),
+        title: Text("Rotas com Pontos Firebase"),
       ),
       body: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: points.length,
-              itemBuilder: (context, index) {
-                final point = points[index];
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: point['cep'],
-                          decoration: InputDecoration(
-                            labelText: "CEP ${index + 1}",
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: TextField(
-                          controller: point['numero'],
-                          decoration: InputDecoration(
-                            labelText: "Número ${index + 1}",
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: _addNewPoint,
-                child: Text("Adicionar Ponto"),
-              ),
-              ElevatedButton(
-                onPressed: _fetchCoordinatesAndDrawRoute,
-                child: Text("Traçar Rota"),
-              ),
-            ],
-          ),
           Expanded(
             child: FlutterMap(
               options: MapOptions(
@@ -222,6 +190,10 @@ class _MapPageState extends State<MapPage> {
                 ),
               ],
             ),
+          ),
+          ElevatedButton(
+            onPressed: _fetchCoordinatesAndDrawRoute,
+            child: Text("Atualizar Rotas"),
           ),
         ],
       ),
