@@ -17,8 +17,15 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
     HomeAdmPage(),
     AreaColetaPage(),
     HomeColetaPage(),
-    ProfileScreen(),
+    ProfileScreen(
+      name: "João Silva",
+      cpf: "123.456.789-00",
+      email: "joao.silva@email.com",
+      imagem: "", // Substitua por uma URL válida ou deixe vazio.
+    ),
   ];
+
+
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
