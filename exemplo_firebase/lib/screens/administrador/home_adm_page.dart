@@ -12,11 +12,13 @@ class _HomeAdmPageState extends State<HomeAdmPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    HomeAdmPage(), // Página inicial
-    AreaColetaPage(), // Página de Área de Coleta
-    HomeColetaPage(), // Página "Ver Itens"
-    ProfileScreen(), // Página de Perfil
+    HomeAdmPage(),
+    AreaColetaPage(),
+    HomeColetaPage(),
+    ProfileScreen(),
   ];
+
+
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -63,7 +65,7 @@ class _HomeAdmPageState extends State<HomeAdmPage> {
                     ),
                     CircleAvatar(
                       radius: 30,
-
+                      backgroundImage: AssetImage('assets/avatar.png'),
                     ),
                   ],
                 ),

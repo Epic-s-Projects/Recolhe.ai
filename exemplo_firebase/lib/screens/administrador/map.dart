@@ -4,307 +4,227 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
-// flutter_map: ^4.0.0
-// latlong2: ^0.8.1
-// http: ^0.13.6
-
 class MapPage extends StatefulWidget {
   @override
   _MapPageState createState() => _MapPageState();
 }
 
 class _MapPageState extends State<MapPage> {
-  bool _isCardExpanded = true;
-
-  // LatLng para a posição inicial e final do mapa
-  final LatLng start = LatLng(-22.57081484823618, -47.40388080106317); // Exemplo: São Paulo
-  final LatLng end = LatLng(-22.678611640730214, -47.291028667977194); // Outro ponto em São Paulo
-  double _totalDistance = 0.0; // Distância total da rota
+  final String googleApiKey = "AIzaSyCptI-V7_XzK4wNMlHAwPRcwQK-chI-rRQ"; // Insira sua chave da API aqui.
+  final List<Map<String, TextEditingController>> points = [];
+  List<LatLng> routePoints = []; // Coordenadas para a rota
+  List<LatLng> userPoints = []; // Coordenadas dos pontos inseridos pelo usuário
 
   @override
   void initState() {
     super.initState();
-    _calculateTotalDistance(); // Calcula a distância total ao iniciar
+    _addNewPoint(); // Adiciona o primeiro ponto automaticamente
+  }
+
+  // Adiciona um novo ponto com campos de entrada
+  void _addNewPoint() {
+    points.add({
+      "cep": TextEditingController(),
+      "numero": TextEditingController(),
+    });
+    setState(() {});
+  }
+
+  // Obtém as coordenadas de todos os pontos e traça uma rota real
+  Future<void> _fetchCoordinatesAndDrawRoute() async {
+    if (points.isEmpty) return;
+
+    try {
+      List<String> locations = [];
+      List<LatLng> userCoordinates = [];
+
+      for (var point in points) {
+        final cep = point['cep']!.text;
+        final numero = point['numero']!.text;
+
+        if (cep.isEmpty || numero.isEmpty) return;
+
+        // Combina CEP e número para buscar o endereço completo
+        final query = "$cep $numero, Brasil";
+        final url = Uri.parse(
+            'https://maps.googleapis.com/maps/api/geocode/json?address=$query&key=$googleApiKey');
+
+        final response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          if (data['results'].isNotEmpty) {
+            final location = data['results'][0]['geometry']['location'];
+            final latLng = LatLng(location['lat'], location['lng']);
+            userCoordinates.add(latLng);
+            locations.add(query);
+          }
+        }
+      }
+
+      if (locations.length < 2) {
+        setState(() {
+          userPoints = userCoordinates;
+          routePoints = [];
+        });
+        return;
+      }
+
+      // Obter a rota entre os pontos usando a API Directions
+      final waypoints = locations.skip(1).take(locations.length - 2).join('|');
+      final url = Uri.parse(
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${locations.first}&destination=${locations.last}&waypoints=$waypoints&key=$googleApiKey');
+
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['routes'].isNotEmpty) {
+          final points = data['routes'][0]['overview_polyline']['points'];
+          final polyline = _decodePolyline(points);
+
+          // Atualiza os pontos do mapa com os marcadores e a rota
+          setState(() {
+            userPoints = userCoordinates;
+            routePoints = polyline;
+          });
+        }
+      }
+    } catch (e) {
+      // Caso ocorra algum erro, ele será tratado silenciosamente
+    }
+  }
+
+  // Decodifica uma polyline em uma lista de LatLng
+  List<LatLng> _decodePolyline(String encoded) {
+    List<LatLng> polyline = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      polyline.add(LatLng(lat / 1E5, lng / 1E5));
+    }
+
+    return polyline;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.png'), // Imagem do fundo
-            fit: BoxFit.cover, // Preenche toda a tela
-          ),
-        ),
-        child: Column(
-          children: [
-            // Avatar, saudação e botão de voltar
-            Container(
-              height: 100,
-              child: Stack(
-                children: [
-                  // Ícone de voltar
-                  Positioned(
-                    top: 20,
-                    left: 20,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.green, size: 40),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                  // Avatar do usuário
-                  Positioned(
-                    top: 10,
-                    right: 20,
-                    child: CircleAvatar(
-
-                      radius: 30,
-                    ),
-                  ),
-                  // Saudação
-                  Positioned(
-                    top: 30,
-                    right: 80,
-                    child: Text(
-                      "Olá, João!",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Área do mapa
-            Expanded(
-              child: Stack(
-                children: [
-                  // Mapa
-                  FutureBuilder<List<LatLng>>(
-                    future: _getRoutePoints(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Erro ao carregar rota'));
-                      }
-
-                      final routePoints = snapshot.data ?? [];
-
-                      return FlutterMap(
-                        options: MapOptions(
-                          center: start,
-                          zoom: 13.0,
-                        ),
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            subdomains: ['a', 'b', 'c'],
-                          ),
-                          MarkerLayer(
-                            markers: [
-                              Marker(
-                                point: start,
-                                builder: (context) => Icon(
-                                  Icons.location_pin,
-                                  color: Colors.green,
-                                  size: 40,
-                                ),
-                              ),
-                              Marker(
-                                point: end,
-                                builder: (context) => Icon(
-                                  Icons.location_pin,
-                                  color: Colors.red,
-                                  size: 40,
-                                ),
-                              ),
-                            ],
-                          ),
-                          PolylineLayer(
-                            polylines: [
-                              Polyline(
-                                points: routePoints,
-                                strokeWidth: 4.0,
-                                color: Colors.blue,
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-
-                  // Botão de expandir/reduzir o card
-                  Positioned(
-                    top: 20,
-                    right: 20,
-                    child: IconButton(
-                      icon: Icon(
-                        _isCardExpanded
-                            ? Icons.arrow_downward
-                            : Icons.arrow_upward,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isCardExpanded = !_isCardExpanded;
-                        });
-                      },
-                    ),
-                  ),
-
-                  // Distância no canto superior esquerdo do mapa
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        "Distância: ${_totalDistance.toStringAsFixed(2)} km",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Card de informações
-            AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              height: _isCardExpanded ? 200 : 50,
-              width: double.infinity,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(15),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Título do card
-                  Text(
-                    "INFORMAÇÕES",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (_isCardExpanded)
-                    SizedBox(height: 10), // Espaçamento
-                  if (_isCardExpanded)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Endereço: 2 Penn Plz Fl",
-                            style: TextStyle(color: Colors.white)),
-                        Text("Número: 15",
-                            style: TextStyle(color: Colors.white)),
-                        Text("Complemento: ",
-                            style: TextStyle(color: Colors.white)),
-                        Text("CEP: 10121-1703",
-                            style: TextStyle(color: Colors.white)),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: Text("Rotas com Pontos"),
       ),
-      // Barra de navegação inferior
-      bottomNavigationBar: Container(
-        color: Colors.black.withOpacity(0.8),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.green,
-          unselectedItemColor: Colors.white,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          iconSize: 45,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '',
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: points.length,
+              itemBuilder: (context, index) {
+                final point = points[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: point['cep'],
+                          decoration: InputDecoration(
+                            labelText: "CEP ${index + 1}",
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: point['numero'],
+                          decoration: InputDecoration(
+                            labelText: "Número ${index + 1}",
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '',
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: _addNewPoint,
+                child: Text("Adicionar Ponto"),
+              ),
+              ElevatedButton(
+                onPressed: _fetchCoordinatesAndDrawRoute,
+                child: Text("Traçar Rota"),
+              ),
+            ],
+          ),
+          Expanded(
+            child: FlutterMap(
+              options: MapOptions(
+                center: userPoints.isNotEmpty
+                    ? userPoints.first
+                    : LatLng(-14.2350, -51.9253), // Centro aproximado do Brasil
+                zoom: userPoints.isNotEmpty ? 15.0 : 5.0, // Zoom inicial no Brasil
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  subdomains: ['a', 'b', 'c'],
+                ),
+                if (routePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: routePoints,
+                        color: Colors.blue,
+                        strokeWidth: 4.0,
+                      ),
+                    ],
+                  ),
+                MarkerLayer(
+                  markers: userPoints
+                      .map((point) => Marker(
+                    point: point,
+                    builder: (context) => Icon(
+                      Icons.location_pin,
+                      color: Colors.red,
+                      size: 30,
+                    ),
+                  ))
+                      .toList(),
+                ),
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.card_giftcard),
-              label: '',
-            ),
-          ],
-          onTap: (index) {
-
-          },
-        ),
+          ),
+        ],
       ),
     );
-  }
-
-  // Função para calcular a distância total da rota
-  Future<void> _calculateTotalDistance() async {
-    final routePoints = await _getRoutePoints();
-    double distance = 0.0;
-
-    for (int i = 0; i < routePoints.length - 1; i++) {
-      distance += Distance().as(
-        LengthUnit.Kilometer,
-        routePoints[i],
-        routePoints[i + 1],
-      );
-    }
-
-    setState(() {
-      _totalDistance = distance;
-    });
-  }
-
-  // Função para obter os pontos da rota
-  Future<List<LatLng>> _getRoutePoints() async {
-    final url = Uri.parse(
-        'http://router.project-osrm.org/route/v1/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?steps=true&geometries=geojson');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final geometry = data['routes'][0]['geometry'];
-      final coordinates = geometry['coordinates'];
-
-      return coordinates.map<LatLng>((coord) {
-        return LatLng(coord[1], coord[0]);
-      }).toList();
-    } else {
-      throw Exception('Failed to load route');
-    }
   }
 }

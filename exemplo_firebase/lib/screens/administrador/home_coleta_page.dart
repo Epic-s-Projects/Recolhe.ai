@@ -10,14 +10,16 @@ class HomeColetaPage extends StatefulWidget {
 
 class _HomeColetaPageState extends State<HomeColetaPage> {
   int _selectedIndex = 2;
-  bool showProductInfo = false; // Adicionei a variável para controlar o estado do card.
+  bool showProductInfo = false; // Controle do estado do card.
 
   final List<Widget> _pages = [
-    HomeAdmPage(), // Página inicial
-    AreaColetaPage(), // Página de Área de Coleta
-    HomeColetaPage(), // Página atual
-    ProfileScreen(), // Página de Perfil
+    HomeAdmPage(),
+    AreaColetaPage(),
+    HomeColetaPage(),
+    ProfileScreen(),
   ];
+
+
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -35,16 +37,6 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF4A261), // Cor do AppBar
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context); // Retorna para a página anterior
-          },
-        ),
-      ),
       body: Stack(
         children: [
           // Imagem de fundo
@@ -59,7 +51,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.fromLTRB(16, 80, 16, 12), // Ajuste no padding superior
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -100,7 +92,6 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 32), // Espaçamento maior
 
               // Calendário
