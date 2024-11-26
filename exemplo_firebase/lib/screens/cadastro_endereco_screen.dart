@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,22 +10,54 @@ class CadastroEnderecoPage extends StatefulWidget {
   const CadastroEnderecoPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _CadastroEnderecoPageState createState() => _CadastroEnderecoPageState();
 }
 
 class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
   final _formKey = GlobalKey<FormState>();
+  final user = UserSession();
 
   // Controladores de texto
   final TextEditingController _cepController = TextEditingController();
   final TextEditingController _ruaController = TextEditingController();
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
-  // final TextEditingController _longitudeController = TextEditingController();
-  // final TextEditingController _latitudeController = TextEditingController();
 
-  // Método para buscar endereço pelo CEP
+  bool hasAddress = false; // Flag para verificar se já existe endereço
+  String docId = UserSession().userId!; // ID do documento para atualização
+  bool showForm = false; // Flag para exibir o formulário
+
+  @override
+  void initState() {
+    super.initState();
+    _checkExistingAddress(); // Verifica se já existe endereço
+  }
+
+  Future<void> _checkExistingAddress() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('endereco')
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+        docId = snapshot.docs.first.id;
+
+        setState(() {
+          hasAddress = true;
+          _cepController.text = data['cep'] ?? '';
+          _ruaController.text = data['rua'] ?? '';
+          _bairroController.text = data['bairro'] ?? '';
+          _numeroController.text = data['numero'] ?? '';
+        });
+      }
+    }
+  }
+
   Future<void> _buscarEnderecoPorCEP(String cep) async {
     final url = Uri.parse("https://viacep.com.br/ws/$cep/json/");
 
@@ -50,7 +84,6 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
     }
   }
 
-  // Método para exibir mensagens de erro
   void _mostrarMensagemErro(String mensagem) {
     showDialog(
       context: context,
@@ -77,36 +110,34 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
       };
 
       try {
-        // Obtém o UID do usuário autenticado
         User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
-          String uid = user.uid; // Pega o UID do usuário autenticado
+          if (hasAddress) {
+            // Atualiza o endereço existente
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(user.uid)
+                .collection("endereco")
+                .doc(docId)
+                .update(endereco);
+          } else {
+            // Adiciona um novo endereço
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(user.uid)
+                .collection("endereco")
+                .add(endereco);
+          }
 
-          // Salva o endereço na subcoleção 'endereco' dentro do documento do usuário
-          await FirebaseFirestore.instance
-              .collection("users")
-              .doc(uid) // Usa o UID do usuário autenticado
-              .collection("endereco") // Subcoleção 'endereco'
-              .add(endereco); // Adiciona os dados
-
-          // Exibe uma mensagem de sucesso
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Endereço salvo com sucesso!")),
           );
 
-          // Limpa os campos após salvar
-          _cepController.clear();
-          _ruaController.clear();
-          _bairroController.clear();
-          _numeroController.clear();
-        } else {
-          // Se não estiver autenticado, exibe uma mensagem
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Usuário não autenticado.")),
-          );
+          setState(() {
+            showForm = false;
+          });
         }
       } catch (e) {
-        // Exibe um erro se algo der errado
         _mostrarMensagemErro("Erro ao salvar no Firebase: $e");
       }
     }
@@ -115,81 +146,105 @@ class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Cadastro de Endereço"),
-      ),
-      body: SingleChildScrollView(
+      appBar: CustomAppBar(user: user, showBackButton: true),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _cepController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "CEP",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) return "Informe o CEP";
-                  if (value.length != 8) return "O CEP deve ter 8 dígitos";
-                  return null;
-                },
-                onChanged: (value) {
-                  if (value.length == 8) {
-                    _buscarEnderecoPorCEP(value);
-                  }
-                },
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _ruaController,
-                decoration: const InputDecoration(
-                  labelText: "Rua",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Informe a rua" : null,
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _bairroController,
-                decoration: const InputDecoration(
-                  labelText: "Bairro",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Informe o bairro" : null,
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _numeroController,
-                decoration: const InputDecoration(
-                  labelText: "Número",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Informe o número" : null,
-              ),
-              const SizedBox(height: 24.0),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _salvarDadosNoFirebase,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 24.0),
-                  ),
-                  child: const Text(
-                    "Salvar",
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ),
-              ),
-            ],
-          ),
+        child: hasAddress && !showForm
+            ? _buildAddressDisplay()
+            : _buildAddressForm(),
+      ),
+      floatingActionButton: hasAddress
+          ? FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            showForm = !showForm;
+          });
+        },
+        child: Icon(showForm ? Icons.close : Icons.edit),
+      )
+          : null,
+    );
+  }
+
+  Widget _buildAddressDisplay() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Endereço Cadastrado:",
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
+        const SizedBox(height: 16.0),
+        Text("CEP: ${_cepController.text}"),
+        Text("Rua: ${_ruaController.text}"),
+        Text("Bairro: ${_bairroController.text}"),
+        Text("Número: ${_numeroController.text}"),
+      ],
+    );
+  }
+
+  Widget _buildAddressForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextFormField(
+            controller: _cepController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: "CEP",
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) return "Informe o CEP";
+              if (value.length != 8) return "O CEP deve ter 8 dígitos";
+              return null;
+            },
+            onChanged: (value) {
+              if (value.length == 8) {
+                _buscarEnderecoPorCEP(value);
+              }
+            },
+          ),
+          const SizedBox(height: 16.0),
+          TextFormField(
+            controller: _ruaController,
+            decoration: const InputDecoration(
+              labelText: "Rua",
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) =>
+            value == null || value.isEmpty ? "Informe a rua" : null,
+          ),
+          const SizedBox(height: 16.0),
+          TextFormField(
+            controller: _bairroController,
+            decoration: const InputDecoration(
+              labelText: "Bairro",
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) =>
+            value == null || value.isEmpty ? "Informe o bairro" : null,
+          ),
+          const SizedBox(height: 16.0),
+          TextFormField(
+            controller: _numeroController,
+            decoration: const InputDecoration(
+              labelText: "Número",
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) =>
+            value == null || value.isEmpty ? "Informe o número" : null,
+          ),
+          const SizedBox(height: 24.0),
+          Center(
+            child: ElevatedButton(
+              onPressed: _salvarDadosNoFirebase,
+              child: const Text("Salvar"),
+            ),
+          ),
+        ],
       ),
     );
   }

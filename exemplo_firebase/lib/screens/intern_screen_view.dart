@@ -1,31 +1,60 @@
-import 'package:exemplo_firebase/screens/profile_screen_view.dart';
-import 'package:exemplo_firebase/screens/selection_screen_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
+import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:flutter/material.dart';
+import '../controllers/user_data.dart';
+import 'profile_screen_view.dart';
+import 'selection_screen_view.dart';
 
 class HomePage extends StatefulWidget {
-  final String name;
-  final String cpf;
-  final String email;
-  final String imagem;
-
-  const HomePage({
-    super.key,
-    required this.name,
-    required this.imagem,
-    required this.cpf,
-    required this.email,
-  });
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  bool showCards = false;
-  int _selectedIndex = 0;
-  bool isCalendarExpanded =
-      false; // Estado para controlar a expansão do calendário
-  DateTime selectedDate = DateTime.now(); // Data selecionada inicialmente
+  bool showCards = false; // Controle para exibir imagem ou cards
+  final user = UserSession();
+  int _selectedIndex = 0; // Para o BottomNavigationBar
+  DateTime selectedDate = DateTime.now(); // Data selecionada no calendário
+  bool isCalendarExpanded = false; // Estado do calendário expandido
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData(); // Carrega os dados do usuário no início
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.userId)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        user.email = data['email'] ?? 'email@exemplo.com';
+        user.name = data['nome'] ?? 'Usuário';
+        user.cpf = data['cpf'] ?? '123';
+        user.imagem = data['imagem'] ?? '';
+
+        final recicladoCollection = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.userId)
+            .collection('reciclado')
+            .where('status', isEqualTo: 'Em processo')
+            .get();
+
+        setState(() {
+          showCards = recicladoCollection.docs.isNotEmpty;
+        });
+      }
+    } catch (e) {
+      print("Erro ao buscar dados do usuário: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +67,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color.fromARGB(255, 223, 209, 186),
         elevation: 0,
         title: Text(
-          'Olá, ${widget.name}!',
+          'Olá, ${user.name}!',
           style: TextStyle(
             fontSize: screenWidth * 0.06,
             fontWeight: FontWeight.bold,
@@ -47,21 +76,31 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           GestureDetector(
-            onTap: () => _navigateToProfile(),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+            },
             child: CircleAvatar(
               radius: screenWidth * 0.06,
               backgroundColor: Colors.white,
-              child: widget.imagem.isNotEmpty
+              child: (user.imagem != null && user.imagem!.isNotEmpty)
                   ? ClipOval(
                       child: Image.network(
-                        widget.imagem,
+                        user.imagem!,
                         fit: BoxFit.cover,
                         width: screenWidth * 0.12,
                         height: screenWidth * 0.12,
                       ),
                     )
-                  : const Icon(Icons.person,
-                      size: 30, color: Color(0xFF7B2CBF)),
+                  : const Icon(
+                      Icons.person,
+                      size: 30,
+                      color: Color(0xFF7B2CBF),
+                    ),
             ),
           ),
         ],
@@ -73,12 +112,14 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: screenHeight * 0.03),
-              _buildWeekDays(),
+              _buildWeekDays(screenWidth),
               SizedBox(height: screenHeight * 0.03),
               SizedBox(
                 height: screenHeight * 0.6,
                 child: Center(
-                  child: showCards ? _buildCards() : _buildImageAndText(),
+                  child: showCards
+                      ? _buildCards(screenWidth)
+                      : _buildImageAndText(screenWidth, screenHeight),
                 ),
               ),
             ],
@@ -133,10 +174,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildImageAndText() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
+  Widget _buildImageAndText(double screenWidth, double screenHeight) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -155,87 +193,11 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: screenHeight * 0.06),
-        ElevatedButton.icon(
-          onPressed: _navigateToSelectionScreen,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(149, 5, 23, 5),
-            padding: EdgeInsets.symmetric(
-                horizontal: screenWidth * 0.08, vertical: screenHeight * 0.02),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-          icon: const Icon(Icons.add, color: Colors.white, size: 20),
-          label: const Text(
-            'Realize sua coleta',
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
       ],
     );
   }
 
-  Widget _buildCards() {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return ListView.builder(
-      itemCount: 9,
-      itemBuilder: (context, index) => Card(
-        shadowColor: const Color.fromARGB(255, 0, 0, 0),
-        color: const Color.fromRGBO(218, 194, 162, 1),
-        margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        elevation: 5,
-        child: Padding(
-          padding: EdgeInsets.all(screenWidth * 0.04),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.asset(
-                  'assets/folhas2.png',
-                  width: screenWidth * 0.2,
-                  height: screenWidth * 0.2,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SizedBox(width: screenWidth * 0.03),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Produto ${index + 1}',
-                      style: TextStyle(
-                        fontSize: screenWidth * 0.06,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: screenWidth * 0.02),
-                    const Text(
-                      'DATA DE Criação\nDATA DE COLETA',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.add,
-                color: Colors.green,
-                size: 50,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWeekDays() {
-    final screenWidth = MediaQuery.of(context).size.width;
-
+  Widget _buildWeekDays(double screenWidth) {
     DateTime now = DateTime.now();
     DateTime firstDayOfWeek = now.subtract(Duration(days: now.weekday));
 
@@ -248,15 +210,14 @@ class _HomePageState extends State<HomePage> {
         Container(
           padding: EdgeInsets.all(screenWidth * 0.02),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(
-                255, 1, 131, 34), // Cor de fundo para a semana
+            color: const Color.fromARGB(255, 1, 131, 34),
             borderRadius: BorderRadius.circular(15),
           ),
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7, // 7 dias por semana
+              crossAxisCount: 7,
               mainAxisSpacing: screenWidth * 0.02,
               crossAxisSpacing: screenWidth * 0.02,
             ),
@@ -269,8 +230,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   setState(() {
                     selectedDate = currentDay;
-                    isCalendarExpanded =
-                        !isCalendarExpanded; // Expandir após seleção
+                    isCalendarExpanded = !isCalendarExpanded;
                   });
                 },
                 child: Container(
@@ -280,17 +240,15 @@ class _HomePageState extends State<HomePage> {
                     shape: BoxShape.circle,
                     color: currentDay == selectedDate
                         ? Colors.blue
-                        : const Color.fromARGB(0, 3, 225, 33),
+                        : Colors.transparent,
                   ),
                   child: Text(
                     '${currentDay.day}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: currentDay == selectedDate
-                          ? const Color.fromRGBO(255, 255, 255, 1)
-                          : (isToday
-                              ? const Color.fromARGB(255, 0, 255, 47)
-                              : const Color.fromARGB(255, 255, 255, 255)),
+                      color: isToday
+                          ? const Color.fromARGB(255, 0, 255, 47)
+                          : Colors.white,
                     ),
                   ),
                 ),
@@ -298,90 +256,15 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-        if (isCalendarExpanded) _buildFullMonthCalendar(now),
+        if (isCalendarExpanded) _buildFullMonthCalendar(now, screenWidth),
       ],
     );
   }
 
-  Widget _buildFullMonthCalendar(DateTime now) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
+  Widget _buildFullMonthCalendar(DateTime now, double screenWidth) {
     DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
     DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
 
-    int daysInMonth = lastDayOfMonth.day;
-    DateTime firstDayOfCalendar =
-        firstDayOfMonth.subtract(Duration(days: firstDayOfMonth.weekday));
-
-    List<DateTime> monthDays = List.generate(
-      (firstDayOfCalendar.day + daysInMonth),
-      (index) => firstDayOfCalendar.add(Duration(days: index)),
-    );
-
-    return Container(
-      padding: EdgeInsets.all(screenWidth * 0.02),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(
-            255, 1, 131, 34), // Cor de fundo para o mês completo
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 7,
-          mainAxisSpacing: screenWidth * 0.02,
-          crossAxisSpacing: screenWidth * 0.02,
-        ),
-        itemCount: monthDays.length,
-        itemBuilder: (context, index) {
-          DateTime currentDay = monthDays[index];
-          bool isToday = currentDay.day == now.day;
-          bool isCurrentMonth = currentDay.month == now.month;
-
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedDate = currentDay;
-              });
-            },
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(screenWidth * 0.02),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentDay == selectedDate
-                    ? Colors.blue
-                    : Colors.transparent,
-              ),
-              child: Text(
-                '${currentDay.day}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: currentDay == selectedDate
-                      ? Colors.white
-                      : (isCurrentMonth
-                          ? (isToday
-                              ? const Color.fromARGB(255, 0, 255, 47)
-                              : const Color.fromARGB(255, 255, 255, 255))
-                          : Colors.grey),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget buildFullMonthCalendar(DateTime now) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // Define o primeiro e o último dia do mês atual
-    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
-    DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-
-    // Gera a lista de dias do mês atual
     List<DateTime> monthDays = List.generate(
       lastDayOfMonth.day,
       (index) => firstDayOfMonth.add(Duration(days: index)),
@@ -390,15 +273,14 @@ class _HomePageState extends State<HomePage> {
     return Container(
       padding: EdgeInsets.all(screenWidth * 0.02),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(
-            212, 88, 153, 13), // Cor de fundo para o calendário
+        color: const Color.fromARGB(255, 1, 131, 34),
         borderRadius: BorderRadius.circular(15),
       ),
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 7, // 7 dias da semana
+          crossAxisCount: 7,
           mainAxisSpacing: screenWidth * 0.02,
           crossAxisSpacing: screenWidth * 0.02,
         ),
@@ -440,11 +322,170 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildCards(double screenWidth) {
+    if (user.userId == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(user.userId)
+                .collection('reciclado')
+                .where('status', isEqualTo: 'Em processo')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return _buildImageAndText(
+                  screenWidth,
+                  MediaQuery.of(context).size.height,
+                );
+              }
+
+              final docs = snapshot.data!.docs;
+
+              return ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                itemCount: docs.length,
+                itemBuilder: (context, index) {
+                  final data = docs[index].data() as Map<String, dynamic>;
+                  return Card(
+                    shadowColor: const Color.fromARGB(255, 0, 0, 0),
+                    color: const Color.fromRGBO(218, 194, 162, 1),
+                    margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 5,
+                    child: Padding(
+                      padding: EdgeInsets.all(screenWidth * 0.04),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.asset(
+                              'assets/folhas2.png',
+                              width: screenWidth * 0.2,
+                              height: screenWidth * 0.2,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          SizedBox(width: screenWidth * 0.03),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Tipo: ${data['tipo'] ?? 'N/A'}',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.06,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: screenWidth * 0.02),
+                                Text(
+                                  'Quantidade: ${data['qtd'] ?? 'N/A'}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectionScreenView(),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(149, 5, 23, 5),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+          icon: const Icon(Icons.add, color: Colors.white, size: 20),
+          label: const Text(
+            'Realize sua coleta',
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+      ],
+    );
+  }
+
   BottomNavigationBar _buildBottomNavigationBar() {
     return BottomNavigationBar(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
+      // Fundo da barra
       currentIndex: _selectedIndex,
-      onTap: _onBottomNavigationTap,
+      // Índice selecionado
+      selectedItemColor: const Color(0xFF38803B),
+      // Cor do item selecionado
+      unselectedItemColor: Colors.black54,
+      // Cor dos itens não selecionados
+      onTap: (index) {
+        if (index != _selectedIndex) {
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          // Navegação baseada no índice
+          switch (index) {
+            case 0: // Botão "Home"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+              );
+              break;
+            case 1: // Botão "Perfil"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+              break;
+            case 2: // Botão "Coletar"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HistoricScreenView(),
+                ),
+              );
+              break;
+            case 3: // Botão "Configurações"
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CadastroEnderecoPage(),
+                ),
+              );
+              break;
+          }
+        }
+      },
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),

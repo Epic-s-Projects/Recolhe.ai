@@ -1,20 +1,13 @@
 import 'package:exemplo_firebase/controllers/selection_controller.dart';
 import 'package:flutter/material.dart';
 
-class SelectionScreenView extends StatefulWidget {
-  final String imagem;
+import '../controllers/user_data.dart';
 
-  const SelectionScreenView({
-    super.key,
-    required this.imagem,
-  });
-
-  @override
-  State<SelectionScreenView> createState() => _SelectionScreenViewState();
-}
-
-class _SelectionScreenViewState extends State<SelectionScreenView> {
+class SelectionScreenView extends StatelessWidget {
   final SelectionController controller = SelectionController();
+  final user = UserSession();
+
+  SelectionScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +23,32 @@ class _SelectionScreenViewState extends State<SelectionScreenView> {
               ),
             ),
           ),
-          // Texto "Olá, João!" e bolinha de perfil
+
+          Positioned(
+            top: 40,
+            left: 10,
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.green,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+
           Positioned(
             top: 50,
-            left: 20,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pop(context); // Volta para a tela anterior
-              },
-              child: const Icon(Icons.arrow_back),
+            left: 50,
+            child: Text(
+              'Olá, ${user.name}!',
+              style: const TextStyle(
+                fontSize: 30,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Positioned(
@@ -47,17 +57,20 @@ class _SelectionScreenViewState extends State<SelectionScreenView> {
             child: CircleAvatar(
               radius: 45,
               backgroundColor: Colors.white,
-              child: widget.imagem.isNotEmpty
+              child: (user.imagem != null && user.imagem!.isNotEmpty)
                   ? ClipOval(
                       child: Image.network(
-                        widget.imagem,
+                        user.imagem!,
                         fit: BoxFit.cover,
                         width: 60,
                         height: 60,
                       ),
                     )
-                  : const Icon(Icons.person,
-                      size: 30, color: Color(0xFF7B2CBF)),
+                  : const Icon(
+                      Icons.person,
+                      size: 30,
+                      color: Color(0xFF7B2CBF),
+                    ),
             ),
           ),
           Positioned(
@@ -97,36 +110,6 @@ class _SelectionScreenViewState extends State<SelectionScreenView> {
         ],
       ),
       // Barra de navegação inferior
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor:
-            Colors.black.withOpacity(0.8), // Fundo preto transparente
-        type: BottomNavigationBarType
-            .fixed, // Garante que todos os ícones estejam visíveis
-        selectedItemColor: Colors.green, // Cor do ícone selecionado
-        unselectedItemColor: Colors.white, // Cor dos ícones não selecionados
-        showSelectedLabels: false, // Remove o rótulo dos ícones
-        showUnselectedLabels: false, // Remove o rótulo dos ícones
-        iconSize: 45, // Tamanho dos ícones ajustável pela variável
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '', // Rótulo vazio
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '', // Rótulo vazio
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: '', // Rótulo vazio
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: '', // Rótulo vazio
-          ),
-        ],
-        onTap: (index) => controller.handleBottomNavTap(context, index),
-      ),
     );
   }
 }

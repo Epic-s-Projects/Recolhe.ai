@@ -1,57 +1,150 @@
 import 'package:exemplo_firebase/controllers/historic_controller.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/profile_screen_view.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class HistoricScreenView extends StatelessWidget {
+import 'cadastro_endereco_screen.dart';
+import 'intern_screen_view.dart';
+
+class HistoricScreenView extends StatefulWidget {
+  const HistoricScreenView({super.key});
+
+  @override
+  _HistoricScreenViewState createState() => _HistoricScreenViewState();
+}
+
+class _HistoricScreenViewState extends State<HistoricScreenView> {
   final HistoricController controller = HistoricController();
+  List<Map<String, dynamic>> historicData = [];
+  bool isLoading = true;
+  final user = UserSession();
+  int _selectedIndex = 0;
 
-  HistoricScreenView({super.key});
+  @override
+  void initState() {
+    super.initState();
+    fetchHistoricData();
+  }
+
+  Future<void> fetchHistoricData() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.userId)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        user.email = data['email'] ?? 'email@exemplo.com';
+        user.name = data['nome'] ?? 'Usuário';
+        user.cpf = data['cpf'] ?? '123';
+        user.imagem = data['imagem'] ?? '';
+
+        final querySnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.userId)
+            .collection('reciclado')
+            .get();
+
+        setState(() {
+          historicData = querySnapshot.docs.map((doc) => doc.data()).toList();
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erro ao buscar dados: $e")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Fundo com a imagem
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.png'), // Caminho da imagem
-                fit: BoxFit.cover,
+      appBar: AppBar(
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back,
+              color: Colors.green, size: size.width * 0.08),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            ); // Volta para a página anterior
+          },
+        ),
+        title: Text(
+          'Olá, ${user.name}!',
+          style: TextStyle(
+            fontSize: size.width * 0.05,
+            fontWeight: FontWeight.bold,
+            color: Colors.green.shade900,
+          ),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
+            },
+            child: CircleAvatar(
+              radius: size.width * 0.06,
+              backgroundColor: Colors.white,
+              child: (user.imagem!.isNotEmpty)
+                  ? ClipOval(
+                      child: Image.network(
+                        user.imagem!,
+                        fit: BoxFit.cover,
+                        width: size.width * 0.12,
+                        height: size.width * 0.12,
+                      ),
+                    )
+                  : const Icon(Icons.person, size: 30, color: Colors.green),
+            ),
+          ),
+        ],
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFF5E6CC), Color(0xFFF1D9B4)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Substituindo o fundo original pelo novo layout
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(), // Ajusta a posição vertical
+                child: Image.asset(
+                  'assets/folhas.png',
+                  width: MediaQuery.of(context).size.width,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          // Ícone de voltar
-          Positioned(
-            top: size.height * 0.05,
-            left: size.width * 0.05,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back,
-                  color: Colors.green, size: size.width * 0.1),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          // Avatar do usuário
-          Positioned(
-            top: size.height * 0.04,
-            right: size.width * 0.05,
-            child: CircleAvatar(
-              backgroundImage: const AssetImage('assets/user_avatar.png'),
-              radius: size.width * 0.08,
-            ),
-          ),
-          // Conteúdo principal
-          Positioned.fill(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Título da seção
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: size.height * 0.06),
-                  child: Center(
+            // Conteúdo da tela (histórico e texto)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: size.height * 0.06),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
                     child: Text(
                       "Históricos",
                       style: TextStyle(
@@ -61,136 +154,97 @@ class HistoricScreenView extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-                // Área de rolagem do histórico
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: size.width * 0.05),
-                      child: Column(
-                        children: List.generate(
-                          12,
-                          (index) => Padding(
-                            padding:
-                                EdgeInsets.only(bottom: size.height * 0.02),
-                            child: const HistoryCard(
-                              date: "02/12/2024 - 18:47",
-                              type: "Eletrônico e Óleo",
-                              timeIcon: Icons.access_time,
-                              icon: Icons.recycling,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  Expanded(
+                    child: isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : historicData.isEmpty
+                            ? Center(
+                                child: Text(
+                                  "Nenhum histórico encontrado.",
+                                  style: TextStyle(
+                                    fontSize: size.width * 0.05,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 0.05),
+                                itemCount: historicData.length,
+                                itemBuilder: (context, index) {
+                                  final data = historicData[index];
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: size.height * 0.02),
+                                    child: Card(
+                                      color: const Color.fromRGBO(
+                                          218, 194, 162, 1),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      elevation: 5,
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.all(size.width * 0.04),
+                                        child: Row(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.asset(
+                                                'assets/folhas2.png',
+                                                width: size.width * 0.2,
+                                                height: size.width * 0.2,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            SizedBox(width: size.width * 0.03),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Tipo: ${data['tipo'] ?? 'N/A'}',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          size.width * 0.05,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Text(
+                                                    'Quantidade: ${data['qtd'] ?? 'N/A'}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Text(
+                                                    'Status: ${data['status'] ?? 'N/A'}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      // Barra de navegação inferior
-      bottomNavigationBar: Container(
-        color: Colors.black.withOpacity(0.8),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.green,
-          unselectedItemColor: Colors.white,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          iconSize: size.width * 0.08,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.card_giftcard),
-              label: '',
+                ],
+              ),
             ),
           ],
-          onTap: (index) {
-            controller.handleBottomNavTap(context, index);
-          },
         ),
-      ),
-    );
-  }
-}
-
-// Widget para os cartões de histórico
-class HistoryCard extends StatelessWidget {
-  final String date;
-  final String type;
-  final IconData icon; // Ícone ao lado do tipo
-  final IconData timeIcon; // Ícone ao lado da data
-
-  const HistoryCard({
-    required this.date,
-    required this.type,
-    required this.icon,
-    required this.timeIcon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      padding: EdgeInsets.all(size.width * 0.05),
-      decoration: BoxDecoration(
-        color: Colors.brown.shade700,
-        borderRadius: BorderRadius.circular(size.width * 0.02),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Linha com o ícone do relógio e a data
-          Row(
-            children: [
-              Icon(timeIcon, color: Colors.green, size: size.width * 0.08),
-              SizedBox(width: size.width * 0.05),
-              Expanded(
-                child: Text(
-                  date,
-                  style: TextStyle(
-                    fontSize: size.width * 0.05,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: size.height * 0.02),
-          // Linha com o ícone do tipo e o texto
-          Row(
-            children: [
-              Icon(icon, color: Colors.green, size: size.width * 0.08),
-              SizedBox(width: size.width * 0.05),
-              Expanded(
-                child: Text(
-                  type,
-                  style: TextStyle(
-                    fontSize: size.width * 0.05,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

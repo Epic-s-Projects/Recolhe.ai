@@ -2,6 +2,8 @@ import 'package:exemplo_firebase/controllers/oil_register_controller.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:flutter/material.dart';
 
+import '../controllers/user_data.dart';
+
 class OilRegisterScreen extends StatefulWidget {
   const OilRegisterScreen({super.key});
 
@@ -11,6 +13,7 @@ class OilRegisterScreen extends StatefulWidget {
 
 class _OilRegisterScreenState extends State<OilRegisterScreen> {
   final OilRegisterControllers _controller = OilRegisterControllers();
+  final user = UserSession();
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +34,7 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
               ),
             ),
           ),
+          // Botão de voltar
           Positioned(
             top: screenHeight * 0.05,
             left: screenWidth * 0.05,
@@ -45,6 +49,30 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
               },
             ),
           ),
+          // Avatar do usuário
+          Positioned(
+            top: screenHeight * 0.05,
+            right: screenWidth * 0.05,
+            child: CircleAvatar(
+              radius: screenWidth * 0.1,
+              backgroundColor: Colors.white,
+              child: user.imagem!.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(
+                        user.imagem!,
+                        fit: BoxFit.cover,
+                        width: screenWidth * 0.2,
+                        height: screenWidth * 0.2,
+                      ),
+                    )
+                  : Icon(
+                      Icons.person,
+                      size: screenWidth * 0.1,
+                      color: const Color(0xFF7B2CBF),
+                    ),
+            ),
+          ),
+          // Conteúdo central
           Center(
             child: SingleChildScrollView(
               child: Column(
@@ -142,11 +170,16 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                   ),
                   SizedBox(height: screenHeight * 0.2),
                   ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
+                      const String tipo = "Óleo usado";
+                      const String status = "Em processo";
+
+                      await _controller.addRecycledData(tipo, status);
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HistoricScreenView(),
+                          builder: (context) => HomePage(),
                         ),
                       );
                     },
@@ -175,55 +208,6 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: Container(
-        color: Colors.black.withOpacity(0.8),
-        child: BottomNavigationBar(
-          backgroundColor: Colors.transparent,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.green,
-          unselectedItemColor: Colors.white,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          iconSize: screenWidth * 0.09,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.card_giftcard),
-              label: '',
-            ),
-          ],
-          onTap: (index) {
-            switch (index) {
-              case 0:
-                print("Home pressionado");
-                break;
-              case 1:
-                print("Usuário pressionado");
-                break;
-              case 2:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HistoricScreenView()),
-                );
-                break;
-              case 3:
-                print("Recompensa pressionado");
-                break;
-            }
-          },
-        ),
       ),
     );
   }

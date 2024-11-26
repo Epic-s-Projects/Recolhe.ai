@@ -1,5 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../screens/login_screen_view.dart';
 
 class AuthService {
   // construir login do usuario
@@ -20,7 +24,6 @@ class AuthService {
     }
   }
 
-  // Cadastro de novo usuário com informações extras
   Future<User?> registerWithEmail(
       String email, String password, String name, String cpf) async {
     try {
@@ -37,6 +40,7 @@ class AuthService {
           'cpf': cpf,
           'email': email,
           'createdAt': Timestamp.now(),
+          'doc_id': user.uid,  // Salvando explicitamente o UID no Firestore
         });
       }
 
@@ -47,48 +51,22 @@ class AuthService {
     }
   }
 
-  // logout do usuario
-  Future<void> signOut() async {
+
+  Future<void> signOut(BuildContext context) async {
     try {
-      return await _auth.signOut();
+      await _auth.signOut();
+      // Após o logout, redireciona para a LoginScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
     } catch (e) {
       print(e.toString());
-      return null;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao sair: $e')),
+      );
     }
   }
-
-  Future<String?> getUserUid() async {
-    // Obtém o usuário autenticado
-    User? user = FirebaseAuth.instance.currentUser;
-
-    // Verifica se o usuário está autenticado e retorna o UID
-    if (user != null) {
-      return user.uid;
-    } else {
-      return null; // Retorna null se o usuário não estiver autenticado
-    }
-  }
-
-  // Future<Map<String, dynamic>?> getUserData() async {
-  //   try {
-  //     // Obtém o UID do usuário logado
-  //     User? user = _auth.currentUser;
-  //     if (user != null) {
-  //       String uid = user.uid;
-  //
-  //       // Busca os dados do usuário no Firestore
-  //       DocumentSnapshot userDoc = await _firestore
-  //           .collection('users') // Coleção onde os dados estão armazenados
-  //           .doc(uid) // Documento com o UID do usuário
-  //           .get();
-  //
-  //       if (userDoc.exists) {
-  //         return userDoc.data() as Map<String, dynamic>;
-  //       }
-  //     }
-  //   } catch (e) {
-  //     print("Erro ao buscar dados do usuário: ${e.toString()}");
-  //   }
-  //   return null;
-  // }
 }

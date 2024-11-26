@@ -1,21 +1,55 @@
-// import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class OilRegisterControllers {
-  // Variável para armazenar a quantidade de óleo
-  int oilAmount = 0;
+  int _oilAmount = 0;
 
-  // Função para incrementar a quantidade de óleo
+  // Incrementa a quantidade de óleo
   void increment() {
-    oilAmount += 500;
+    _oilAmount += 100; // Incrementa 100ml por clique
   }
 
-  // Função para decrementar a quantidade de óleo
+  // Decrementa a quantidade de óleo
   void decrement() {
-    if (oilAmount > 0) oilAmount -= 500;
+    if (_oilAmount > 0) {
+      _oilAmount -= 100; // Decrementa 100ml por clique
+    }
   }
 
-  // Função para retornar a quantidade de óleo
+  // Obtém a quantidade atual de óleo
   int getOilAmount() {
-    return oilAmount;
+    return _oilAmount;
+  }
+
+  // Adiciona dados à subcoleção 'reciclado'
+  Future<void> addRecycledData(String tipo, String status) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final uid = user.uid;
+
+        // Dados a serem adicionados na subcoleção
+        final data = {
+          "qtd": _oilAmount,
+          "tipo": tipo,
+          "timestamp": FieldValue.serverTimestamp(),
+          "status": status
+        };
+
+        // Adiciona à subcoleção 'reciclado'
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(uid) // Documento do usuário
+            .collection("reciclado") // Subcoleção 'reciclado'
+            .add(data); // Adiciona os dados
+
+        print("Dados adicionados com sucesso!");
+      } else {
+        print("Usuário não autenticado.");
+      }
+    } catch (e) {
+      print("Erro ao adicionar dados: $e");
+    }
   }
 }

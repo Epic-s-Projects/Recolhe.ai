@@ -1,19 +1,10 @@
+import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/service/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String name;
-  final String cpf;
-  final String email;
-  final String imagem;
-
-  const ProfileScreen({
-    super.key,
-    required this.name,
-    required this.cpf,
-    required this.email,
-    required this.imagem,
-  });
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -21,6 +12,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   AuthService _authService = AuthService();
+  final user = UserSession();
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +21,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0, // Remove a sombra do AppBar
+      appBar: CustomAppBar(
+        user: user,
+        showBackButton: true,
       ),
       extendBodyBehindAppBar: true, // Faz o AppBar sobrepor o conteúdo
       body: Container(
@@ -51,10 +43,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               CircleAvatar(
                 radius: screenWidth * 0.2, // Tamanho do avatar responsivo
                 backgroundColor: Colors.white,
-                child: widget.imagem.isNotEmpty
+                child: user.imagem!.isNotEmpty
                     ? ClipOval(
                         child: Image.network(
-                          widget.imagem,
+                          user.imagem!,
                           fit: BoxFit.cover,
                           width: screenWidth * 0.4, // Responsivo
                           height: screenWidth * 0.4, // Responsivo
@@ -67,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
               ),
               Text(
-                widget.name,
+                user.name!,
                 style: TextStyle(
                   fontSize: screenWidth * 0.08, // Responsivo
                   fontWeight: FontWeight.bold,
@@ -75,8 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               // Informações com ícones
-              infoTile(Icons.email, widget.email),
-              infoTile(Icons.person, widget.cpf),
+              infoTile(Icons.email, user.email!),
+              infoTile(Icons.person, user.cpf!),
               infoTile(
                 Icons.location_on,
                 'R. Catatu dos Santos\nBarbados\n1090\n13486-229',
@@ -84,16 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 20), // Espaçamento antes do botão
               ElevatedButton(
                 onPressed: () async {
-                  await _authService
-                      .signOut(); // Chama o método para fazer logout.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Desconectado com sucesso!')),
-                  );
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/login',
-                    (route) => false, // Redireciona para a página de login.
-                  );
+                  await _authService.signOut(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -101,15 +84,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.2, // Responsivo
-                    vertical: screenHeight * 0.025, // Responsivo
+                    horizontal: screenWidth * 0.2,
+                    vertical: screenHeight * 0.02,
                   ),
                 ),
                 child: const Text(
                   'Sair do aplicativo',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 22, // Alteração do tamanho da fonte
+                    fontSize: 22,
                   ),
                 ),
               ),
