@@ -153,12 +153,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProfileScreen(
-          name: widget.name,
-          email: widget.email,
-          cpf: widget.cpf,
-          imagem: widget.imagem,
-        ),
+        builder: (context) => const ProfileScreen(),
       ),
     );
   }
@@ -167,9 +162,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SelectionScreenView(
-          imagem: widget.imagem,
-        ),
+        builder: (context) => SelectionScreenView(),
       ),
     );
   }
@@ -311,8 +304,8 @@ class _HomePageState extends State<HomePage> {
                   color: currentDay == selectedDate
                       ? Colors.white
                       : (isToday
-                          ? const Color.fromARGB(255, 0, 154, 57)
-                          : Colors.black),
+                          ? const Color.fromARGB(255, 0, 208, 76)
+                          : const Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ),
@@ -345,14 +338,14 @@ class _HomePageState extends State<HomePage> {
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                 return _buildImageAndText(
                   screenWidth,
-                  MediaQuery.of(context).size.height,
+                  MediaQuery.of(context).size.height * 0.02,
                 );
               }
 
               final docs = snapshot.data!.docs;
 
               return ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final data = docs[index].data() as Map<String, dynamic>;
@@ -418,15 +411,15 @@ class _HomePageState extends State<HomePage> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(30),
             ),
           ),
-          icon: const Icon(Icons.add, color: Colors.white, size: 20),
+          icon: const Icon(Icons.add, color: Colors.white, size: 30),
           label: const Text(
             'Realize sua coleta',
-            style: TextStyle(fontSize: 20, color: Colors.white),
+            style: TextStyle(fontSize: 25, color: Colors.white),
           ),
         ),
       ],

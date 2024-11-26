@@ -63,10 +63,10 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
               children: [
                 const SizedBox(height: 50),
                 // Header com saudação e avatar
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Olá, João!',
                       style: TextStyle(
                         fontSize: 24,
@@ -108,7 +108,8 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            showMapCard = true; // Altera o estado para exibir o card
+                            showMapCard =
+                                true; // Altera o estado para exibir o card
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -120,9 +121,9 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children: [
                             Text(
                               'Ver Mapa',
                               style: TextStyle(
@@ -146,7 +147,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
             ),
           ),
           if (showMapCard)
-          // Card do mapa
+            // Card do mapa
             Center(
               child: Container(
                 width: 300,
@@ -189,19 +190,19 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
                     ),
                     const SizedBox(height: 16),
                     // Conteúdo do card
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.electrical_services, color: Colors.black),
-                        const SizedBox(width: 8),
-                        const Text('Eletrônico', style: TextStyle(fontSize: 16)),
+                        SizedBox(width: 8),
+                        Text('Eletrônico', style: TextStyle(fontSize: 16)),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.oil_barrel, color: Colors.black),
-                        const SizedBox(width: 8),
-                        const Text('Óleo', style: TextStyle(fontSize: 16)),
+                        SizedBox(width: 8),
+                        Text('Óleo', style: TextStyle(fontSize: 16)),
                       ],
                     ),
                     const SizedBox(height: 16),

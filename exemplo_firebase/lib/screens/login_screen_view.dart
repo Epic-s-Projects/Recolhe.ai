@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
 import 'package:exemplo_firebase/screens/set_icon_screen_view.dart';
-import 'package:exemplo_firebase/screens/teste_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,13 +54,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.green,
                       ),
                       ShaderMask(
-                        shaderCallback: (bounds) =>
-                            const LinearGradient(
-                              colors: [
-                                Color(0xFF109410),
-                                Color(0xFF1AE91A),
-                              ],
-                            ).createShader(bounds),
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0xFF109410),
+                            Color(0xFF1AE91A),
+                          ],
+                        ).createShader(bounds),
                         child: const Text(
                           'Recolhe.ai',
                           style: TextStyle(
@@ -216,8 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
             // Documento do usuário não encontrado
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text(
-                    "Documento do usuário não encontrado no Firestore."),
+                content:
+                    Text("Documento do usuário não encontrado no Firestore."),
               ),
             );
           }

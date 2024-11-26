@@ -136,26 +136,26 @@ class _SetIconScreenState extends State<SetIconScreen> {
                 child: ElevatedButton(
                   onPressed: selectedIndex != null
                       ? () async {
-                    // Atualiza o campo 'imagem' no Firestore
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(widget.userId)
-                        .set(
-                      {'imagem': imageUrls[selectedIndex!]},
-                      SetOptions(merge: true),
-                    );
+                          // Atualiza o campo 'imagem' no Firestore
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(widget.userId)
+                              .set(
+                            {'imagem': imageUrls[selectedIndex!]},
+                            SetOptions(merge: true),
+                          );
 
-                    // Atualiza a imagem no UserSession
-                    user.imagem = imageUrls[selectedIndex!];
+                          // Atualiza a imagem no UserSession
+                          user.imagem = imageUrls[selectedIndex!];
 
-                    // Redireciona para a HomePage
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomePage(),
-                      ),
-                    );
-                  }
+                          // Redireciona para a HomePage
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomePage(),
+                            ),
+                          );
+                        }
                       : null,
                   // Desabilita o botão se nenhuma imagem estiver selecionada
                   style: ElevatedButton.styleFrom(

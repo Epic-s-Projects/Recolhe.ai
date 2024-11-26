@@ -3,8 +3,6 @@ import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/profile_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import 'cadastro_endereco_screen.dart';
 import 'intern_screen_view.dart';
 
 class HistoricScreenView extends StatefulWidget {
