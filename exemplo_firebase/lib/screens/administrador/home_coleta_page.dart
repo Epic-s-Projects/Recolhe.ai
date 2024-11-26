@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../profile_screen_view.dart';
 import 'home_adm_page.dart';
@@ -9,14 +12,92 @@ class HomeColetaPage extends StatefulWidget {
 }
 
 class _HomeColetaPageState extends State<HomeColetaPage> {
-  int _selectedIndex = 2;
-  bool showProductInfo = false; // Adicionei a variável para controlar o estado do card.
+  bool showCards = false; // Controle para exibir imagem ou cards
+  final user = UserSession();
+  int _selectedIndex = 0; // Para o BottomNavigationBar
+  // Estado do calendário expandido
+  bool showProductInfo =
+      false; // Adicionei a variável para controlar o estado do card.
+  final _formKey = GlobalKey<FormState>();
+  // final user = UserSession();
+
+  // Controladores de texto
+  final TextEditingController _cepController = TextEditingController();
+  final TextEditingController _ruaController = TextEditingController();
+  final TextEditingController _bairroController = TextEditingController();
+  final TextEditingController _numeroController = TextEditingController();
+
+  bool hasAddress = false; // Flag para verificar se já existe endereço
+  String docId = UserSession().userId!; // ID do documento para atualização
+  bool showForm = false; // Flag para exibir o formulário
+
+  @override
+  void initState() {
+    super.initState();
+    _checkExistingAddress(); // Verifica se já existe endereço
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.userId)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        user.email = data['email'] ?? 'email@exemplo.com';
+        user.name = data['nome'] ?? 'Usuário';
+        user.cpf = data['cpf'] ?? '123';
+        user.imagem = data['imagem'] ?? '';
+
+        final recicladoCollection = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.userId)
+            .collection('reciclado')
+            .where('status', isEqualTo: 'Em processo')
+            .get();
+
+        setState(() {
+          showCards = recicladoCollection.docs.isNotEmpty;
+        });
+      }
+    } catch (e) {
+      print("Erro ao buscar dados do usuário: $e");
+    }
+  }
+
+  Future<void> _checkExistingAddress() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('endereco')
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+        docId = snapshot.docs.first.id;
+
+        setState(() {
+          hasAddress = true;
+          _cepController.text = data['cep'] ?? '';
+          _ruaController.text = data['rua'] ?? '';
+          _bairroController.text = data['bairro'] ?? '';
+          _numeroController.text = data['numero'] ?? '';
+        });
+      }
+    }
+  }
 
   final List<Widget> _pages = [
     HomeAdmPage(), // Página inicial
     AreaColetaPage(), // Página de Área de Coleta
     HomeColetaPage(), // Página atual
-    ProfileScreen(), // Página de Perfil
+    const ProfileScreen(), // Página de Perfil
   ];
 
   void _onItemTapped(int index) {
@@ -59,12 +140,13 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
+                      shaderCallback: (bounds) => const LinearGradient(
                         colors: [Color(0xFF109410), Color(0xFF052E05)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -74,7 +156,8 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white, // A cor base é substituída pelo gradiente
+                          color: Colors
+                              .white, // A cor base é substituída pelo gradiente
                         ),
                       ),
                     ),
@@ -88,7 +171,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.2),
                             blurRadius: 4,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
@@ -97,26 +180,6 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                         color: Colors.black,
                       ),
                     ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 32), // Espaçamento maior
-
-              // Calendário
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildCalendarItem('S', Color(0xFF5D6DFF)),
-                    _buildCalendarItem('T', Color(0xFF109410)),
-                    _buildCalendarItem('Q', Color(0xFFC59A64)),
-                    _buildCalendarItem('Q', Color(0xFF109410)),
-                    _buildCalendarItem('S', Color(0xFF109410)),
-                    _buildCalendarItem('S', Color(0xFF109410)),
-                    _buildCalendarItem('D', Color(0xFF109410)),
                   ],
                 ),
               ),
@@ -132,7 +195,8 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                       GestureDetector(
                         onTap: () {
                           setState(() {
-                            showProductInfo = !showProductInfo; // Alterna o estado
+                            showProductInfo =
+                                !showProductInfo; // Alterna o estado
                           });
                         },
                         child: Card(
@@ -148,17 +212,18 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                               child: Icon(Icons.image, color: Colors.grey),
                             ),
                             title: Text(
-                              showProductInfo ? 'Produto' : 'CASA',
-                              style: TextStyle(
+                              showProductInfo ? 'Produto' : _ruaController.text,
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             subtitle: Text(
                               showProductInfo
                                   ? 'DATA DE Criação\nDATA DE COLETA'
-                                  : 'Endereço\nPessoa',
+                                  : "${_numeroController.text}/n${_bairroController.text}",
                             ),
-                            trailing: Icon(Icons.close, color: Colors.black),
+                            trailing:
+                                const Icon(Icons.close, color: Colors.black),
                           ),
                         ),
                       ),

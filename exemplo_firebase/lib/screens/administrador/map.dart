@@ -17,8 +17,10 @@ class _MapPageState extends State<MapPage> {
   bool _isCardExpanded = true;
 
   // LatLng para a posição inicial e final do mapa
-  final LatLng start = LatLng(-22.57081484823618, -47.40388080106317); // Exemplo: São Paulo
-  final LatLng end = LatLng(-22.678611640730214, -47.291028667977194); // Outro ponto em São Paulo
+  final LatLng start =
+      LatLng(-22.57081484823618, -47.40388080106317); // Exemplo: São Paulo
+  final LatLng end = LatLng(
+      -22.678611640730214, -47.291028667977194); // Outro ponto em São Paulo
   double _totalDistance = 0.0; // Distância total da rota
 
   @override
@@ -31,7 +33,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/background.png'), // Imagem do fundo
             fit: BoxFit.cover, // Preenche toda a tela
@@ -40,7 +42,7 @@ class _MapPageState extends State<MapPage> {
         child: Column(
           children: [
             // Avatar, saudação e botão de voltar
-            Container(
+            SizedBox(
               height: 100,
               child: Stack(
                 children: [
@@ -49,23 +51,23 @@ class _MapPageState extends State<MapPage> {
                     top: 20,
                     left: 20,
                     child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.green, size: 40),
+                      icon: const Icon(Icons.arrow_back,
+                          color: Colors.green, size: 40),
                       onPressed: () {
                         Navigator.pop(context);
                       },
                     ),
                   ),
                   // Avatar do usuário
-                  Positioned(
+                  const Positioned(
                     top: 10,
                     right: 20,
                     child: CircleAvatar(
-
                       radius: 30,
                     ),
                   ),
                   // Saudação
-                  Positioned(
+                  const Positioned(
                     top: 30,
                     right: 80,
                     child: Text(
@@ -90,11 +92,12 @@ class _MapPageState extends State<MapPage> {
                     future: _getRoutePoints(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
 
                       if (snapshot.hasError) {
-                        return Center(child: Text('Erro ao carregar rota'));
+                        return const Center(
+                            child: Text('Erro ao carregar rota'));
                       }
 
                       final routePoints = snapshot.data ?? [];
@@ -107,14 +110,14 @@ class _MapPageState extends State<MapPage> {
                         children: [
                           TileLayer(
                             urlTemplate:
-                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                            subdomains: ['a', 'b', 'c'],
+                                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            subdomains: const ['a', 'b', 'c'],
                           ),
                           MarkerLayer(
                             markers: [
                               Marker(
                                 point: start,
-                                builder: (context) => Icon(
+                                builder: (context) => const Icon(
                                   Icons.location_pin,
                                   color: Colors.green,
                                   size: 40,
@@ -122,7 +125,7 @@ class _MapPageState extends State<MapPage> {
                               ),
                               Marker(
                                 point: end,
-                                builder: (context) => Icon(
+                                builder: (context) => const Icon(
                                   Icons.location_pin,
                                   color: Colors.red,
                                   size: 40,
@@ -169,14 +172,15 @@ class _MapPageState extends State<MapPage> {
                     top: 10,
                     left: 10,
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.black.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         "Distância: ${_totalDistance.toStringAsFixed(2)} km",
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -190,11 +194,11 @@ class _MapPageState extends State<MapPage> {
 
             // Card de informações
             AnimatedContainer(
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               height: _isCardExpanded ? 200 : 50,
               width: double.infinity,
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
                 color: Colors.green,
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(15),
@@ -204,7 +208,7 @@ class _MapPageState extends State<MapPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Título do card
-                  Text(
+                  const Text(
                     "INFORMAÇÕES",
                     style: TextStyle(
                       color: Colors.white,
@@ -213,9 +217,9 @@ class _MapPageState extends State<MapPage> {
                     ),
                   ),
                   if (_isCardExpanded)
-                    SizedBox(height: 10), // Espaçamento
+                    const SizedBox(height: 10), // Espaçamento
                   if (_isCardExpanded)
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("Endereço: 2 Penn Plz Fl",
@@ -245,7 +249,7 @@ class _MapPageState extends State<MapPage> {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           iconSize: 45,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: '',
@@ -263,9 +267,7 @@ class _MapPageState extends State<MapPage> {
               label: '',
             ),
           ],
-          onTap: (index) {
-
-          },
+          onTap: (index) {},
         ),
       ),
     );
@@ -277,7 +279,7 @@ class _MapPageState extends State<MapPage> {
     double distance = 0.0;
 
     for (int i = 0; i < routePoints.length - 1; i++) {
-      distance += Distance().as(
+      distance += const Distance().as(
         LengthUnit.Kilometer,
         routePoints[i],
         routePoints[i + 1],
