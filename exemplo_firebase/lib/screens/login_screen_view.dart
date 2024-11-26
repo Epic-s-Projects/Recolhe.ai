@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 import '../controllers/user_data.dart';
 import '../service/auth_service.dart';
+import 'administrador/home_adm_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -173,53 +174,65 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         if (user != null) {
-          // Se o login for bem-sucedido, busque o documento no Firestore
-          var userDocument = await FirebaseFirestore.instance
-              .collection('users') // Sua coleção de usuários
-              .doc(user.uid) // Usa o UID do usuário logado
-              .get();
+          // Verificação do email para redirecionamento diretamente no FirebaseAuth
+          if (user.email != null && user.email!.contains('@coleta.com')) {
+            // Se o email for do tipo admin, redireciona para a página de administrador
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeAdmPage(),
+              ),
+            );
+          } else {
+            // Se o email não for de admin, continua o fluxo normal
+            var userDocument = await FirebaseFirestore.instance
+                .collection('users') // Sua coleção de usuários
+                .doc(user.uid) // Usa o UID do usuário logado
+                .get();
 
-          if (userDocument.exists) {
-            // Atualiza o UserSession com os dados do usuário
-            final userSession = UserSession();
-            userSession.email = user.email;
-            userSession.name = userDocument.data()?['nome'] ?? "Usuário";
-            userSession.cpf = userDocument.data()?['cpf'] ?? "123";
-            userSession.imagem = userDocument.data()?['imagem'];
-            userSession.userId = user.uid;
+            if (userDocument.exists) {
+              // Atualiza o UserSession com os dados do usuário
+              final userSession = UserSession();
+              userSession.email = user.email;
+              userSession.name = userDocument.data()?['nome'] ?? "Usuário";
+              userSession.cpf = userDocument.data()?['cpf'] ?? "123";
+              userSession.imagem = userDocument.data()?['imagem'];
+              userSession.userId = user.uid;
 
-            // Printando os dados do usuário no console
-            print("Nome: ${userSession.name}");
-            print("Email: ${userSession.email}");
-            print("CPF: ${userSession.cpf}");
-            print("Imagem: ${userSession.imagem}");
-            print("UserID: ${userSession.userId}");
+              // Printando os dados do usuário no console
+              print("Nome: ${userSession.name}");
+              print("Email: ${userSession.email}");
+              print("CPF: ${userSession.cpf}");
+              print("Imagem: ${userSession.imagem}");
+              print("UserID: ${userSession.userId}");
 
-            if (userSession.imagem == null || userSession.imagem!.isEmpty) {
-              // Redireciona para a página de configuração de ícone
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SetIconScreen(userId: user.uid),
-                ),
-              );
+              // Verifica a imagem para redirecionar
+              if (userSession.imagem == null || userSession.imagem!.isEmpty) {
+                // Redireciona para a página de configuração de ícone
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SetIconScreen(userId: user.uid),
+                  ),
+                );
+              } else {
+                // Redireciona para a página inicial
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(),
+                  ),
+                );
+              }
             } else {
-              // Redireciona para a página inicial
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePage(),
+              // Documento do usuário não encontrado
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      "O Usuário não existe!"),
                 ),
               );
             }
-          } else {
-            // Documento do usuário não encontrado
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                    "Documento do usuário não encontrado no Firestore."),
-              ),
-            );
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
