@@ -10,7 +10,12 @@ class HomeColetaPage extends StatefulWidget {
 
 class _HomeColetaPageState extends State<HomeColetaPage> {
   int _selectedIndex = 2;
-  bool showProductInfo = false; // Controle do estado do card.
+
+  final List<Map<String, dynamic>> mockData = [
+    {'tipo': 'Plástico', 'qtd': '5 kg'},
+    {'tipo': 'Vidro', 'qtd': '2 kg'},
+    {'tipo': 'Papel', 'qtd': '10 kg'},
+  ];
 
   final List<Widget> _pages = [
     HomeAdmPage(),
@@ -23,8 +28,6 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
       imagem: "", // Substitua por uma URL válida ou deixe vazio.
     ),
   ];
-
-
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -41,6 +44,8 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -56,7 +61,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 80, 16, 12), // Ajuste no padding superior
+                padding: const EdgeInsets.fromLTRB(16, 80, 16, 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -71,7 +76,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white, // A cor base é substituída pelo gradiente
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -90,79 +95,18 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                         ],
                       ),
                       child: const Icon(
-                        Icons.person, // Ícone de usuário
+                        Icons.person,
                         color: Colors.black,
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32), // Espaçamento maior
+              const SizedBox(height: 32),
 
-              // Calendário
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildCalendarItem('S', Color(0xFF5D6DFF)),
-                    _buildCalendarItem('T', Color(0xFF109410)),
-                    _buildCalendarItem('Q', Color(0xFFC59A64)),
-                    _buildCalendarItem('Q', Color(0xFF109410)),
-                    _buildCalendarItem('S', Color(0xFF109410)),
-                    _buildCalendarItem('S', Color(0xFF109410)),
-                    _buildCalendarItem('D', Color(0xFF109410)),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24), // Espaçamento maior
-
-              // Cards com informações dinâmicas
+              // Lista de cards
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            showProductInfo = !showProductInfo; // Alterna o estado
-                          });
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 2,
-                          child: ListTile(
-                            leading: Container(
-                              width: 48,
-                              height: 48,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.image, color: Colors.grey),
-                            ),
-                            title: Text(
-                              showProductInfo ? 'Produto' : 'CASA',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Text(
-                              showProductInfo
-                                  ? 'DATA DE Criação\nDATA DE COLETA'
-                                  : 'Endereço\nPessoa',
-                            ),
-                            trailing: Icon(Icons.close, color: Colors.black),
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
+                child: _buildCards(screenWidth),
               ),
             ],
           ),
@@ -197,22 +141,76 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
     );
   }
 
-  Widget _buildCalendarItem(String label, Color color) {
-    return Container(
-      width: 32,
-      height: 32,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+  // Método para construir os cards com dados fictícios
+  Widget _buildCards(double screenWidth) {
+    if (mockData.isEmpty) {
+      return Center(
+        child: Text(
+          'Nenhum item disponível',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-      ),
+      );
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+      itemCount: mockData.length,
+      itemBuilder: (context, index) {
+        final data = mockData[index];
+        return Card(
+          shadowColor: const Color.fromARGB(255, 0, 0, 0),
+          color: const Color.fromRGBO(218, 194, 162, 1),
+          margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 5,
+          child: Padding(
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset(
+                    'assets/folhas.png',
+                    width: screenWidth * 0.2,
+                    height: screenWidth * 0.2,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                SizedBox(width: screenWidth * 0.03),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tipo: ${data['tipo']}',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.06,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: screenWidth * 0.02),
+                      Text(
+                        'Quantidade: ${data['qtd']}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.close, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      mockData.removeAt(index);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
