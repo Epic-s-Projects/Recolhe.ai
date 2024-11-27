@@ -38,11 +38,18 @@ class OilRegisterControllers {
         };
 
         // Adiciona à subcoleção 'reciclado'
-        await FirebaseFirestore.instance
+        final docRef = await FirebaseFirestore.instance
             .collection("users")
-            .doc(uid) // Documento do usuário
-            .collection("reciclado") // Subcoleção 'reciclado'
-            .add(data); // Adiciona os dados
+            .doc(uid)
+            .collection("reciclado")
+            .add(data);
+
+        final docId = docRef.id;
+
+        await docRef.update({
+          'id': docId, // Adiciona o ID ao próprio documento
+        });
+
 
         print("Dados adicionados com sucesso!");
       } else {

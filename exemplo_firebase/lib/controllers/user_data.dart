@@ -18,6 +18,18 @@ class UserSession {
   String? userId; // Variável para armazenar o ID do documento
   String? doc_id;
 
+
+  Future<void> fetchUserId() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      userId = user.uid; // Atribui o UID do usuário logado
+    } else {
+      print("Nenhum usuário logado.");
+    }
+  }
+
+
+
   // Método para buscar os dados do Firestore
   Future<void> fetchUserData() async {
     final user = FirebaseAuth.instance.currentUser;

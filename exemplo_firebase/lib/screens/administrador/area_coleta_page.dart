@@ -3,6 +3,7 @@ import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/map.dart';
 import 'package:flutter/material.dart';
+import 'detalhes_reciclado_page.dart';
 import 'home_adm_page.dart';
 import 'home_coleta_page.dart';
 import 'profile_adm_page.dart';
@@ -60,6 +61,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
         final userData = userDoc.data() as Map<String, dynamic>;
         String? nome = userData['nome'];
         String? cpf = userData['cpf'];
+        String userId = userDoc.id; // ID do documento do usuário
 
         // Busca os reciclados na subcoleção "reciclado"
         QuerySnapshot recicladoSnapshot = await userDoc.reference
@@ -83,6 +85,8 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
             'nome': nome,
             'cpf': cpf,
             'endereco': endereco,
+            'userId': userId, // Inclui o ID do documento do usuário
+            'recicladoId': recicladoDoc.id, // Inclui o ID do documento do reciclado
           });
         }
       }
@@ -92,6 +96,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
 
     return allReciclado;
   }
+
 
 
   void _onItemTapped(int index) {
@@ -125,22 +130,31 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
         itemCount: reciclados.length,
         itemBuilder: (context, index) {
           final reciclado = reciclados[index];
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Exibe os dados do reciclado
-                  Text(
-                    reciclado['tipo'] ?? 'Tipo não disponível',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetalhesRecicladoPage(reciclado: reciclado),
+                ),
+              );
+            },
+            child: Card(
+              margin: EdgeInsets.symmetric(vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                // Exibe os dados do reciclado
+                Text(
+                reciclado['tipo'] ?? 'Tipo não disponível',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                   SizedBox(height: 8),
                   Text('Quantidade: ${reciclado['qtd'] ?? 'Não disponível'}'),
                   SizedBox(height: 8),
@@ -155,15 +169,17 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
                   SizedBox(height: 8),
                   // Exibe o endereço, se disponível
                   if (reciclado['endereco'] != null) ...[
-                    Text('Endereço:',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text(
-                        'Rua: ${reciclado['endereco']['cep'] ?? 'Não informado'}'),
-                    Text(
-                        'Bairro: ${reciclado['endereco']['bairro'] ?? 'Não informado'}'),
-                  ],
-                  SizedBox(height: 16),
-                ],
+                Text('Endereço:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                  'Rua: ${reciclado['endereco']['cep'] ?? 'Não informado'}'),
+              Text(
+                  'Bairro: ${reciclado['endereco']['bairro'] ?? 'Não informado'}'),
+              ],
+                    Text('DocID: ${reciclado['userId'] ?? 'Não informado'}'),
+              SizedBox(height: 16),
+          ],
+                ),
               ),
             ),
           );
