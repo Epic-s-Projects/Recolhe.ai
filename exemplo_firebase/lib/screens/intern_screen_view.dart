@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
+import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:flutter/material.dart';
 import '../controllers/user_data.dart';
 import 'profile_screen_view.dart';
@@ -9,7 +10,7 @@ import 'selection_screen_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-  
+
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -18,9 +19,31 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool showCards = false; // Controle para exibir imagem ou cards
   final user = UserSession();
-  int _selectedIndex = 0; // Para o BottomNavigationBar
   DateTime selectedDate = DateTime.now(); // Data selecionada no calendário
   bool isCalendarExpanded = false; // Estado do calendário expandido
+
+  int _selectedIndex = 0; // Define o índice inicial para esta página
+
+  // Lista de páginas para alternância na barra de navegação
+  final List<Widget> _pages = [
+    HomePage(),
+    HistoricScreenView(),
+    RankingPage(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
 
 
   @override
@@ -59,20 +82,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
-      appBar: (CustomAppBar(user: UserSession(), showBackButton: true,)),
+      appBar: CustomAppBar(user: UserSession(), showBackButton: true),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
@@ -94,9 +113,35 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, size: 40),
+            label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history, size: 40),
+            label: 'Histórico',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.checklist, size: 40),
+            label: 'Pontuação',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 40),
+            label: 'Perfil',
+          ),
+        ],
+      ),
     );
   }
+
 
   Widget _buildImageAndText(double screenWidth, double screenHeight) {
     return Column(
@@ -355,80 +400,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
     );
-  }
 
-
-  BottomNavigationBar _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      backgroundColor: const Color.fromARGB(255, 223, 209, 186),
-      // Fundo da barra
-      currentIndex: _selectedIndex,
-      // Índice selecionado
-      selectedItemColor: const Color(0xFF38803B),
-      // Cor do item selecionado
-      unselectedItemColor: Colors.black54,
-      // Cor dos itens não selecionados
-      onTap: (index) {
-        if (index != _selectedIndex) {
-          setState(() {
-            _selectedIndex = index;
-          });
-
-          // Navegação baseada no índice
-          switch (index) {
-            case 0: // Botão "Home"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomePage(),
-                ),
-              );
-              break;
-            case 1: // Botão "Perfil"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              );
-              break;
-            case 2: // Botão "Coletar"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HistoricScreenView(),
-                ),
-              );
-              break;
-            case 3: // Botão "Configurações"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CadastroEnderecoPage(),
-                ),
-              );
-              break;
-          }
-        }
-      },
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Perfil',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.list_alt),
-          label: 'Coletar',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Configurações',
-        ),
-      ],
-    );
   }
 }

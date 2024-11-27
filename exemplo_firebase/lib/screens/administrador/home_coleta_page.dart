@@ -1,5 +1,7 @@
+import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:flutter/material.dart';
-import '../profile_screen_view.dart';
+import 'profile_adm_page.dart';
 import 'home_adm_page.dart';
 import 'area_coleta_page.dart';
 
@@ -11,12 +13,13 @@ class HomeColetaPage extends StatefulWidget {
 class _HomeColetaPageState extends State<HomeColetaPage> {
   int _selectedIndex = 2;
   bool showProductInfo = false; // Controle do estado do card.
+  final user = UserSession();
 
   final List<Widget> _pages = [
     HomeAdmPage(),
     AreaColetaPage(),
     HomeColetaPage(),
-    ProfileScreen(),
+    ProfileScreenADM(),
   ];
 
 
@@ -37,6 +40,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar(user: user),
       body: Stack(
         children: [
           // Imagem de fundo
@@ -49,49 +53,6 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
           // Conteúdo da página
           Column(
             children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 80, 16, 12), // Ajuste no padding superior
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
-                        colors: [Color(0xFF109410), Color(0xFF052E05)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ).createShader(bounds),
-                      child: const Text(
-                        'Olá, João!',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white, // A cor base é substituída pelo gradiente
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.person, // Ícone de usuário
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 32), // Espaçamento maior
 
               // Calendário

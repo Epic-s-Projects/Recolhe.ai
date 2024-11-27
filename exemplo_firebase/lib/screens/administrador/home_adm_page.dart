@@ -1,5 +1,7 @@
+import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:flutter/material.dart';
-import '../profile_screen_view.dart';
+import 'profile_adm_page.dart';
 import 'home_coleta_page.dart'; // Página já criada anteriormente
 import 'area_coleta_page.dart'; // Nova página de Área de Coleta
 
@@ -10,12 +12,13 @@ class HomeAdmPage extends StatefulWidget {
 
 class _HomeAdmPageState extends State<HomeAdmPage> {
   int _selectedIndex = 0;
+  final user = UserSession();
 
   final List<Widget> _pages = [
     HomeAdmPage(),
     AreaColetaPage(),
     HomeColetaPage(),
-    ProfileScreen(),
+    ProfileScreenADM(),
   ];
 
 
@@ -36,6 +39,7 @@ class _HomeAdmPageState extends State<HomeAdmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: CustomAppBar(user: user),
       body: Stack(
         children: [
           // Imagem de fundo
@@ -51,24 +55,6 @@ class _HomeAdmPageState extends State<HomeAdmPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Olá, João!',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                    ),
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage('assets/avatar.png'),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 80),
                 Center(
                   child: Column(

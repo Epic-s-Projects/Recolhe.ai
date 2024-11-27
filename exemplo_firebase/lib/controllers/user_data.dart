@@ -32,7 +32,7 @@ class UserSession {
 
       if (userDoc.exists) {
         final data = userDoc.data();
-        name = data?['name'];
+        name = data?['nome'];
         cpf = data?['cpf'];
         imagem = data?['imagem'];
         doc_id = data?['doc_id'];

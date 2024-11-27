@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'profile_adm_page.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -14,6 +17,7 @@ class _MapPageState extends State<MapPage> {
   final String googleApiKey = "AIzaSyCptI-V7_XzK4wNMlHAwPRcwQK-chI-rRQ"; // Insira sua chave da API aqui.
   List<LatLng> routePoints = []; // Coordenadas para a rota
   List<LatLng> userPoints = []; // Coordenadas dos endereços do Firebase
+  final user = UserSession();
 
   @override
   void initState() {
@@ -148,9 +152,7 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Rotas com Pontos Firebase"),
-      ),
+      appBar: CustomAppBar(user: user),
       body: Column(
         children: [
           Expanded(

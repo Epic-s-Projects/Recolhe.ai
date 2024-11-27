@@ -1,3 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/administrador/map.dart';
 import 'package:flutter/material.dart';
 import 'home_adm_page.dart';
 import 'home_coleta_page.dart';
@@ -11,20 +15,83 @@ class AreaColetaPage extends StatefulWidget {
 class _AreaColetaPageState extends State<AreaColetaPage> {
   bool showMapCard = false; // Controla se o card do mapa será exibido
   int _selectedIndex = 1; // Define o índice inicial para esta página
+  final user = UserSession();
 
-  // Lista de páginas para alternância na barra de navegação
+  List<Map<String, dynamic>> reciclados = []; // Lista de reciclados
+  bool isLoading = true; // Estado de carregamento dos dados
+
   final List<Widget> _pages = [
     HomeAdmPage(),
     AreaColetaPage(),
     HomeColetaPage(),
-    ProfileScreen(
-      name: "João Silva",
-      cpf: "123.456.789-00",
-      email: "joao.silva@email.com",
-      imagem: "", // Substitua por uma URL válida ou deixe vazio.
-    ),
+    ProfileScreenADM(),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadReciclados(); // Carrega os reciclados ao iniciar
+  }
+
+  Future<void> _loadReciclados() async {
+    try {
+      List<Map<String, dynamic>> data = await fetchAllReciclado();
+      setState(() {
+        reciclados = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Erro ao carregar reciclados: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAllReciclado() async {
+    List<Map<String, dynamic>> allReciclado = [];
+
+    try {
+      QuerySnapshot usersSnapshot =
+      await FirebaseFirestore.instance.collection("users").get();
+
+      for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
+        // Pega o nome e CPF do usuário diretamente da coleção "users"
+        final userData = userDoc.data() as Map<String, dynamic>;
+        String? nome = userData['nome'];
+        String? cpf = userData['cpf'];
+
+        // Busca os reciclados na subcoleção "reciclado"
+        QuerySnapshot recicladoSnapshot = await userDoc.reference
+            .collection("reciclado")
+            .where("status", isEqualTo: "Em processo")
+            .get();
+
+        // Busca o endereço na subcoleção "endereco"
+        QuerySnapshot enderecoSnapshot =
+        await userDoc.reference.collection("endereco").get();
+
+        Map<String, dynamic>? endereco;
+        if (enderecoSnapshot.docs.isNotEmpty) {
+          endereco = enderecoSnapshot.docs.first.data() as Map<String, dynamic>;
+        }
+
+        // Adiciona os dados de reciclado com informações do usuário e endereço
+        for (QueryDocumentSnapshot recicladoDoc in recicladoSnapshot.docs) {
+          allReciclado.add({
+            ...recicladoDoc.data() as Map<String, dynamic>,
+            'nome': nome,
+            'cpf': cpf,
+            'endereco': endereco,
+          });
+        }
+      }
+    } catch (e) {
+      print("Erro ao buscar reciclados: $e");
+    }
+
+    return allReciclado;
+  }
 
 
   void _onItemTapped(int index) {
@@ -43,197 +110,67 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent, // Fundo transparente
-        elevation: 0, // Sem sombra
-        automaticallyImplyLeading: false, // Remove qualquer botão de voltar automático
-      ),
-      extendBodyBehindAppBar: true, // Faz o conteúdo ocupar o espaço atrás do AppBar
-      body: Stack(
-        children: [
-          // Imagem de fundo
-          Positioned.fill(
-            child: Image.asset(
-              'assets/fundoHome.png', // Caminho da imagem de fundo
-              fit: BoxFit.cover,
+      appBar: CustomAppBar(user: user), // Remove qualquer botão de voltar automático
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // Indicador de carregamento
+          : reciclados.isEmpty
+          ? Center(
+        child: Text(
+          'Nenhum reciclado encontrado.',
+          style: TextStyle(fontSize: 18),
+        ),
+      )
+          : ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        itemCount: reciclados.length,
+        itemBuilder: (context, index) {
+          final reciclado = reciclados[index];
+          return Card(
+            margin: EdgeInsets.symmetric(vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-          ),
-          // Conteúdo da página
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 50),
-                // Header com saudação e avatar
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Olá, João!',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                    ),
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage('assets/avatar.png'),
-                    ),
+            elevation: 4,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Exibe os dados do reciclado
+                  Text(
+                    reciclado['tipo'] ?? 'Tipo não disponível',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Quantidade: ${reciclado['qtd'] ?? 'Não disponível'}'),
+                  SizedBox(height: 8),
+                  Text('Status: ${reciclado['status'] ?? 'Não informado'}'),
+                  SizedBox(height: 8),
+                  // Exibe o nome e CPF do usuário
+                  Text(
+                    'Usuário: ${reciclado['nome'] ?? 'Nome não disponível'}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text('CPF: ${reciclado['cpf'] ?? 'CPF não informado'}'),
+                  SizedBox(height: 8),
+                  // Exibe o endereço, se disponível
+                  if (reciclado['endereco'] != null) ...[
+                    Text('Endereço:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                        'Rua: ${reciclado['endereco']['cep'] ?? 'Não informado'}'),
+                    Text(
+                        'Bairro: ${reciclado['endereco']['bairro'] ?? 'Não informado'}'),
                   ],
-                ),
-                const SizedBox(height: 50),
-                if (!showMapCard) ...[
-                  // Exibição inicial antes de "Ver Mapa"
-                  const Center(
-                    child: Text(
-                      'Aguardando entrada em área \nde coleta!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF109410), Color(0xFF1AE91A)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            showMapCard = true; // Altera o estado para exibir o card
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text(
-                              'Ver Mapa',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Icon(
-                              Icons.location_pin,
-                              color: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  SizedBox(height: 16),
                 ],
-                const Spacer(),
-              ],
-            ),
-          ),
-          if (showMapCard)
-          // Card do mapa
-            Center(
-              child: Container(
-                width: 300,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.brown[200],
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Header do card
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Lixo de João!',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close, color: Colors.black),
-                          onPressed: () {
-                            setState(() {
-                              showMapCard = false; // Fechar o card
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Conteúdo do card
-                    Row(
-                      children: [
-                        Icon(Icons.electrical_services, color: Colors.black),
-                        const SizedBox(width: 8),
-                        const Text('Eletrônico', style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Icon(Icons.oil_barrel, color: Colors.black),
-                        const SizedBox(width: 8),
-                        const Text('Óleo', style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Botão Ver Local
-                    ElevatedButton(
-                      onPressed: () {
-                        // Lógica do botão "Ver Local"
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text(
-                        'VER LOCAL',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ),
-        ],
+          );
+        },
       ),
-      bottomNavigationBar: BottomNavigationBar(
+
+        bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 46, 50, 46),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white54,
