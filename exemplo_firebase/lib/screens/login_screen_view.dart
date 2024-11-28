@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
 import 'package:exemplo_firebase/screens/set_icon_screen_view.dart';
-import 'package:exemplo_firebase/screens/teste_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -82,6 +82,14 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // formulario de endereço integrado ao perfil
+  // aparecer apenas os itens na localização do coletor
+  // notificação após cadastrar o óleo -> ok
+  // notificação após coletor dar baixa -> OK
+  // notificar o usuário dos pontos ganhos
+  // no cadastro de óleo verificar se o endereço está preenchido.
+
+
   // Widget _buildLoadingView() {
   //   return Center(
   //     child: Container(
