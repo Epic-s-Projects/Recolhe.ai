@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/map.dart';
 import 'package:flutter/material.dart';
-import 'detalhes_reciclado_page.dart';
 import 'home_adm_page.dart';
 import 'home_coleta_page.dart';
 import 'profile_adm_page.dart';
@@ -14,12 +12,9 @@ class AreaColetaPage extends StatefulWidget {
 }
 
 class _AreaColetaPageState extends State<AreaColetaPage> {
-  bool showMapCard = false; // Controla se o card do mapa será exibido
-  int _selectedIndex = 1; // Define o índice inicial para esta página
+  bool showMapCard = false;
+  int _selectedIndex = 1;
   final user = UserSession();
-
-  List<Map<String, dynamic>> reciclados = []; // Lista de reciclados
-  bool isLoading = true; // Estado de carregamento dos dados
 
   final List<Widget> _pages = [
     HomeAdmPage(),
@@ -27,77 +22,6 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
     HomeColetaPage(),
     ProfileScreenADM(),
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadReciclados(); // Carrega os reciclados ao iniciar
-  }
-
-  Future<void> _loadReciclados() async {
-    try {
-      List<Map<String, dynamic>> data = await fetchAllReciclado();
-      setState(() {
-        reciclados = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      print("Erro ao carregar reciclados: $e");
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> fetchAllReciclado() async {
-    List<Map<String, dynamic>> allReciclado = [];
-
-    try {
-      QuerySnapshot usersSnapshot =
-      await FirebaseFirestore.instance.collection("users").get();
-
-      for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
-        // Pega o nome e CPF do usuário diretamente da coleção "users"
-        final userData = userDoc.data() as Map<String, dynamic>;
-        String? nome = userData['nome'];
-        String? cpf = userData['cpf'];
-        String userId = userDoc.id; // ID do documento do usuário
-
-        // Busca os reciclados na subcoleção "reciclado"
-        QuerySnapshot recicladoSnapshot = await userDoc.reference
-            .collection("reciclado")
-            .where("status", isEqualTo: "Em processo")
-            .get();
-
-        // Busca o endereço na subcoleção "endereco"
-        QuerySnapshot enderecoSnapshot =
-        await userDoc.reference.collection("endereco").get();
-
-        Map<String, dynamic>? endereco;
-        if (enderecoSnapshot.docs.isNotEmpty) {
-          endereco = enderecoSnapshot.docs.first.data() as Map<String, dynamic>;
-        }
-
-        // Adiciona os dados de reciclado com informações do usuário e endereço
-        for (QueryDocumentSnapshot recicladoDoc in recicladoSnapshot.docs) {
-          allReciclado.add({
-            ...recicladoDoc.data() as Map<String, dynamic>,
-            'nome': nome,
-            'cpf': cpf,
-            'endereco': endereco,
-            'userId': userId, // Inclui o ID do documento do usuário
-            'recicladoId': recicladoDoc.id, // Inclui o ID do documento do reciclado
-          });
-        }
-      }
-    } catch (e) {
-      print("Erro ao buscar reciclados: $e");
-    }
-
-    return allReciclado;
-  }
-
-
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -115,103 +39,199 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(user: user), // Remove qualquer botão de voltar automático
-      body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Indicador de carregamento
-          : reciclados.isEmpty
-          ? Center(
-        child: Text(
-          'Nenhum reciclado encontrado.',
-          style: TextStyle(fontSize: 18),
-        ),
-      )
-          : ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: reciclados.length,
-        itemBuilder: (context, index) {
-          final reciclado = reciclados[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetalhesRecicladoPage(reciclado: reciclado),
-                ),
-              );
-            },
-            child: Card(
-              margin: EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                // Exibe os dados do reciclado
-                Text(
-                reciclado['tipo'] ?? 'Tipo não disponível',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                  SizedBox(height: 8),
-                  Text('Quantidade: ${reciclado['qtd'] ?? 'Não disponível'}'),
-                  SizedBox(height: 8),
-                  Text('Status: ${reciclado['status'] ?? 'Não informado'}'),
-                  SizedBox(height: 8),
-                  // Exibe o nome e CPF do usuário
-                  Text(
-                    'Usuário: ${reciclado['nome'] ?? 'Nome não disponível'}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+      extendBodyBehindAppBar: true,
+      appBar: CustomAppBar(user: UserSession()),
+      body: Stack(
+        children: [
+          // Soft gradient background instead of plain image
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/fundoHome.png'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    Colors.white.withOpacity(0.7),
+                    BlendMode.lighten,
                   ),
-                  Text('CPF: ${reciclado['cpf'] ?? 'CPF não informado'}'),
-                  SizedBox(height: 8),
-                  // Exibe o endereço, se disponível
-                  if (reciclado['endereco'] != null) ...[
-                Text('Endereço:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                  'Rua: ${reciclado['endereco']['cep'] ?? 'Não informado'}'),
-              Text(
-                  'Bairro: ${reciclado['endereco']['bairro'] ?? 'Não informado'}'),
-              ],
-                    Text('DocID: ${reciclado['userId'] ?? 'Não informado'}'),
-              SizedBox(height: 16),
-          ],
+                ),
+              ),
+              foregroundDecoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withOpacity(0.6),
+                    Colors.green.withOpacity(0.2),
+                  ],
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
 
-        bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 40),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.location_on, size: 40),
-            label: 'Área de Coleta',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment, size: 40),
-            label: 'Ver Itens',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 40),
-            label: 'Perfil',
+          // Centered content with soft animations
+          AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
+            child: !showMapCard
+                ? _buildInitialContent()
+                : _buildMapCard(),
           ),
         ],
       ),
+      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
+
+  Widget _buildInitialContent() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Aguardando entrada\nem área de coleta!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: Colors.green.shade900,
+              letterSpacing: 1.1,
+            ),
+          ),
+          SizedBox(height: 30),
+          ElevatedButton.icon(
+            onPressed: () => setState(() => showMapCard = true),
+            icon: Icon(Icons.location_pin, color: Colors.white),
+            label: Text('Ver Mapa', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green.shade600,
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMapCard() {
+    return Center(
+      child: Container(
+        width: 320,
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withOpacity(0.3),
+              blurRadius: 15,
+              offset: Offset(0, 8),
+            )
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Lixo de João!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green.shade700,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.close, color: Colors.grey),
+                  onPressed: () => setState(() => showMapCard = false),
+                ),
+              ],
+            ),
+            Divider(color: Colors.green.shade100),
+            SizedBox(height: 10),
+            _buildInfoRow(Icons.electrical_services, 'Eletrônico'),
+            SizedBox(height: 10),
+            _buildInfoRow(Icons.oil_barrel, 'Óleo'),
+            SizedBox(height: 20),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MapPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade50,
+                  foregroundColor: Colors.green.shade800,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Text(
+                  'VER LOCAL',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.green.shade600),
+        SizedBox(width: 12),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.green.shade800,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomNavBar() {
+    return BottomNavigationBar(
+      backgroundColor: Color.fromARGB(255, 46, 50, 46),
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white54,
+      type: BottomNavigationBarType.fixed,
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home, size: 40),
+          label: 'Início',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.location_on, size: 40),
+          label: 'Área de Coleta',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.assignment, size: 40),
+          label: 'Ver Itens',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person, size: 40),
+          label: 'Perfil',
+        ),
+      ],
     );
   }
 }

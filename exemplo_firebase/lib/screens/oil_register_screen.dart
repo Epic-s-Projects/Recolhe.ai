@@ -16,6 +16,32 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
   final OilRegisterControllers _controller = OilRegisterControllers();
   final user = UserSession();
 
+
+  Widget _buildLoadingView() {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF795548)), // Brown progress indicator
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Confirmando quantidade de óleo...',
+              style: TextStyle(color: Color(0xFF795548), fontWeight: FontWeight.w600),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -175,13 +201,13 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                       const String tipo = "Óleo usado";
                       const String status = "Em processo";
 
-                      await _controller.addRecycledData(tipo, status);
+                      await _controller.addRecycledData(tipo, status, context);
 
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => HomePage(),
-                        ),
+                        )
                       );
                     },
                     icon: Icon(
@@ -190,7 +216,7 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                       size: screenWidth * 0.06,
                     ),
                     label: Text(
-                      "Avançar",
+                      "Adicionar Item",
                       style: TextStyle(
                         fontSize: screenWidth * 0.05,
                         color: Colors.white,

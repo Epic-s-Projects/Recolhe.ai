@@ -82,6 +82,31 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Widget _buildLoadingView() {
+  //   return Center(
+  //     child: Container(
+  //       padding: EdgeInsets.all(24),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white.withOpacity(0.9),
+  //         borderRadius: BorderRadius.circular(16),
+  //       ),
+  //       child: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           CircularProgressIndicator(
+  //             valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
+  //           ),
+  //           SizedBox(height: 16),
+  //           Text(
+  //             'Carregando reciclados...',
+  //             style: TextStyle(color: Color(0xFF795548), fontWeight: FontWeight.w600),
+  //           )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
 
 
   @override
@@ -162,7 +187,29 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: screenHeight * 0.06),
-
+        const SizedBox(height: 20),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectionScreenView(),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(149, 5, 23, 5),
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+          ),
+          icon: const Icon(Icons.add, color: Colors.white, size: 20),
+          label: const Text(
+            'Realize sua coleta',
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
       ],
     );
   }

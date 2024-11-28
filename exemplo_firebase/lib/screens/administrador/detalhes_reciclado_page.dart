@@ -3,18 +3,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../controllers/user_data.dart';
+import 'home_coleta_page.dart';
 
-class DetalhesRecicladoPage extends StatelessWidget {
+class DetalhesRecicladoPage extends StatefulWidget {
   final Map<String, dynamic> reciclado;
 
   DetalhesRecicladoPage({required this.reciclado});
+
+  @override
+  _DetalhesRecicladoPageState createState() => _DetalhesRecicladoPageState();
+}
+
+class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
+  bool _isLoading = false;
 
   final user = UserSession();
 
   Future<void> confirmarReciclado(String docId, Map<String, dynamic> reciclado, String uid) async {
     try {
-
-      // Garante que o usuário está autenticado
       final userCurrent = FirebaseAuth.instance.currentUser;
       if (userCurrent == null) {
         print("Erro: Nenhum usuário autenticado.");
@@ -26,18 +32,16 @@ class DetalhesRecicladoPage extends StatelessWidget {
 
       final docRef = FirebaseFirestore.instance
           .collection('users')
-          .doc(uid) // Documento do usuário (UID)
+          .doc(uid)
           .collection('reciclado')
-          .doc(docId); // Documento do reciclado
+          .doc(docId);
 
-      // Verifique se o documento existe
       final docSnapshot = await docRef.get();
       if (!docSnapshot.exists) {
         print("Documento não encontrado para o ID: $docId");
         return;
       }
 
-      // Atualize os dados
       await docRef.update({
         'status': 'Concluído',
         'data_coleta': timestamp,
@@ -51,63 +55,241 @@ class DetalhesRecicladoPage extends StatelessWidget {
     }
   }
 
+  void _handleConfirmation() async {
+    setState(() {
+      _isLoading = true;
+    });
 
+    try {
+      await confirmarReciclado(widget.reciclado['id'], widget.reciclado, widget.reciclado['userId']);
+      await Future.delayed(Duration(seconds: 3));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Reciclado confirmado com sucesso!'),
+          backgroundColor: Color(0xFF4CAF50), // Green success color
+        ),
+      );
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => HomeColetaPage()),
+            (route) => false,
+      );
+    } catch (e) {
+      print("Erro ao confirmar reciclado: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao confirmar reciclado. Tente novamente.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Detalhes do Reciclado'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Detalhes do Reciclado',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/fundoHome.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: SafeArea(
+          child: _isLoading
+              ? _buildLoadingView()
+              : _buildDetailsView(),
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildLoadingView() {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              reciclado['tipo'] ?? 'Tipo não disponível',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF795548)), // Brown progress indicator
             ),
             SizedBox(height: 16),
-            Text('Quantidade: ${reciclado['qtd'] ?? 'Não disponível'}'),
-            Text('Status: ${reciclado['status'] ?? 'Não informado'}'),
-            if (reciclado['nome'] != null) ...[
-              SizedBox(height: 16),
-              Text('Usuário: ${reciclado['nome']}'),
-              Text('CPF: ${reciclado['cpf']}'),
-            ],
-            if (reciclado['endereco'] != null) ...[
-              SizedBox(height: 16),
-              Text('Endereço:'),
-              Text('Rua: ${reciclado['endereco']['cep'] ?? 'Não informado'}'),
-              Text('Bairro: ${reciclado['endereco']['bairro'] ?? 'Não informado'}'),
-              Text('DocID: ${reciclado['userId'] ?? 'Não informado'}'),
-            ],
-            SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Volta para a página anterior
-                  },
-                  child: Text('Não Confirmar'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    print("Reciclado: $reciclado"); // Debug para verificar os dados do reciclado
-                    print("ID do documento: ${reciclado['id']}");
-                    String uid = reciclado['userId'];
-                    await confirmarReciclado(reciclado['id'], reciclado, uid);
+            Text(
+              'Confirmando reciclagem...',
+              style: TextStyle(color: Color(0xFF795548), fontWeight: FontWeight.w600),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
-                    Navigator.pop(context); // Volta para a página anterior
-                  },
-                  child: Text('Confirmar'),
+  Widget _buildDetailsView() {
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Card(
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Exibe os detalhes
+                      _buildDetailItem(
+                        icon: Icons.category,
+                        title: 'Tipo',
+                        value: widget.reciclado['tipo'] ?? 'Tipo não disponível',
+                        isImportant: true,
+                      ),
+                      _buildDetailItem(
+                        icon: Icons.scale,
+                        title: 'Quantidade',
+                        value: widget.reciclado['qtd']?.toString() ?? 'Não disponível',
+                      ),
+                      _buildDetailItem(
+                        icon: Icons.check_circle_outline,
+                        title: 'Status',
+                        value: widget.reciclado['status'] ?? 'Não informado',
+                      ),
+                      if (widget.reciclado['nome'] != null) ...[
+                        _buildDetailItem(
+                          icon: Icons.person,
+                          title: 'Usuário',
+                          value: widget.reciclado['nome'],
+                        ),
+                        _buildDetailItem(
+                          icon: Icons.credit_card,
+                          title: 'CPF',
+                          value: widget.reciclado['cpf'],
+                        ),
+                      ],
+                      if (widget.reciclado['endereco'] != null) ...[
+                        _buildDetailItem(
+                          icon: Icons.location_on,
+                          title: 'Endereço',
+                          value: 'CEP: ${widget.reciclado['endereco']['cep'] ?? 'Não informado'}\n'
+                              'Bairro: ${widget.reciclado['endereco']['bairro'] ?? 'Não informado'}',
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Não Confirmar',
+                      style: TextStyle(color: Color(0xFF795548)),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _handleConfirmation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF4CAF50),
+                      foregroundColor: Color(0xFFFFFFFF),
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text('Confirmar'),
+                  ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildDetailItem({
+    required IconData icon,
+    required String title,
+    required String value,
+    bool isImportant = false,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: Color(0xFF795548),
+            size: 24,
+          ),
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Color(0xFF795548),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: isImportant ? 18 : 16,
+                    fontWeight: isImportant ? FontWeight.bold : FontWeight.normal,
+                    color: isImportant ? Color(0xFF2E7D32) : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

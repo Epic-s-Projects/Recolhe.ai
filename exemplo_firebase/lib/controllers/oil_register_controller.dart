@@ -1,5 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../screens/administrador/home_coleta_page.dart';
 
 class OilRegisterControllers {
   int _oilAmount = 0;
@@ -22,7 +26,8 @@ class OilRegisterControllers {
   }
 
   // Adiciona dados à subcoleção 'reciclado'
-  Future<void> addRecycledData(String tipo, String status) async {
+  Future<void> addRecycledData(
+      String tipo, String status, BuildContext context) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
 
@@ -50,13 +55,31 @@ class OilRegisterControllers {
           'id': docId, // Adiciona o ID ao próprio documento
         });
 
+        // Exibe o SnackBar de sucesso
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Óleo adicionado com sucesso!'),
+            backgroundColor: Color(0xFF4CAF50), // Green success color
+          ),
+        );
 
-        print("Dados adicionados com sucesso!");
+        // Navega para a HomeColetaPage
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => HomeColetaPage()),
+              (route) => false,
+        );
       } else {
         print("Usuário não autenticado.");
       }
     } catch (e) {
-      print("Erro ao adicionar dados: $e");
+      print("Erro ao confirmar reciclado: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro ao confirmar reciclado. Tente novamente.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
     }
   }
 }
