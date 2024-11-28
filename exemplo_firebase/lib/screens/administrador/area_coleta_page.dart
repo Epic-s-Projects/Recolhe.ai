@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
-import 'package:exemplo_firebase/screens/administrador/map.dart';
 import 'package:flutter/material.dart';
 import 'detalhes_reciclado_page.dart';
 import 'home_adm_page.dart';
@@ -25,7 +24,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
     HomeAdmPage(),
     AreaColetaPage(),
     HomeColetaPage(),
-    ProfileScreenADM(),
+    const ProfileScreenADM(),
   ];
 
   @override
@@ -54,7 +53,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
 
     try {
       QuerySnapshot usersSnapshot =
-      await FirebaseFirestore.instance.collection("users").get();
+          await FirebaseFirestore.instance.collection("users").get();
 
       for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
         // Pega o nome e CPF do usuário diretamente da coleção "users"
@@ -71,7 +70,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
 
         // Busca o endereço na subcoleção "endereco"
         QuerySnapshot enderecoSnapshot =
-        await userDoc.reference.collection("endereco").get();
+            await userDoc.reference.collection("endereco").get();
 
         Map<String, dynamic>? endereco;
         if (enderecoSnapshot.docs.isNotEmpty) {
@@ -86,7 +85,8 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
             'cpf': cpf,
             'endereco': endereco,
             'userId': userId, // Inclui o ID do documento do usuário
-            'recicladoId': recicladoDoc.id, // Inclui o ID do documento do reciclado
+            'recicladoId':
+                recicladoDoc.id, // Inclui o ID do documento do reciclado
           });
         }
       }
@@ -96,8 +96,6 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
 
     return allReciclado;
   }
-
-
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -115,78 +113,88 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(user: user), // Remove qualquer botão de voltar automático
+      appBar: CustomAppBar(
+          user: user), // Remove qualquer botão de voltar automático
       body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Indicador de carregamento
+          ? const Center(
+              child: CircularProgressIndicator()) // Indicador de carregamento
           : reciclados.isEmpty
-          ? Center(
-        child: Text(
-          'Nenhum reciclado encontrado.',
-          style: TextStyle(fontSize: 18),
-        ),
-      )
-          : ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: reciclados.length,
-        itemBuilder: (context, index) {
-          final reciclado = reciclados[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetalhesRecicladoPage(reciclado: reciclado),
-                ),
-              );
-            },
-            child: Card(
-              margin: EdgeInsets.symmetric(vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                // Exibe os dados do reciclado
-                Text(
-                reciclado['tipo'] ?? 'Tipo não disponível',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                  SizedBox(height: 8),
-                  Text('Quantidade: ${reciclado['qtd'] ?? 'Não disponível'}'),
-                  SizedBox(height: 8),
-                  Text('Status: ${reciclado['status'] ?? 'Não informado'}'),
-                  SizedBox(height: 8),
-                  // Exibe o nome e CPF do usuário
-                  Text(
-                    'Usuário: ${reciclado['nome'] ?? 'Nome não disponível'}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+              ? const Center(
+                  child: Text(
+                    'Nenhum reciclado encontrado.',
+                    style: TextStyle(fontSize: 18),
                   ),
-                  Text('CPF: ${reciclado['cpf'] ?? 'CPF não informado'}'),
-                  SizedBox(height: 8),
-                  // Exibe o endereço, se disponível
-                  if (reciclado['endereco'] != null) ...[
-                Text('Endereço:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                  'Rua: ${reciclado['endereco']['cep'] ?? 'Não informado'}'),
-              Text(
-                  'Bairro: ${reciclado['endereco']['bairro'] ?? 'Não informado'}'),
-              ],
-                    Text('DocID: ${reciclado['userId'] ?? 'Não informado'}'),
-              SizedBox(height: 16),
-          ],
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: reciclados.length,
+                  itemBuilder: (context, index) {
+                    final reciclado = reciclados[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                DetalhesRecicladoPage(reciclado: reciclado),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Exibe os dados do reciclado
+                              Text(
+                                reciclado['tipo'] ?? 'Tipo não disponível',
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                  'Quantidade: ${reciclado['qtd'] ?? 'Não disponível'}'),
+                              const SizedBox(height: 8),
+                              Text(
+                                  'Status: ${reciclado['status'] ?? 'Não informado'}'),
+                              const SizedBox(height: 8),
+                              // Exibe o nome e CPF do usuário
+                              Text(
+                                'Usuário: ${reciclado['nome'] ?? 'Nome não disponível'}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                  'CPF: ${reciclado['cpf'] ?? 'CPF não informado'}'),
+                              const SizedBox(height: 8),
+                              // Exibe o endereço, se disponível
+                              if (reciclado['endereco'] != null) ...[
+                                const Text('Endereço:',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text(
+                                    'Rua: ${reciclado['endereco']['cep'] ?? 'Não informado'}'),
+                                Text(
+                                    'Bairro: ${reciclado['endereco']['bairro'] ?? 'Não informado'}'),
+                              ],
+                              Text(
+                                  'DocID: ${reciclado['userId'] ?? 'Não informado'}'),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ),
-          );
-        },
-      ),
 
-        bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 46, 50, 46),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white54,

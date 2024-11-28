@@ -27,136 +27,145 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE1C8A9),
-              Color(0xFFC59A64),
-            ],
-          ),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Logo e texto "Recolhe.ai"
-                  Column(
-                    children: [
-                      const Icon(
-                        Icons.recycling,
-                        size: 80,
-                        color: Colors.green,
-                      ),
-                      ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFF109410),
-                            Color(0xFF1AE91A),
-                          ],
-                        ).createShader(bounds),
-                        child: const Text(
-                          'Recolhe.ai',
-                          style: TextStyle(
-                            fontFamily: 'Mulish',
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Verifica se o layout está em modo paisagem ou em tela maior
+          bool isWideScreen = constraints.maxWidth > 600;
 
-                  // Campo de entrada de Email
-                  CustomTextField(
-                    controller: _emailController,
-                    icon: Icons.email,
-                    hintText: 'Email',
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Insira um email válido';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Campo de entrada de Senha
-                  CustomTextField(
-                    controller: _passwordController,
-                    icon: Icons.lock,
-                    hintText: 'Senha',
-                    isPassword: true,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Insira uma senha';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  // Link "Esqueceu sua senha?"
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'Esqueceu sua senha?',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Botão Login
-                  GradientButton(
-                    text: 'Login',
-                    onPressed: _validarLogin,
-                    textColor: Colors.white,
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Texto "Não tem uma conta? Registre-se"
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Não tem uma conta? "),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RegistroScreen(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Registre-se',
-                          style: TextStyle(
-                            color: Color(0xFF109410),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFFE1C8A9),
+                  Color(0xFFC59A64),
                 ],
               ),
             ),
-          ),
-        ),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWideScreen
+                      ? 100.0
+                      : 32.0, // Margem ajustada para telas maiores
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Logo e texto "Recolhe.ai"
+                      Column(
+                        children: [
+                          Image.asset(
+                            'assets/recycle_icon.png',
+                            width: isWideScreen
+                                ? 300
+                                : 250, // Ajuste dinâmico da largura
+                            height: isWideScreen
+                                ? 300
+                                : 250, // Ajuste dinâmico da altura
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Campo de entrada de Email
+                      CustomTextField(
+                        controller: _emailController,
+                        icon: Icons.email,
+                        hintText: 'Email',
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Insira um email válido';
+                          }
+                          return null;
+                        },
+                        errorStyle: const TextStyle(
+                          color: Colors.redAccent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Campo de entrada de Senha
+                      CustomTextField(
+                        controller: _passwordController,
+                        icon: Icons.lock,
+                        hintText: 'Senha',
+                        isPassword: true,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Insira uma senha';
+                          }
+                          return null;
+                        },
+                        errorStyle: const TextStyle(
+                          color: Colors.redAccent,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+
+                      // Link "Esqueceu sua senha?"
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {},
+                          child: const Text(
+                            'Esqueceu sua senha?',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Botão Login
+                      GradientButton(
+                        text: 'Login',
+                        onPressed: _validarLogin,
+                        textColor: Colors.white,
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Texto "Não tem uma conta? Registre-se"
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Não tem uma conta? "),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegistroScreen(),
+                                ),
+                              );
+                            },
+                            child: const Text(
+                              'Registre-se',
+                              style: TextStyle(
+                                color: Color(0xFF109410),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -257,6 +266,7 @@ class CustomTextField extends StatelessWidget {
   final bool isPassword;
   final String? Function(String?) validator;
   final List<TextInputFormatter>? inputFormatters;
+  final TextStyle errorStyle;
 
   const CustomTextField({
     Key? key,
@@ -266,15 +276,16 @@ class CustomTextField extends StatelessWidget {
     required this.validator,
     this.isPassword = false,
     this.inputFormatters,
+    required this.errorStyle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          width: 2,
+          width: 3,
           color: const Color(0xFF109410),
         ),
       ),
@@ -287,7 +298,7 @@ class CustomTextField extends StatelessWidget {
           prefixIcon: Icon(icon, color: const Color(0xFF109410)),
           hintText: hintText,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(vertical: 20),
         ),
       ),
     );
@@ -301,19 +312,19 @@ class GradientButton extends StatelessWidget {
   final Color textColor;
 
   const GradientButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.textColor = Colors.white,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 50,
+      height: 60,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(15),
         gradient: const LinearGradient(
           colors: [
             Color(0xFF109410),
@@ -327,7 +338,7 @@ class GradientButton extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
         child: Text(

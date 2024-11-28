@@ -8,10 +8,12 @@ class ModernAddressRegistrationPage extends StatefulWidget {
   const ModernAddressRegistrationPage({Key? key}) : super(key: key);
 
   @override
-  _ModernAddressRegistrationPageState createState() => _ModernAddressRegistrationPageState();
+  _ModernAddressRegistrationPageState createState() =>
+      _ModernAddressRegistrationPageState();
 }
 
-class _ModernAddressRegistrationPageState extends State<ModernAddressRegistrationPage> {
+class _ModernAddressRegistrationPageState
+    extends State<ModernAddressRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _cepController = TextEditingController();
   final TextEditingController _ruaController = TextEditingController();
@@ -23,7 +25,7 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
 
   // Modern color palette
   final Color _accentColor = const Color(0xFF4CAF50); // Earthy green
-  final Color _backgroundColor = const Color(0xFFF5F5F5); // Soft gray
+  // final Color _backgroundColor = const Color(0xFFF5F5F5); // Soft gray
 
   @override
   void initState() {
@@ -80,9 +82,11 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
+        title: const Text(
           'Atenção',
-          style: TextStyle(color:  Color.fromARGB(255, 223, 209, 186),),
+          style: TextStyle(
+            color: Color.fromARGB(255, 223, 209, 186),
+          ),
         ),
         content: Text(message),
         actions: [
@@ -121,7 +125,7 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Endereço salvo com sucesso!'),
+          content: const Text('Endereço salvo com sucesso!'),
           backgroundColor: _accentColor,
         ),
       );
@@ -151,13 +155,13 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
       ),
       floatingActionButton: _hasAddress
           ? FloatingActionButton(
-        onPressed: () => setState(() => _isEditing = !_isEditing),
-        backgroundColor: _accentColor,
-        child: Icon(
-          _isEditing ? Icons.close : Icons.edit,
-          color: Colors.white,
-        ),
-      )
+              onPressed: () => setState(() => _isEditing = !_isEditing),
+              backgroundColor: _accentColor,
+              child: Icon(
+                _isEditing ? Icons.close : Icons.edit,
+                color: Colors.white,
+              ),
+            )
           : null,
     );
   }
@@ -171,7 +175,7 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Endereço Cadastrado',
               style: TextStyle(
                 fontSize: 18,
@@ -199,12 +203,12 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
             '$label: ',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 223, 209, 186).withOpacity(0.8),
+              color: const Color.fromARGB(255, 223, 209, 186).withOpacity(0.8),
             ),
           ),
           Text(
             value,
-            style: TextStyle(color: Colors.black87),
+            style: const TextStyle(color: Colors.black87),
           ),
         ],
       ),
@@ -233,20 +237,23 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
           _buildTextField(
             controller: _ruaController,
             label: 'Rua',
-            validator: (value) => value?.isEmpty == true ? 'Rua obrigatória' : null,
+            validator: (value) =>
+                value?.isEmpty == true ? 'Rua obrigatória' : null,
           ),
           const SizedBox(height: 15),
           _buildTextField(
             controller: _bairroController,
             label: 'Bairro',
-            validator: (value) => value?.isEmpty == true ? 'Bairro obrigatório' : null,
+            validator: (value) =>
+                value?.isEmpty == true ? 'Bairro obrigatório' : null,
           ),
           const SizedBox(height: 15),
           _buildTextField(
             controller: _numeroController,
             label: 'Número',
             keyboardType: TextInputType.number,
-            validator: (value) => value?.isEmpty == true ? 'Número obrigatório' : null,
+            validator: (value) =>
+                value?.isEmpty == true ? 'Número obrigatório' : null,
           ),
           const SizedBox(height: 25),
           ElevatedButton(
@@ -280,9 +287,13 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
       keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Color.fromARGB(255, 223, 209, 186),),
+        labelStyle: const TextStyle(
+          color: Color.fromARGB(255, 223, 209, 186),
+        ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 223, 209, 186),),
+          borderSide: const BorderSide(
+            color: Color.fromARGB(255, 223, 209, 186),
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         focusedBorder: OutlineInputBorder(
@@ -290,7 +301,7 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
           borderRadius: BorderRadius.circular(12),
         ),
         errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
           borderRadius: BorderRadius.circular(12),
         ),
       ),

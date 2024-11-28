@@ -18,24 +18,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return AppBar(
-      backgroundColor: Colors.green,
+      backgroundColor: const Color.fromARGB(0, 76, 175, 79),
       elevation: 0,
       leading: showBackButton
           ? IconButton(
-        icon: Icon(
-          Icons.arrow_back,
-          color: const Color(0xFF38783B), // Verde suave
-          size: screenWidth * 0.06,
-        ),
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ),
-          );// Volta para a página anterior
-        },
-      )
+              icon: Icon(
+                Icons.arrow_back,
+                color: const Color(0xFF38783B), // Verde suave
+                size: screenWidth * 0.06,
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                ); // Volta para a página anterior
+              },
+            )
           : null, // Sem botão caso `showBackButton` seja falso
       title: Text(
         'Olá, ${user.name ?? 'Usuário'}',
@@ -62,18 +62,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               backgroundColor: Colors.grey.shade200,
               child: (user.imagem != null && user.imagem!.isNotEmpty)
                   ? ClipOval(
-                child: Image.network(
-                  user.imagem!,
-                  fit: BoxFit.cover,
-                  width: screenWidth * 0.12,
-                  height: screenWidth * 0.12,
-                ),
-              )
+                      child: Image.network(
+                        user.imagem!,
+                        fit: BoxFit.cover,
+                        width: screenWidth * 0.12,
+                        height: screenWidth * 0.12,
+                      ),
+                    )
                   : Icon(
-                Icons.person,
-                size: screenWidth * 0.06,
-                color: Colors.grey.shade600,
-              ),
+                      Icons.person,
+                      size: screenWidth * 0.06,
+                      color: Colors.grey.shade600,
+                    ),
             ),
           ),
         ),

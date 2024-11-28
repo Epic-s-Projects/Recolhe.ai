@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/controllers/app_bar.dart';
-import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +24,10 @@ class _HomePageState extends State<HomePage> {
 
   // Lista de páginas para alternância na barra de navegação
   final List<Widget> _pages = [
-    HomePage(),
-    HistoricScreenView(),
+    const HomePage(),
+    const HistoricScreenView(),
     RankingPage(),
-    ProfileScreen(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -94,11 +93,11 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: screenHeight * 0.03),
+              SizedBox(height: screenHeight * 0.02),
               _buildWeekDays(screenWidth),
-              SizedBox(height: screenHeight * 0.03),
+              SizedBox(height: screenHeight * 0.02),
               SizedBox(
-                height: screenHeight * 0.6,
+                height: screenHeight * 0.69,
                 child: Center(
                   child: showCards
                       ? _buildCards(screenWidth)
@@ -144,7 +143,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         Image.asset(
           'assets/banner_inicial.png',
-          height: screenHeight * 0.4,
+          height: screenHeight * 0.2,
           fit: BoxFit.cover,
         ),
         SizedBox(height: screenHeight * 0.02),
@@ -323,7 +322,7 @@ class _HomePageState extends State<HomePage> {
                   return Card(
                     shadowColor: const Color.fromARGB(255, 0, 0, 0),
                     color: const Color.fromRGBO(218, 194, 162, 1),
-                    margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
+                    margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -335,9 +334,9 @@ class _HomePageState extends State<HomePage> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
-                              'assets/folhas2.png',
-                              width: screenWidth * 0.2,
-                              height: screenWidth * 0.2,
+                              'assets/img_product.png',
+                              width: screenWidth * 0.09,
+                              height: screenWidth * 0.09,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -370,7 +369,6 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ),
-        const SizedBox(height: 20),
         ElevatedButton.icon(
           onPressed: () {
             Navigator.push(
@@ -382,7 +380,7 @@ class _HomePageState extends State<HomePage> {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromARGB(149, 5, 23, 5),
-            padding: const EdgeInsets.symmetric(horizontal: 40),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),

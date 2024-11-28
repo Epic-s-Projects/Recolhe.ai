@@ -96,10 +96,11 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                               width: 48,
                               height: 48,
                               color: Colors.grey[300],
-                              child: Icon(Icons.image, color: Colors.grey),
+                              child:
+                                  const Icon(Icons.image, color: Colors.grey),
                             ),
                             title: Text(
-                              showProductInfo ? 'Produto' : _ruaController.text,
+                              showProductInfo ? 'Produto' : 'CASA',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -107,7 +108,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
                             subtitle: Text(
                               showProductInfo
                                   ? 'DATA DE Criação\nDATA DE COLETA'
-                                  : "${_numeroController.text}/n${_bairroController.text}",
+                                  : 'Endereço\nPessoa',
                             ),
                             trailing:
                                 const Icon(Icons.close, color: Colors.black),

@@ -16,6 +16,7 @@ dependencies:
   geocoding: ^3.0.0
   flutter_map: ^4.0.0
   latlong2: ^0.8.1
+  flutter_launcher_icons: ^0.13.0
   flutter:
     sdk: flutter
   intl: ^0.18.1
@@ -28,8 +29,16 @@ dev_dependencies:
   flutter_lints: ^3.0.0
 
 
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/recycle_icon.png" # Substitua pelo caminho do seu ícone
+  adaptive_icon_background: "#FFFFFF"   # Apenas para Android
+  adaptive_icon_foreground: "assets/recycle_icon.png" # Opcional para ícones adaptáveis
+  
 flutter:
   uses-material-design: true
 
   assets:
     - assets/
+

@@ -6,7 +6,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'profile_adm_page.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -170,7 +169,7 @@ class _MapPageState extends State<MapPage> {
                 TileLayer(
                   urlTemplate:
                       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: ['a', 'b', 'c'],
+                  subdomains: const ['a', 'b', 'c'],
                 ),
                 if (routePoints.isNotEmpty)
                   PolylineLayer(
@@ -186,7 +185,7 @@ class _MapPageState extends State<MapPage> {
                   markers: userPoints
                       .map((point) => Marker(
                             point: point,
-                            builder: (context) => Icon(
+                            builder: (context) => const Icon(
                               Icons.location_pin,
                               color: Colors.red,
                               size: 30,
@@ -199,7 +198,7 @@ class _MapPageState extends State<MapPage> {
           ),
           ElevatedButton(
             onPressed: _fetchCoordinatesAndDrawRoute,
-            child: Text("Atualizar Rotas"),
+            child: const Text("Atualizar Rotas"),
           ),
         ],
       ),
