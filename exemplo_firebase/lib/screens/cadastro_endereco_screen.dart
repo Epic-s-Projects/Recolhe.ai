@@ -1,194 +1,308 @@
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
-class CadastroEnderecoPage extends StatefulWidget {
-  const CadastroEnderecoPage({super.key});
+class ModernAddressRegistrationPage extends StatefulWidget {
+  const ModernAddressRegistrationPage({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _CadastroEnderecoPageState createState() => _CadastroEnderecoPageState();
+  _ModernAddressRegistrationPageState createState() =>
+      _ModernAddressRegistrationPageState();
 }
 
-class _CadastroEnderecoPageState extends State<CadastroEnderecoPage> {
+class _ModernAddressRegistrationPageState
+    extends State<ModernAddressRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
-
-  // Controladores de texto
   final TextEditingController _cepController = TextEditingController();
   final TextEditingController _ruaController = TextEditingController();
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
-  // final TextEditingController _longitudeController = TextEditingController();
-  // final TextEditingController _latitudeController = TextEditingController();
 
-  // Método para buscar endereço pelo CEP
-  Future<void> _buscarEnderecoPorCEP(String cep) async {
+  bool _hasAddress = false;
+  bool _isEditing = false;
+
+  final Color _accentColor = const Color(0xFF4CAF50);
+  final Color _backgroundColor = const Color(0xFFF5F5F5);
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchExistingAddress();
+  }
+
+  Future<void> _fetchExistingAddress() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('endereco')
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+        setState(() {
+          _hasAddress = true;
+          _cepController.text = data['cep'] ?? '';
+          _ruaController.text = data['rua'] ?? '';
+          _bairroController.text = data['bairro'] ?? '';
+          _numeroController.text = data['numero'] ?? '';
+        });
+      }
+    } catch (e) {
+      _showErrorDialog('Erro ao carregar endereço');
+    }
+  }
+
+  Future<void> _fetchAddressByCEP(String cep) async {
     final url = Uri.parse("https://viacep.com.br/ws/$cep/json/");
 
     try {
       final response = await http.get(url);
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
-        if (data.containsKey('erro')) {
-          _mostrarMensagemErro("CEP não encontrado!");
-        } else {
-          // Atualiza os campos com os dados da API
+        if (!data.containsKey('erro')) {
           setState(() {
             _ruaController.text = data['logradouro'] ?? '';
             _bairroController.text = data['bairro'] ?? '';
           });
         }
-      } else {
-        _mostrarMensagemErro("Erro ao buscar o endereço.");
       }
     } catch (e) {
-      _mostrarMensagemErro("Erro na conexão: $e");
+      _showErrorDialog('Erro ao buscar endereço');
     }
   }
 
-  // Método para exibir mensagens de erro
-  void _mostrarMensagemErro(String mensagem) {
+  void _showErrorDialog(String message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Erro"),
-        content: Text(mensagem),
+        title: const Text(
+          'Atenção',
+          style: TextStyle(color: Colors.red),
+        ),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("OK"),
+            child: Text(
+              'OK',
+              style: TextStyle(color: _accentColor),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _salvarDadosNoFirebase() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final endereco = {
-        "cep": _cepController.text,
-        "rua": _ruaController.text,
-        "bairro": _bairroController.text,
-        "numero": _numeroController.text,
-      };
+  Future<void> _saveAddress() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
-      try {
-        // Obtém o UID do usuário autenticado
-        User? user = FirebaseAuth.instance.currentUser;
-        if (user != null) {
-          String uid = user.uid; // Pega o UID do usuário autenticado
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
 
-          // Salva o endereço na subcoleção 'endereco' dentro do documento do usuário
-          await FirebaseFirestore.instance
-              .collection("users")
-              .doc(uid) // Usa o UID do usuário autenticado
-              .collection("endereco") // Subcoleção 'endereco'
-              .add(endereco); // Adiciona os dados
+    final addressData = {
+      "cep": _cepController.text,
+      "rua": _ruaController.text,
+      "bairro": _bairroController.text,
+      "numero": _numeroController.text,
+    };
 
-          // Exibe uma mensagem de sucesso
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Endereço salvo com sucesso!")),
-          );
+    try {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUser.uid)
+          .collection("endereco")
+          .doc("main_address")
+          .set(addressData);
 
-          // Limpa os campos após salvar
-          _cepController.clear();
-          _ruaController.clear();
-          _bairroController.clear();
-          _numeroController.clear();
-        } else {
-          // Se não estiver autenticado, exibe uma mensagem
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Usuário não autenticado.")),
-          );
-        }
-      } catch (e) {
-        // Exibe um erro se algo der errado
-        _mostrarMensagemErro("Erro ao salvar no Firebase: $e");
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Endereço salvo com sucesso!'),
+          backgroundColor: _accentColor,
+        ),
+      );
+
+      setState(() {
+        _hasAddress = true;
+        _isEditing = false;
+      });
+    } catch (e) {
+      _showErrorDialog('Erro ao salvar endereço');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
-        title: const Text("Cadastro de Endereço"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'Cadastro de Endereço',
+          style: TextStyle(color: Colors.black),
+        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _cepController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "CEP",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) return "Informe o CEP";
-                  if (value.length != 8) return "O CEP deve ter 8 dígitos";
-                  return null;
-                },
-                onChanged: (value) {
-                  if (value.length == 8) {
-                    _buscarEnderecoPorCEP(value);
-                  }
-                },
+        padding: const EdgeInsets.all(20),
+        child: _hasAddress && !_isEditing
+            ? _buildAddressView()
+            : _buildAddressForm(),
+      ),
+      floatingActionButton: _hasAddress
+          ? FloatingActionButton(
+        onPressed: () => setState(() => _isEditing = !_isEditing),
+        backgroundColor: _accentColor,
+        child: Icon(
+          _isEditing ? Icons.close : Icons.edit,
+          color: Colors.white,
+        ),
+      )
+          : null,
+    );
+  }
+
+  Widget _buildAddressView() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Endereço Cadastrado',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _ruaController,
-                decoration: const InputDecoration(
-                  labelText: "Rua",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Informe a rua" : null,
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _bairroController,
-                decoration: const InputDecoration(
-                  labelText: "Bairro",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Informe o bairro" : null,
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                controller: _numeroController,
-                decoration: const InputDecoration(
-                  labelText: "Número",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? "Informe o número" : null,
-              ),
-              const SizedBox(height: 24.0),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _salvarDadosNoFirebase,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12.0, horizontal: 24.0),
-                  ),
-                  child: const Text(
-                    "Salvar",
-                    style: TextStyle(fontSize: 16.0),
-                  ),
-                ),
-              ),
-            ],
+            ),
+            const Divider(),
+            _buildAddressDetailRow(Icons.location_on, 'CEP', _cepController.text),
+            _buildAddressDetailRow(Icons.streetview, 'Rua', _ruaController.text),
+            _buildAddressDetailRow(Icons.location_city, 'Bairro', _bairroController.text),
+            _buildAddressDetailRow(Icons.home, 'Número', _numeroController.text),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddressDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Icon(icon, color: _accentColor),
+          const SizedBox(width: 10),
+          Text(
+            '$label: ',
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
+          Flexible(
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.black87),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddressForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          _buildTextField(
+            controller: _cepController,
+            label: 'CEP',
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) return 'CEP obrigatório';
+              if (value.length != 8) return 'CEP inválido';
+              return null;
+            },
+            onChanged: (value) {
+              if (value.length == 8) _fetchAddressByCEP(value);
+            },
+          ),
+          const SizedBox(height: 15),
+          _buildTextField(
+            controller: _ruaController,
+            label: 'Rua',
+            validator: (value) =>
+            value?.isEmpty == true ? 'Rua obrigatória' : null,
+          ),
+          const SizedBox(height: 15),
+          _buildTextField(
+            controller: _bairroController,
+            label: 'Bairro',
+            validator: (value) =>
+            value?.isEmpty == true ? 'Bairro obrigatório' : null,
+          ),
+          const SizedBox(height: 15),
+          _buildTextField(
+            controller: _numeroController,
+            label: 'Número',
+            keyboardType: TextInputType.number,
+            validator: (value) =>
+            value?.isEmpty == true ? 'Número obrigatório' : null,
+          ),
+          const SizedBox(height: 25),
+          ElevatedButton(
+            onPressed: _saveAddress,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _accentColor,
+              padding:
+              const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Text(
+              'Salvar Endereço',
+              style: TextStyle(fontSize: 16, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+    ValueChanged<String>? onChanged,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: validator,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: _accentColor),
         ),
       ),
     );

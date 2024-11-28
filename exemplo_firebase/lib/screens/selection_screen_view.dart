@@ -24,9 +24,25 @@ class SelectionScreenView extends StatelessWidget {
               ),
             ),
           ),
+
+          Positioned(
+            top: 40,
+            left: 10,
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.green,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+
           Positioned(
             top: 50,
-            left: 20,
+            left: 50,
             child: Text(
               'Olá, ${user.name}!',
               style: const TextStyle(
@@ -95,36 +111,6 @@ class SelectionScreenView extends StatelessWidget {
         ],
       ),
       // Barra de navegação inferior
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor:
-            Colors.black.withOpacity(0.8), // Fundo preto transparente
-        type: BottomNavigationBarType
-            .fixed, // Garante que todos os ícones estejam visíveis
-        selectedItemColor: Colors.green, // Cor do ícone selecionado
-        unselectedItemColor: Colors.white, // Cor dos ícones não selecionados
-        showSelectedLabels: false, // Remove o rótulo dos ícones
-        showUnselectedLabels: false, // Remove o rótulo dos ícones
-        iconSize: 45, // Tamanho dos ícones ajustável pela variável
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '', // Rótulo vazio
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '', // Rótulo vazio
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: '', // Rótulo vazio
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.card_giftcard),
-            label: '', // Rótulo vazio
-          ),
-        ],
-        onTap: (index) => controller.handleBottomNavTap(context, index),
-      ),
     );
   }
 }

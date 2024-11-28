@@ -16,6 +16,7 @@ class UserSession {
   String? email;
   String? imagem;
   String? userId; // Variável para armazenar o ID do documento
+  String? doc_id;
 
   // Método para buscar os dados do Firestore
   Future<void> fetchUserData() async {
@@ -31,9 +32,10 @@ class UserSession {
 
       if (userDoc.exists) {
         final data = userDoc.data();
-        name = data?['name'];
+        name = data?['nome'];
         cpf = data?['cpf'];
         imagem = data?['imagem'];
+        doc_id = data?['doc_id'];
 
         // Atribuindo o ID do documento
         userId = userDoc.id;
