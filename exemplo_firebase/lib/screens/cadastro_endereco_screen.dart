@@ -8,10 +8,12 @@ class ModernAddressRegistrationPage extends StatefulWidget {
   const ModernAddressRegistrationPage({Key? key}) : super(key: key);
 
   @override
-  _ModernAddressRegistrationPageState createState() => _ModernAddressRegistrationPageState();
+  _ModernAddressRegistrationPageState createState() =>
+      _ModernAddressRegistrationPageState();
 }
 
-class _ModernAddressRegistrationPageState extends State<ModernAddressRegistrationPage> {
+class _ModernAddressRegistrationPageState
+    extends State<ModernAddressRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _cepController = TextEditingController();
   final TextEditingController _ruaController = TextEditingController();
@@ -21,9 +23,8 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
   bool _hasAddress = false;
   bool _isEditing = false;
 
-  // Modern color palette
-  final Color _accentColor = const Color(0xFF4CAF50); // Earthy green
-  final Color _backgroundColor = const Color(0xFFF5F5F5); // Soft gray
+  final Color _accentColor = const Color(0xFF4CAF50);
+  final Color _backgroundColor = const Color(0xFFF5F5F5);
 
   @override
   void initState() {
@@ -80,9 +81,9 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
+        title: const Text(
           'Atenção',
-          style: TextStyle(color:  Color.fromARGB(255, 223, 209, 186),),
+          style: TextStyle(color: Colors.red),
         ),
         content: Text(message),
         actions: [
@@ -116,12 +117,12 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
           .collection("users")
           .doc(currentUser.uid)
           .collection("endereco")
-          .doc(_hasAddress ? null : null)
+          .doc("main_address")
           .set(addressData);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Endereço salvo com sucesso!'),
+          content: const Text('Endereço salvo com sucesso!'),
           backgroundColor: _accentColor,
         ),
       );
@@ -138,10 +139,16 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 223, 209, 186),
+      backgroundColor: _backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        title: const Text(
+          'Cadastro de Endereço',
+          style: TextStyle(color: Colors.black),
+        ),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -171,40 +178,41 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Endereço Cadastrado',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 223, 209, 186),
               ),
             ),
-            const SizedBox(height: 15),
-            _buildAddressDetailRow('CEP', _cepController.text),
-            _buildAddressDetailRow('Rua', _ruaController.text),
-            _buildAddressDetailRow('Bairro', _bairroController.text),
-            _buildAddressDetailRow('Número', _numeroController.text),
+            const Divider(),
+            _buildAddressDetailRow(Icons.location_on, 'CEP', _cepController.text),
+            _buildAddressDetailRow(Icons.streetview, 'Rua', _ruaController.text),
+            _buildAddressDetailRow(Icons.location_city, 'Bairro', _bairroController.text),
+            _buildAddressDetailRow(Icons.home, 'Número', _numeroController.text),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAddressDetailRow(String label, String value) {
+  Widget _buildAddressDetailRow(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
+          Icon(icon, color: _accentColor),
+          const SizedBox(width: 10),
           Text(
             '$label: ',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 223, 209, 186).withOpacity(0.8),
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          Text(
-            value,
-            style: TextStyle(color: Colors.black87),
+          Flexible(
+            child: Text(
+              value,
+              style: const TextStyle(color: Colors.black87),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
@@ -233,34 +241,38 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
           _buildTextField(
             controller: _ruaController,
             label: 'Rua',
-            validator: (value) => value?.isEmpty == true ? 'Rua obrigatória' : null,
+            validator: (value) =>
+            value?.isEmpty == true ? 'Rua obrigatória' : null,
           ),
           const SizedBox(height: 15),
           _buildTextField(
             controller: _bairroController,
             label: 'Bairro',
-            validator: (value) => value?.isEmpty == true ? 'Bairro obrigatório' : null,
+            validator: (value) =>
+            value?.isEmpty == true ? 'Bairro obrigatório' : null,
           ),
           const SizedBox(height: 15),
           _buildTextField(
             controller: _numeroController,
             label: 'Número',
             keyboardType: TextInputType.number,
-            validator: (value) => value?.isEmpty == true ? 'Número obrigatório' : null,
+            validator: (value) =>
+            value?.isEmpty == true ? 'Número obrigatório' : null,
           ),
           const SizedBox(height: 25),
           ElevatedButton(
             onPressed: _saveAddress,
             style: ElevatedButton.styleFrom(
               backgroundColor: _accentColor,
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
             child: const Text(
               'Salvar Endereço',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16, color: Colors.white),
             ),
           ),
         ],
@@ -273,29 +285,26 @@ class _ModernAddressRegistrationPageState extends State<ModernAddressRegistratio
     required String label,
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
-    void Function(String)? onChanged,
+    ValueChanged<String>? onChanged,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: TextStyle(color: Color.fromARGB(255, 223, 209, 186),),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 223, 209, 186),),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: _accentColor, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
       validator: validator,
       onChanged: onChanged,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: _accentColor),
+        ),
+      ),
     );
   }
 }

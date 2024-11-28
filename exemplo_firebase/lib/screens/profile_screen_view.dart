@@ -1,9 +1,11 @@
-import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
 import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/service/auth_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import 'cadastro_endereco_screen.dart';
 import 'historic_screen_view.dart';
 import 'intern_screen_view.dart';
 
@@ -17,15 +19,57 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final AuthService _authService = AuthService();
   final user = UserSession();
-  int _selectedIndex = 3; // Define o índice inicial para esta página
+  int _selectedIndex = 3;
+  Map<String, String> _address = {};
 
-  // Lista de páginas para alternância na barra de navegação
-  final List<Widget> _pages = [
-    HomePage(),
-    HistoricScreenView(),
-    RankingPage(),
-    ProfileScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchAddress();
+  }
+
+  Future<void> _fetchAddress() async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return;
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('endereco')
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+        setState(() {
+          _address = {
+            'cep': data['cep'] ?? 'CEP não informado',
+            'rua': data['rua'] ?? 'Rua não informada',
+            'bairro': data['bairro'] ?? 'Bairro não informado',
+            'numero': data['numero'] ?? 'Número não informado',
+          };
+        });
+      } else {
+        setState(() {
+          _address = {
+            'cep': 'Endereço não cadastrado',
+            'rua': '',
+            'bairro': '',
+            'numero': '',
+          };
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _address = {
+          'cep': 'Erro ao carregar endereço',
+          'rua': '',
+          'bairro': '',
+          'numero': '',
+        };
+      });
+    }
+  }
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -39,6 +83,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
+
+  final List<Widget> _pages = [
+    HomePage(),
+    HistoricScreenView(),
+    RankingPage(),
+    ProfileScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Profile Avatar with Edit Option
+              // Avatar
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -84,14 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: IconButton(
                         icon: Icon(Icons.edit, color: Colors.white, size: 20),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ModernAddressRegistrationPage(),
-                            ),
-                          );// Volta para a página anterior
-                        },
+                        onPressed: () {},
                       ),
                     ),
                   ),
@@ -99,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Name with Edit Option
+              // Nome e Botão Editar
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -113,13 +157,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(width: 8),
                   IconButton(
                     icon: Icon(Icons.edit, color: Colors.green.shade700, size: 20),
-                    onPressed: (){}
+                    onPressed: () {},
                   ),
                 ],
               ),
               const SizedBox(height: 24),
 
-              // Profile Information Cards
+              // Informações de Perfil
               _buildInfoCard(
                 icon: Icons.email,
                 title: 'E-mail',
@@ -130,15 +174,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: 'CPF',
                 content: user.cpf!,
               ),
-              _buildInfoCard(
+              _buildAddressCard(
+                context: context,
                 icon: Icons.location_on,
                 title: 'Endereço',
-                content: 'R. Catatu dos Santos\nBarbados, 1090\n13486-229',
+                content:
+                '${_address['rua']}, ${_address['numero']}\n${_address['bairro']}\nCEP: ${_address['cep']}',
               ),
 
               const SizedBox(height: 32),
 
-              // Sign Out Button
+              // Botão Sair
               ElevatedButton(
                 onPressed: () => _authService.signOut(context),
                 style: ElevatedButton.styleFrom(
@@ -224,6 +270,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: Colors.grey.shade800,
             fontSize: 16,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddressCard({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: Icon(Icons.location_on, color: Colors.green.shade700, size: 32),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.green.shade700,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          content,
+          style: TextStyle(
+            color: Colors.grey.shade800,
+            fontSize: 16,
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.edit, color: Colors.green.shade700, size: 20),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ModernAddressRegistrationPage(),
+              ),
+            );
+          },
         ),
       ),
     );
