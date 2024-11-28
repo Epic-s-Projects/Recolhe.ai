@@ -1,5 +1,6 @@
 import 'package:exemplo_firebase/controllers/historic_controller.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:exemplo_firebase/screens/profile_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +18,28 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
   List<Map<String, dynamic>> historicData = [];
   bool isLoading = true;
   final user = UserSession();
-  int _selectedIndex = 0;
+  int _selectedIndex = 1; // Define o índice inicial para esta página
+
+  // Lista de páginas para alternância na barra de navegação
+  final List<Widget> _pages = [
+    HomePage(),
+    HistoricScreenView(),
+    RankingPage(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -244,6 +266,33 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, size: 40),
+            label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history, size: 40),
+            label: 'Histórico',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.checklist, size: 40),
+            label: 'Pontuação',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 40),
+            label: 'Perfil',
+          ),
+        ],
+      ),
     );
+
   }
 }

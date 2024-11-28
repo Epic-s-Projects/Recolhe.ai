@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
-import 'home_coleta_page.dart';
+import 'package:exemplo_firebase/service/auth_service.dart';
+
+import '../../controllers/user_data.dart';
 import 'area_coleta_page.dart';
 import 'home_adm_page.dart';
+import 'home_coleta_page.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class ProfileScreenADM extends StatefulWidget {
+
+  const ProfileScreenADM({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ProfileScreenADM> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  int _selectedIndex = 3; // Índice inicial para a aba "Perfil"
+class _ProfileScreenState extends State<ProfileScreenADM> {
+  final user = UserSession();
+  AuthService _authService = AuthService();
+  int _selectedIndex = 3;
 
   final List<Widget> _pages = [
-    HomeAdmPage(), // Página inicial
-    AreaColetaPage(), // Página de Área de Coleta
-    HomeColetaPage(), // Página "Ver Itens"
-    ProfileScreen(), // Página de Perfil
+    HomeAdmPage(),
+    AreaColetaPage(),
+    HomeColetaPage(),
+    ProfileScreenADM(),
   ];
+
+
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -35,63 +43,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Obter as dimensões da tela
+    double screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    double screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFE6BEA8), // Background da página principal
-              ),
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  CircleAvatar(
-                    radius: 90,
-                    backgroundColor: Colors.white,
-                    child: const Icon(Icons.person,
-                        size: 50, color: Color(0xFF7B2CBF)),
+      extendBodyBehindAppBar: true, // Faz o AppBar sobrepor o conteúdo
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/background.png'), // Caminho da imagem
+            fit: BoxFit.cover, // Faz a imagem ocupar toda a tela
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0), // Garantir que o conteúdo tenha espaçamento
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center, // Centraliza os elementos
+              children: [
+                const SizedBox(height: 80), // Espaço para o AppBar
+                // Avatar e Nome
+                CircleAvatar(
+                  radius: screenWidth * 0.2, // Tamanho do avatar responsivo
+                  backgroundColor: Colors.white,
+                  child: user.imagem != null && user.imagem!.isNotEmpty
+                      ? ClipOval(
+                    child: Image.network(
+                      user.imagem!,
+                      fit: BoxFit.cover,
+                      width: screenWidth * 0.4, // Responsivo
+                      height: screenWidth * 0.4, // Responsivo
+                    ),
+                  )
+                      : const Icon(
+                    Icons.person,
+                    size: 50,
+                    color: Color(0xFF7B2CBF),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "João Silva",
+                ),
+                Text(
+                  user.name!,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.08, // Responsivo
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+                // Informações com ícones
+                infoTile(Icons.email, user.email!),
+                infoTile(Icons.person, user.cpf!),
+                infoTile(
+                  Icons.location_on,
+                  'R. Catatu dos Santos\nBarbados\n1090\n13486-229',
+                ),
+                const SizedBox(height: 20), // Espaçamento antes do botão
+                ElevatedButton(
+                  onPressed: () async {
+                    await _authService.signOut(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.2,
+                      vertical: screenHeight * 0.02,
+                    ),
+                  ),
+                  child: const Text(
+                    'Sair do aplicativo',
                     style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: Colors.white,
+                      fontSize: 22,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  infoTile(Icons.email, "joao.silva@email.com"),
-                  infoTile(Icons.person, "123.456.789-00"),
-                  infoTile(Icons.location_on,
-                      'R. Catatu dos Santos\nBarbados\n1090\n13486-229'),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/login', (route) => false);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 80, vertical: 20),
-                    ),
-                    child: const Text(
-                      'Sair do aplicativo',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -125,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget infoTile(IconData icon, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Row(
         children: [
           Icon(icon, color: Colors.green, size: 50),
@@ -134,7 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                color: Colors.grey.shade800,
+                color:
+                Colors.grey.shade800.withOpacity(0.8), // Opacidade no fundo
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -144,8 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 25),
-          Icon(Icons.edit, color: Colors.grey),
+          const Icon(Icons.edit, color: Colors.grey),
         ],
       ),
     );

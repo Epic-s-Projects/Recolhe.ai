@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/screens/cadastro_endereco_screen.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
+import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:flutter/material.dart';
 import '../controllers/user_data.dart';
 import 'profile_screen_view.dart';
@@ -17,9 +18,31 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool showCards = false; // Controle para exibir imagem ou cards
   final user = UserSession();
-  int _selectedIndex = 0; // Para o BottomNavigationBar
   DateTime selectedDate = DateTime.now(); // Data selecionada no calendário
   bool isCalendarExpanded = false; // Estado do calendário expandido
+
+  int _selectedIndex = 0; // Define o índice inicial para esta página
+
+  // Lista de páginas para alternância na barra de navegação
+  final List<Widget> _pages = [
+    HomePage(),
+    HistoricScreenView(),
+    RankingPage(),
+    ProfileScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -64,10 +87,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
-      appBar: (CustomAppBar(
-        user: UserSession(),
-        showBackButton: true,
-      )),
+      appBar: CustomAppBar(user: UserSession(), showBackButton: true),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
@@ -89,43 +109,31 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
-
-  void _onBottomNavigationTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        break;
-      case 1:
-        _navigateToProfile();
-        break;
-      case 2:
-        _navigateToSelectionScreen();
-        break;
-      case 3:
-        break;
-    }
-  }
-
-  void _navigateToProfile() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ProfileScreen(),
-      ),
-    );
-  }
-
-  void _navigateToSelectionScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SelectionScreenView(),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, size: 40),
+            label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history, size: 40),
+            label: 'Histórico',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.checklist, size: 40),
+            label: 'Pontuação',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 40),
+            label: 'Perfil',
+          ),
+        ],
       ),
     );
   }
@@ -291,6 +299,7 @@ class _HomePageState extends State<HomePage> {
                 .collection('users')
                 .doc(user.userId)
                 .collection('reciclado')
+                .where('status', isEqualTo: 'Em processo')
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -311,24 +320,8 @@ class _HomePageState extends State<HomePage> {
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final data = docs[index].data() as Map<String, dynamic>;
-                  final timestamp = data['timestamp'] != null
-                      ? DateTime.fromMillisecondsSinceEpoch(
-                          data['timestamp'].millisecondsSinceEpoch)
-                      : null;
-
-                  final formattedDateDay = timestamp != null
-                      ? timestamp.day.toString().padLeft(2, '0')
-                      : '??';
-
-                  final formattedDateMonthYear = timestamp != null
-                      ? '${_getMonthName(timestamp.month)} ${timestamp.year}'
-                      : 'Data Indisponível';
-
-                  final status = data['status'] ?? 'Não Iniciado';
-                  final progressColor = _getProgressColor(status);
-                  final progressValue = _getProgressValue(status);
-
                   return Card(
+                    shadowColor: const Color.fromARGB(255, 0, 0, 0),
                     color: const Color.fromRGBO(218, 194, 162, 1),
                     margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
                     shape: RoundedRectangleBorder(
@@ -336,19 +329,19 @@ class _HomePageState extends State<HomePage> {
                     ),
                     elevation: 5,
                     child: Padding(
-                      padding: EdgeInsets.all(screenWidth * 0.05),
+                      padding: EdgeInsets.all(screenWidth * 0.04),
                       child: Row(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(10),
                             child: Image.asset(
                               'assets/folhas2.png',
-                              width: screenWidth * 0.25,
-                              height: screenWidth * 0.25,
+                              width: screenWidth * 0.2,
+                              height: screenWidth * 0.2,
                               fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(width: screenWidth * 0.04),
+                          SizedBox(width: screenWidth * 0.03),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,77 +349,14 @@ class _HomePageState extends State<HomePage> {
                                 Text(
                                   'Tipo: ${data['tipo'] ?? 'N/A'}',
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.05,
+                                    fontSize: screenWidth * 0.06,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
                                   ),
                                 ),
                                 SizedBox(height: screenWidth * 0.02),
-                                Row(
-                                  children: [
-                                    Text(
-                                      '${data['qtd'] ?? '0'}',
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.06,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      'ML',
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.04,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: screenWidth * 0.02),
-                                Row(
-                                  children: [
-                                    Text(
-                                      formattedDateDay,
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.06,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Flexible(
-                                      child: Text(
-                                        formattedDateMonthYear,
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.04,
-                                          color: Colors.black54,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: screenWidth * 0.03),
-                                Column(
-                                  children: [
-                                    Text(
-                                      status,
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.045,
-                                        fontWeight: FontWeight.bold,
-                                        color: progressColor,
-                                      ),
-                                    ),
-                                    SizedBox(height: screenWidth * 0.02),
-                                    LinearProgressIndicator(
-                                      value: progressValue,
-                                      color: progressColor,
-                                      backgroundColor: const Color.fromARGB(
-                                          255, 220, 220, 220),
-                                      minHeight: screenWidth * 0.02,
-                                    ),
-                                  ],
+                                Text(
+                                  'Quantidade: ${data['qtd'] ?? 'N/A'}',
+                                  style: const TextStyle(fontSize: 14),
                                 ),
                               ],
                             ),
@@ -462,120 +392,6 @@ class _HomePageState extends State<HomePage> {
             'Realize sua coleta',
             style: TextStyle(fontSize: 25, color: Colors.white),
           ),
-        ),
-      ],
-    );
-  }
-
-  Color _getProgressColor(String status) {
-    switch (status) {
-      case 'Em Processo':
-        return Colors.amber;
-      case 'Concluído':
-        return Colors.green;
-      default:
-        return Colors.blue;
-    }
-  }
-
-  double _getProgressValue(String status) {
-    switch (status) {
-      case 'Em Processo':
-        return 0.5;
-      case 'Concluído':
-        return 1.0;
-      default:
-        return 0.0;
-    }
-  }
-
-  String _getMonthName(int month) {
-    const months = [
-      'Janeiro',
-      'Fevereiro',
-      'Março',
-      'Abril',
-      'Maio',
-      'Junho',
-      'Julho',
-      'Agosto',
-      'Setembro',
-      'Outubro',
-      'Novembro',
-      'Dezembro'
-    ];
-    return months[month - 1];
-  }
-
-  BottomNavigationBar _buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      backgroundColor: const Color.fromARGB(255, 223, 209, 186),
-      // Fundo da barra
-      currentIndex: _selectedIndex,
-      // Índice selecionado
-      selectedItemColor: const Color(0xFF38803B),
-      // Cor do item selecionado
-      unselectedItemColor: Colors.black54,
-      // Cor dos itens não selecionados
-      onTap: (index) {
-        if (index != _selectedIndex) {
-          setState(() {
-            _selectedIndex = index;
-          });
-
-          // Navegação baseada no índice
-          switch (index) {
-            case 0: // Botão "Home"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomePage(),
-                ),
-              );
-              break;
-            case 1: // Botão "Perfil"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              );
-              break;
-            case 2: // Botão "Coletar"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HistoricScreenView(),
-                ),
-              );
-              break;
-            case 3: // Botão "Configurações"
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CadastroEnderecoPage(),
-                ),
-              );
-              break;
-          }
-        }
-      },
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Perfil',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.list_alt),
-          label: 'Coletar',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Configurações',
         ),
       ],
     );
