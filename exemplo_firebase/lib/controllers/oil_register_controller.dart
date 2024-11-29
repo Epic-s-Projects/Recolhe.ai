@@ -6,13 +6,13 @@ class OilRegisterControllers {
 
   // Incrementa a quantidade de óleo
   void increment() {
-    _oilAmount += 100; // Incrementa 100ml por clique
+    _oilAmount += 500; // Incrementa 100ml por clique
   }
 
   // Decrementa a quantidade de óleo
   void decrement() {
     if (_oilAmount > 0) {
-      _oilAmount -= 100; // Decrementa 100ml por clique
+      _oilAmount -= 500; // Decrementa 100ml por clique
     }
   }
 
@@ -49,7 +49,6 @@ class OilRegisterControllers {
         await docRef.update({
           'id': docId, // Adiciona o ID ao próprio documento
         });
-
 
         print("Dados adicionados com sucesso!");
       } else {
