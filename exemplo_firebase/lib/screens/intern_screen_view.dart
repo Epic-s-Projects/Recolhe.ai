@@ -316,26 +316,27 @@ class _HomePageState extends State<HomePage> {
               final docs = snapshot.data!.docs;
 
               return ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final data = docs[index].data() as Map<String, dynamic>;
 
                   return Card(
+                    color: const Color.fromARGB(255, 239, 239, 239),
                     margin: EdgeInsets.symmetric(
                       vertical: screenWidth * 0.03,
                       horizontal: screenWidth * 0.01,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    elevation: 9,
+                    elevation: 5,
                     child: InkWell(
                       onTap: () {
                         // Ação ao clicar no card
                         _showDetailDialog(context, data);
                       },
-                      hoverColor: Colors.grey[200],
+                      hoverColor: const Color.fromARGB(255, 223, 209, 186),
                       borderRadius: BorderRadius.circular(16),
                       child: Padding(
                         padding: EdgeInsets.all(screenWidth * 0.05),
@@ -345,11 +346,12 @@ class _HomePageState extends State<HomePage> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 30.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 30.0),
                                 child: Image.asset(
                                   _getImageForRecycleType(data['tipo']),
-                                  width: screenWidth * 0.1,
-                                  height: screenWidth * 0.1,
+                                  width: screenWidth * 0.13,
+                                  height: screenWidth * 0.13,
                                   fit: BoxFit.cover,
                                 )
                                     .animate()
@@ -380,7 +382,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         'Quantidade: ${data['qtd'] ?? 'N/A'} ml',
                                         style: TextStyle(
-                                          fontSize: screenWidth * 0.03,
+                                          fontSize: screenWidth * 0.04,
                                           color: Colors.grey[600],
                                         ),
                                       ),
@@ -399,7 +401,7 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         'Status: ${data['status'] ?? 'N/A'}',
                                         style: TextStyle(
-                                          fontSize: screenWidth * 0.03,
+                                          fontSize: screenWidth * 0.04,
                                           color: _getColorForStatus(
                                               data['status']),
                                           fontWeight: FontWeight.bold,
@@ -407,11 +409,11 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: screenWidth * 0.02),
+                                  // SizedBox(height: screenWidth * 0.02),
                                 ],
                               ),
                             ),
-                            Icon(Icons.chevron_right, color: Colors.grey[400]),
+                            // Icon(Icons.chevron_right, color: Colors.grey[400]),
                           ],
                         ),
                       ),
@@ -427,7 +429,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0009),
           child: ElevatedButton.icon(
             onPressed: () {
               Navigator.push(
@@ -439,16 +441,16 @@ class _HomePageState extends State<HomePage> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF056517),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
             icon: const Icon(Icons.add, color: Colors.white, size: 28),
             label: const Text(
               'Realize sua coleta',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -506,7 +508,8 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFFF9F9F9), // Cor de fundo suave
+          backgroundColor:
+              const Color.fromARGB(255, 255, 255, 255), // Cor de fundo suave
           title: const Text(
             'Detalhes da Coleta',
             style: TextStyle(
@@ -524,25 +527,25 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildDetailRow('Tipo', data['tipo'] ?? 'N/A', Icons.category,
-                  Color(0xFF388E3C)),
+                  const Color(0xFF388E3C)),
               _buildDetailRow('Quantidade', '${data['qtd'] ?? 'N/A'} kg',
-                  Icons.storage, Color(0xFF1976D2)),
+                  Icons.storage, const Color(0xFF1976D2)),
               _buildDetailRow('Status', data['status'] ?? 'N/A',
-                  Icons.check_circle, Color(0xFFFF9800)),
+                  Icons.check_circle, const Color(0xFFFF9800)),
               _buildDetailRow(
                   'Data de Atualização',
                   data['dataAtualizacao'] ?? 'Desconhecido',
                   Icons.calendar_today,
-                  Color(0xFF9E9E9E)),
+                  const Color(0xFF9E9E9E)),
               if (data['observacoes'] != null)
                 _buildDetailRow('Observações', data['observacoes'],
-                    Icons.comment, Color(0xFF0288D1)),
+                    Icons.comment, const Color(0xFF0288D1)),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(
+              child: const Text(
                 'Fechar',
                 style: TextStyle(
                   color: Color(0xFF388E3C), // Cor verde para o botão
@@ -559,7 +562,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildDetailRow(
       String label, String value, IconData icon, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 18.0),
       child: Row(
         children: [
           Icon(
