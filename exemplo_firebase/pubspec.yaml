@@ -33,4 +33,15 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/
+    - assets/icones/homem1.png
+    - assets/icones/homem2.png
+    - assets/icones/homem3.png
+    - assets/icones/homem4.png
+    - assets/icones/homem5.png
+    - assets/icones/homem6.png
+    - assets/icones/mulher1.png
+    - assets/icones/mulher2.png
+    - assets/icones/mulher3.png
+    - assets/icones/mulher4.png
+    - assets/icones/mulher5.png
+    - assets/icones/mulher6.png
