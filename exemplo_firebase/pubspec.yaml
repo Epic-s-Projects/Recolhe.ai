@@ -29,6 +29,12 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.0
 
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+
 
 flutter_icons:
   android: true
@@ -37,9 +43,4 @@ flutter_icons:
   adaptive_icon_background: "#FFFFFF"   # Apenas para Android
   adaptive_icon_foreground: "assets/recycle_icon.png" # Opcional para ícones adaptáveis
   
-flutter:
-  uses-material-design: true
-
-  assets:
-    - assets/
 
