@@ -82,41 +82,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // formulario de endereço integrado ao perfil
-  // aparecer apenas os itens na localização do coletor
-  // notificação após cadastrar o óleo -> ok
-  // notificação após coletor dar baixa -> OK
-  // notificar o usuário dos pontos ganhos
-  // no cadastro de óleo verificar se o endereço está preenchido.
-
-
-  // Widget _buildLoadingView() {
-  //   return Center(
-  //     child: Container(
-  //       padding: EdgeInsets.all(24),
-  //       decoration: BoxDecoration(
-  //         color: Colors.white.withOpacity(0.9),
-  //         borderRadius: BorderRadius.circular(16),
-  //       ),
-  //       child: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           CircularProgressIndicator(
-  //             valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
-  //           ),
-  //           SizedBox(height: 16),
-  //           Text(
-  //             'Carregando reciclados...',
-  //             style: TextStyle(color: Color(0xFF795548), fontWeight: FontWeight.w600),
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
