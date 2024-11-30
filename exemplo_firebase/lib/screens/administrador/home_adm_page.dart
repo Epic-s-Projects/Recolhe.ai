@@ -1,7 +1,9 @@
 import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/endereco_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'profile_adm_page.dart';
 import 'home_coleta_page.dart'; // Página já criada anteriormente
 import 'area_coleta_page.dart'; // Nova página de Área de Coleta
@@ -41,7 +43,7 @@ class _HomeAdmPageState extends State<HomeAdmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomAppBar(user: user),
+        appBar: CustomAppBarADM(user: user),
       body: Stack(
         children: [
           // Imagem de fundo

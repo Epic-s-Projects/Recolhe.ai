@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:exemplo_firebase/screens/administrador/reciclado_por_endereco_page.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ class _EnderecosPageState extends State<EnderecosPage> {
   List<Map<String, dynamic>> enderecos = [];
   bool isLoading = true;
   int _selectedIndex = 1;
+  final user = UserSession();
 
 
   final List<Widget> _pages = [
@@ -88,10 +91,7 @@ class _EnderecosPageState extends State<EnderecosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Endereços'),
-        backgroundColor: Color(0xFF4CAF50),
-      ),
+      appBar:(CustomAppBarADM(user: user)),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(

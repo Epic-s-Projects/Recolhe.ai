@@ -91,39 +91,57 @@ class _RankingPageState extends State<RankingPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       appBar: CustomAppBar(user: user),
-      body: Container(
-        child: SafeArea(
-          child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: _rankingData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                );
-              } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text(
-                    'Nenhum dado encontrado',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                );
-              }
+      body: Stack(
+        children: [
+          SafeArea(
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _rankingData,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  );
+                } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'Nenhum dado encontrado',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
 
-              final users = snapshot.data!;
-              return Column(
-                children: [
-                  _buildTopThreeSection(users.take(3).toList()),
-                  Expanded(
-                    child: _buildRemainingRanking(users.skip(3).toList()),
-                  ),
-                ],
-              );
-            },
+                final users = snapshot.data!;
+                return Column(
+                  children: [
+                    _buildTopThreeSection(users.take(3).toList()),
+                    Expanded(
+                      child: _buildRemainingRanking(users.skip(3).toList()),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
-        ),
 
+          // Botão flutuante para "Mais informações"
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                _showRewardsDialog(context); // Abre o diálogo
+              },
+              backgroundColor: const Color(0xFF4CAF50), // Verde moderno
+              icon: const Icon(Icons.info_outline, color: Colors.white),
+              label: const Text(
+                "Mais informações",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 46, 50, 46),
@@ -153,6 +171,7 @@ class _RankingPageState extends State<RankingPage> {
       ),
     );
   }
+
 
   Widget _buildTopThreeSection(List<Map<String, dynamic>> topThree) {
     return Container(
@@ -355,4 +374,90 @@ class _RankingPageState extends State<RankingPage> {
       ),
     );
   }
+}
+
+void _showRewardsDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF4CAF50), Color(0xFF2E7D32)], // Tons de verde
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Título
+              Text(
+                "🎉 Prêmios para os 5 Melhores! 🎉",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black26,
+                      blurRadius: 4,
+                      offset: Offset(2, 2),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Corpo da mensagem
+              Text(
+                "Os 5 primeiros colocados no ranking de reciclagem ganham prêmios incríveis como:\n\n"
+                    "🥇 1º Lugar: Um vale-presente de R\$500 e uma medalha de ouro virtual!\n"
+                    "🥈 **2º Lugar: Um vale-presente de R\$300 e uma medalha de prata virtual!\n"
+                    "🥉 3º Lugar: Um vale-presente de R\$200 e uma medalha de bronze virtual!\n"
+                    "🏅 4º e 5º Lugar: Um kit sustentável exclusivo para continuar reciclando!\n\n"
+                    "Transforme seu óleo usado em conquistas e faça a diferença pelo meio ambiente! 🌿",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Botão de Fechar
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Fecha o diálogo
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 223, 209, 186), // Marrom escuro
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                icon: const Icon(Icons.check_circle, color: Colors.white),
+                label: const Text(
+                  "Entendi, vou reciclar!",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

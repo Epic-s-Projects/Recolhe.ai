@@ -143,6 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         },
+
                         child: const Text(
                           'Registre-se',
                           style: TextStyle(

@@ -9,12 +9,12 @@ class OilRegisterControllers {
   int _oilAmount = 0;
 
   void increment() {
-    _oilAmount += 100;
+    _oilAmount += 500;
   }
 
   void decrement() {
     if (_oilAmount > 0) {
-      _oilAmount -= 100;
+      _oilAmount -= 500;
     }
   }
 
@@ -48,38 +48,79 @@ class OilRegisterControllers {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Endereço não cadastrado"),
-                content: Text(
-                    "Você precisa cadastrar um endereço antes de continuar."),
+                backgroundColor: const Color(0xFFF5F5F5), // Cor de fundo suave
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // Bordas arredondadas
+                ),
+                title: Row(
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red, size: 30),
+                    const SizedBox(width: 10),
+                    const Text(
+                      "Endereço não cadastrado",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF333333),
+                      ),
+                    ),
+                  ],
+                ),
+                content: const Text(
+                  "Você precisa cadastrar um endereço antes de continuar.",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF666666), // Cor do texto
+                  ),
+                ),
                 actions: [
-                  TextButton(
+                  TextButton.icon(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              ModernAddressRegistrationPage(),
+                          builder: (context) => ModernAddressRegistrationPage(),
                         ),
                       );
                     },
-                    child: Text("Cadastrar Endereço"),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFF4CAF50), // Verde
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: const Icon(Icons.add_location_alt, size: 20),
+                    label: const Text(
+                      "Cadastrar Endereço",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  TextButton(
+                  TextButton.icon(
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomePage(),
-                        ),
-                            (route) => false,
-                      );
+                      Navigator.of(context).pop(); // Fecha apenas o diálogo
                     },
-                    child: Text("Voltar"),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFFD32F2F), // Vermelho
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: const Icon(Icons.arrow_back, size: 20),
+                    label: const Text(
+                      "Voltar",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ],
               );
             },
           );
+
+
           return; // Interrompe a execução do método
         }
 

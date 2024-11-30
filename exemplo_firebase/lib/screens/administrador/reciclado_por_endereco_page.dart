@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:flutter/material.dart';
 
 import 'detalhes_reciclado_page.dart';
@@ -17,6 +19,7 @@ class RecicladosPorEnderecoPage extends StatefulWidget {
 class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
   List<Map<String, dynamic>> reciclados = [];
   bool isLoading = true;
+  final user = UserSession();
 
   @override
   void initState() {
@@ -90,10 +93,7 @@ class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Reciclados por Endereço'),
-        backgroundColor: Color(0xFF4CAF50),
-      ),
+      appBar: CustomAppBarADM(user: user),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
