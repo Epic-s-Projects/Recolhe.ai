@@ -3,6 +3,7 @@ import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:exemplo_firebase/screens/administrador/reciclado_por_endereco_page.dart';
+import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 import 'package:flutter/material.dart';
 
 import 'home_adm_page.dart';
@@ -21,7 +22,7 @@ class _EnderecosPageState extends State<EnderecosPage> {
 
 
   final List<Widget> _pages = [
-    HomeAdmPage(),
+    NearbyItemsPage(),
     // AreaColetaPage(),
     EnderecosPage(),
     HomeColetaPage(),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:exemplo_firebase/service/auth_service.dart';
@@ -61,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
 
 
   final List<Widget> _pages = [
-    HomeAdmPage(),
+    NearbyItemsPage(),
     // AreaColetaPage(),
     EnderecosPage(),
     HomeColetaPage(),

@@ -21,39 +21,77 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
 
   Future<void> confirmarReciclado(String docId, Map<String, dynamic> reciclado, String uid) async {
     try {
+      // Obter usuário autenticado
       final userCurrent = FirebaseAuth.instance.currentUser;
       if (userCurrent == null) {
         print("Erro: Nenhum usuário autenticado.");
         return;
       }
+      print("Usuário autenticado: ${userCurrent.uid}");
 
+      // Validar campos obrigatórios
+      if (docId.isEmpty || uid.isEmpty) {
+        print("Erro: docId ou uid está vazio.");
+        return;
+      }
+      print("docId: $docId, uid: $uid");
+
+      // Validar dados do reciclado
+      if (reciclado == null || reciclado.isEmpty) {
+        print("Erro: Dados do reciclado estão ausentes.");
+        return;
+      }
+      print("Reciclado: $reciclado");
+
+      // Fornecer valores padrão
       final timestamp = Timestamp.now();
-      final xpGanho = reciclado['qtd'] ?? 0;
+      final xpGanho = (reciclado['qtd'] as num?)?.toInt() ?? 0; // Valor padrão: 0
+      print("XP ganho calculado: $xpGanho");
 
+      // Referência ao documento no Firestore
       final docRef = FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
           .collection('reciclado')
           .doc(docId);
 
+      // Verificar se o documento existe
       final docSnapshot = await docRef.get();
       if (!docSnapshot.exists) {
-        print("Documento não encontrado para o ID: $docId");
+        print("Erro: Documento não encontrado para o ID: $docId");
         return;
       }
+      print("Documento encontrado: ${docSnapshot.data()}");
 
+      // Atualizar o documento no Firestore
       await docRef.update({
         'status': 'Concluído',
         'data_coleta': timestamp,
         'xp_ganho': xpGanho,
-        'checked_by': userCurrent.uid
+        'checked_by': userCurrent.uid, // Garantir que o UID está correto
       });
 
       print("Documento atualizado com sucesso!");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Reciclado confirmado com sucesso!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Voltar para a página anterior
+      Navigator.pop(context);
     } catch (e) {
-      print("Erro ao atualizar reciclado: $e");
+      print("Erro ao confirmar reciclado: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Erro ao confirmar reciclado. Tente novamente."),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+
 
   void _handleConfirmation() async {
     setState(() {
@@ -61,13 +99,30 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
     });
 
     try {
-      await confirmarReciclado(widget.reciclado['id'], widget.reciclado, widget.reciclado['userId']);
-      await Future.delayed(Duration(seconds: 3));
+      final id = widget.reciclado['id'];
+      final userId = widget.reciclado['userId'];
+
+      // Verificar se os campos obrigatórios estão presentes
+      if (id == null || userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro: Dados do reciclado incompletos.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Chamar a função de confirmação
+      await confirmarReciclado(id, widget.reciclado, userId);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Reciclado confirmado com sucesso!'),
-          backgroundColor: Color(0xFF4CAF50), // Green success color
+          backgroundColor: Color(0xFF4CAF50),
         ),
       );
 
@@ -90,6 +145,7 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
