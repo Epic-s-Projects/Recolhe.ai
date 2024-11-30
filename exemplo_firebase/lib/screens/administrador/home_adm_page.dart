@@ -1,5 +1,6 @@
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/administrador/endereco_page.dart';
 import 'package:flutter/material.dart';
 import 'profile_adm_page.dart';
 import 'home_coleta_page.dart'; // Página já criada anteriormente
@@ -16,7 +17,8 @@ class _HomeAdmPageState extends State<HomeAdmPage> {
 
   final List<Widget> _pages = [
     HomeAdmPage(),
-    AreaColetaPage(),
+    // AreaColetaPage(),
+    EnderecosPage(),
     HomeColetaPage(),
     ProfileScreenADM(),
   ];

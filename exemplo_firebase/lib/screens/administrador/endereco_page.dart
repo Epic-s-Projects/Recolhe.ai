@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:exemplo_firebase/screens/administrador/reciclado_por_endereco_page.dart';
 import 'package:flutter/material.dart';
+
+import 'home_adm_page.dart';
+import 'home_coleta_page.dart';
 
 class EnderecosPage extends StatefulWidget {
   @override
@@ -10,6 +14,29 @@ class EnderecosPage extends StatefulWidget {
 class _EnderecosPageState extends State<EnderecosPage> {
   List<Map<String, dynamic>> enderecos = [];
   bool isLoading = true;
+  int _selectedIndex = 1;
+
+
+  final List<Widget> _pages = [
+    HomeAdmPage(),
+    // AreaColetaPage(),
+    EnderecosPage(),
+    HomeColetaPage(),
+    ProfileScreenADM(),
+  ];
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => _pages[index]),
+      ).then((_) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -80,7 +107,34 @@ class _EnderecosPageState extends State<EnderecosPage> {
               : _buildEnderecosList(),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white54,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, size: 40),
+            label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on, size: 40),
+            label: 'Área de Coleta',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment, size: 40),
+            label: 'Ver Itens',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person, size: 40),
+            label: 'Perfil',
+          ),
+        ],
+      ),
     );
+
   }
 
   Widget _buildLoadingView() {

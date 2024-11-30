@@ -5,6 +5,7 @@ import 'package:exemplo_firebase/service/auth_service.dart';
 
 import '../../controllers/user_data.dart';
 import 'area_coleta_page.dart';
+import 'endereco_page.dart';
 import 'home_adm_page.dart';
 import 'home_coleta_page.dart';
 
@@ -61,11 +62,11 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
 
   final List<Widget> _pages = [
     HomeAdmPage(),
-    AreaColetaPage(),
+    // AreaColetaPage(),
+    EnderecosPage(),
     HomeColetaPage(),
     ProfileScreenADM(),
   ];
-
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {

@@ -3,6 +3,7 @@ import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:flutter/material.dart';
 import 'detalhes_reciclado_page.dart';
+import 'endereco_page.dart';
 import 'profile_adm_page.dart';
 import 'home_adm_page.dart';
 import 'area_coleta_page.dart';
@@ -22,7 +23,8 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
 
   final List<Widget> _pages = [
     HomeAdmPage(),
-    AreaColetaPage(),
+    // AreaColetaPage(),
+    EnderecosPage(),
     HomeColetaPage(),
     ProfileScreenADM(),
   ];
