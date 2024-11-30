@@ -97,8 +97,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(37), // Define a altura desejada (50 é um exemplo)
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false, // Remove a seta de voltar
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

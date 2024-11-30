@@ -1,8 +1,10 @@
+import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/profile_screen_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../controllers/app_bar.dart';
 import 'historic_screen_view.dart';
 import 'intern_screen_view.dart';
 
@@ -16,6 +18,7 @@ class RankingPage extends StatefulWidget {
 class _RankingPageState extends State<RankingPage> {
   late Future<List<Map<String, dynamic>>> _rankingData;
   int _selectedIndex = 2;
+  final user = UserSession();
 
   @override
   void initState() {
@@ -86,27 +89,9 @@ class _RankingPageState extends State<RankingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Ranking',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      backgroundColor: const Color.fromARGB(255, 223, 209, 186),
+      appBar: CustomAppBar(user: user),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
         child: SafeArea(
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: _rankingData,

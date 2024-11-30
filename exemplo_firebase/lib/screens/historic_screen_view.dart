@@ -1,3 +1,4 @@
+import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/historic_controller.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
@@ -91,56 +92,7 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
         .size;
 
     return Scaffold(
-
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-              Icons.arrow_back, color: Colors.green, size: size.width * 0.08),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const HomePage(),
-              ),
-            );// Volta para a página anterior
-          },
-        ),
-        title: Text(
-          'Olá, ${user.name}!',
-          style: TextStyle(
-            fontSize: size.width * 0.05,
-            fontWeight: FontWeight.bold,
-            color: Colors.green.shade900,
-          ),
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              );
-            },
-            child: CircleAvatar(
-              radius: size.width * 0.06,
-              backgroundColor: Colors.white,
-              child: (user.imagem!.isNotEmpty)
-                  ? ClipOval(
-                child: Image.network(
-                  user.imagem!,
-                  fit: BoxFit.cover,
-                  width: size.width * 0.12,
-                  height: size.width * 0.12,
-                ),
-              )
-                  : const Icon(Icons.person, size: 30, color: Colors.green),
-            ),
-          ),
-        ],
-      ),
+      appBar: CustomAppBar(user: user), backgroundColor: Color(0xFFF5E6CC),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -151,7 +103,6 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
         ),
         child: Stack(
           children: [
-            // Substituindo o fundo original pelo novo layout
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(

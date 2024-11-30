@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/administrador/reciclado_por_endereco_page.dart';
 import 'package:flutter/material.dart';
 
 class EnderecosPage extends StatefulWidget {
@@ -126,6 +127,11 @@ class _EnderecosPageState extends State<EnderecosPage> {
   }
 
   Widget _buildEnderecoCard(Map<String, dynamic> endereco) {
+    final numero = endereco['numero'] ?? 'Número não disponível';
+    final rua = endereco['rua'] ?? 'Rua não disponível';
+    final cep = endereco['cep'] ?? 'CEP não informado';
+    final bairro = endereco['bairro'] ?? 'Bairro não informado';
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -148,8 +154,9 @@ class _EnderecosPageState extends State<EnderecosPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               Text(
-                endereco['bairro'] ?? 'Bairro não informado',
+                bairro,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -158,144 +165,19 @@ class _EnderecosPageState extends State<EnderecosPage> {
               ),
               SizedBox(height: 8),
               Text(
-                endereco['rua'] ?? 'Rua não disponível',
+                '${rua ?? "Rua não disponível"}, ${numero ?? "Número não disponível"}',
                 style: TextStyle(fontSize: 16, color: Colors.black87),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class RecicladosPorEnderecoPage extends StatefulWidget {
-  final Map<String, dynamic> endereco;
-
-  RecicladosPorEnderecoPage({required this.endereco});
-
-  @override
-  _RecicladosPorEnderecoPageState createState() =>
-      _RecicladosPorEnderecoPageState();
-}
-
-class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
-  List<Map<String, dynamic>> reciclados = [];
-  bool isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadReciclados();
-  }
-
-  Future<void> _loadReciclados() async {
-    try {
-      List<Map<String, dynamic>> data = await fetchReciclados(widget.endereco);
-      setState(() {
-        reciclados = data;
-        isLoading = false;
-      });
-    } catch (e) {
-      print("Erro ao carregar reciclados: $e");
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> fetchReciclados(
-      Map<String, dynamic> endereco) async {
-    List<Map<String, dynamic>> allReciclados = [];
-
-    try {
-      QuerySnapshot recicladoSnapshot = await FirebaseFirestore.instance
-          .collection("users")
-          .doc(endereco['userId'])
-          .collection("reciclado")
-          .where("enderecoId", isEqualTo: endereco['enderecoId'])
-          .get();
-
-      for (QueryDocumentSnapshot recicladoDoc in recicladoSnapshot.docs) {
-        allReciclados.add({
-          ...recicladoDoc.data() as Map<String, dynamic>,
-          'recicladoId': recicladoDoc.id,
-        });
-      }
-    } catch (e) {
-      print("Erro ao buscar reciclados: $e");
-    }
-
-    return allReciclados;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Reciclados por Endereço'),
-        backgroundColor: Color(0xFF4CAF50),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/fundoHome.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SafeArea(
-          child: isLoading
-              ? Center(
-            child: CircularProgressIndicator(
-              valueColor:
-              AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
-            ),
-          )
-              : reciclados.isEmpty
-              ? Center(
-            child: Text(
-              'Nenhum reciclado encontrado para este endereço.',
-              style: TextStyle(
-                fontSize: 18,
-                color: Color(0xFF795548),
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 8),
+              Text(
+                cep,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xFF2E7D32),
+                ),
               ),
-            ),
-          )
-              : ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: reciclados.length,
-            itemBuilder: (context, index) {
-              final reciclado = reciclados[index];
-              return Card(
-                margin: EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 8,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        reciclado['tipo'] ?? 'Tipo não disponível',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2E7D32),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        reciclado['status'] ?? 'Status não disponível',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+            ],
+
           ),
         ),
       ),

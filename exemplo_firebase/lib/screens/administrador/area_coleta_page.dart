@@ -1,5 +1,6 @@
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/administrador/endereco_page.dart';
 import 'package:exemplo_firebase/screens/administrador/map.dart';
 import 'package:flutter/material.dart';
 import 'home_adm_page.dart';
@@ -19,7 +20,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
   final List<Widget> _pages = [
     HomeAdmPage(),
     AreaColetaPage(),
-    HomeColetaPage(),
+    EnderecosPage(),
     ProfileScreenADM(),
   ];
 
