@@ -378,7 +378,22 @@ Aqui vai a descrição das ferramentas.
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Fontes de Pesquisa do Projeto" alt="Typing SVG" /></a>
 ## Referências
-Aqui vai a descrição das referências.
+
+* ### Fontes de Pesquisa para Desenvolvimento do Problema:
+    - [G1 - Notícia sobre acúmulo de lixo e mato alto na praça de Limeira](https://g1.globo.com/sp/piracicaba-regiao/noticia/2023/12/25/sem-manutencao-praca-de-limeira-tem-mato-alto-acumulo-de-lixo-e-gera-transtornos-a-moradores.ghtml)
+    - [Prefeitura faz Contrato Emergencial para limpeza pública](https://diariodejustica.com.br/prefeitura-de-limeira-faz-contrato-emergencial-de-r-209-milhoes-para-limpeza-publica/)
+    - [Resíduos no Brasil não são reaproveitados](https://g1.globo.com/jornal-nacional/noticia/2023/05/17/dia-mundial-da-reciclagem-96percent-dos-residuos-produzidos-no-brasil-nao-sao-reaproveitados.ghtml)
+    - [Vídeo sobre a Coleta Seletiva de Limeira](https://www.facebook.com/prefeituralimeira/videos/a-coleta-seletiva-realizada-em-limeira-percorre-v%C3%A1rias-regi%C3%B5es-da-cidade-o-servi/754470765802787/)
+
+* ### IA's Utilizadas:
+    - [ChatGPT 3.5](https://chat.openai.com/)
+    - [Claude AI](https://claude.ai/login?returnTo=%2F%3F)
+    - [Gama App](https://gamma.app/pt-br)
+    - [Bing - Image Creator](https://www.bing.com/images/create)
+ 
+* ### UX/UI:
+  - [Figma](https://www.figma.com/)
+  
 <br><br><br>
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Desenvolvedores" alt="Typing SVG" /></a>
