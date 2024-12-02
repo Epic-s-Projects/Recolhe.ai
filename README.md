@@ -383,6 +383,41 @@ Aqui vai a descrição das referências.
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Desenvolvedores" alt="Typing SVG" /></a>
 ## Equipe de Desenvolvimento
+<div align=center>
+  <table style="width: 100%">
+    <tbody>
+      <tr align=center>
+        <th><strong> Heitor Rodrigo de Melo Silva </br> Hunter7210 </strong></th>
+        <th><strong> João Victor de Lima </br> JoaovlLima </strong></th>
+        <th><strong> Rafael Souza de Moura </br> rafaelmoura23</strong></th>
+         <th><strong> Vinícius Granço Feitoza </br> epicestudar </strong></th>
+      </tr>
+      <tr align=center>
+        <td>
+          <a href="https://github.com/Hunter7210">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/Hunter7210">
+          </a>
+        </td>
+        <td>
+          <a href="https://github.com/JoaovlLima">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/JoaovlLima">
+          </a>
+        </td>
+         <td>
+          <a href="https://github.com/rafaelmoura23">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/rafaelmoura23">
+          </a>
+        </td>
+         <td>
+          <a href="https://github.com/epicestudar">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/epicestudar">
+          </a>
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+</div>
 
 
 
