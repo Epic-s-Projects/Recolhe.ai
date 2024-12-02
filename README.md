@@ -392,10 +392,6 @@ Aqui vai a descrição da equipe.
 <br><br><br><br><br>
 
 
-# Funcionalidades
-
-
-
 - Página ADM (Pré Cadastro)
 - Design Cards()
 - Histórico de Cards()
