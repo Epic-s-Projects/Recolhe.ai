@@ -12,11 +12,18 @@ class _HomeAdmPageState extends State<HomeAdmPage> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    HomeAdmPage(), // Página inicial
-    AreaColetaPage(), // Página de Área de Coleta
-    HomeColetaPage(), // Página "Ver Itens"
-    ProfileScreen(), // Página de Perfil
+    HomeAdmPage(),
+    AreaColetaPage(),
+    HomeColetaPage(),
+    ProfileScreen(
+      name: "João Silva",
+      cpf: "123.456.789-00",
+      email: "joao.silva@email.com",
+      imagem: "", // Substitua por uma URL válida ou deixe vazio.
+    ),
   ];
+
+
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {

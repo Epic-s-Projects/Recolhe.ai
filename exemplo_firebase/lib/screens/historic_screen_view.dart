@@ -1,3 +1,4 @@
+import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/historic_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +6,7 @@ import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/profile_screen_view.dart';
 import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
+import 'package:intl/intl.dart';
 
 class HistoricScreenView extends StatefulWidget {
   const HistoricScreenView({super.key});
@@ -87,7 +89,7 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
         return Icons.hourglass_bottom;
       case 'concluído':
         return Icons.check_circle;
-      case 'pendente':
+      case 'Pendente':
         return Icons.pending;
       default:
         return Icons.help_outline;
@@ -100,11 +102,19 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
         return Colors.orange;
       case 'concluído':
         return Colors.green;
-      case 'pendente':
+      case 'Pendente':
         return Colors.red;
       default:
         return Colors.grey;
     }
+  }
+
+  String _formatarData(Timestamp? timestamp) {
+    if (timestamp == null) return 'N/A';
+    final DateTime dateTime =
+        timestamp.toDate(); // Converte Timestamp para DateTime
+    final DateFormat formatter = DateFormat('dd/MM/yyyy'); // Formato desejado
+    return formatter.format(dateTime); // Retorna a data formatada
   }
 
   @override
@@ -112,6 +122,7 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: CustomAppBar(user: user),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -138,16 +149,6 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Text(
-                      "Históricos",
-                      style: TextStyle(
-                        fontSize: size.width * 0.08,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade900,
-                      ),
-                    ),
-                  ),
                   Expanded(
                     child: isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -187,7 +188,7 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               child: Image.asset(
-                                                'assets/folhas2.png',
+                                                'assets/img_product.png',
                                                 width: size.width * 0.2,
                                                 height: size.width * 0.2,
                                                 fit: BoxFit.cover,
@@ -273,7 +274,27 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
                                                           width: size.width *
                                                               0.02),
                                                       Text(
-                                                        'Data: ${data['data'] ?? 'N/A'}',
+                                                        'Data: ${_formatarData(data['data_coleta'])}',
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Row(
+                                                    children: [
+                                                      Icon(Icons.wind_power,
+                                                          size: 20,
+                                                          color: Colors.amber),
+                                                      SizedBox(
+                                                          width: size.width *
+                                                              0.02),
+                                                      Text(
+                                                        'XP: ${(data['xp_ganho'])}',
                                                         style: const TextStyle(
                                                           fontSize: 12,
                                                           color: Colors.grey,

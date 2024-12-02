@@ -3,6 +3,7 @@ import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../controllers/user_data.dart';
 import 'profile_screen_view.dart';
 import 'selection_screen_view.dart';
@@ -286,6 +287,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  String _formatarData(Timestamp? timestamp) {
+    if (timestamp == null) return 'N/A';
+    final DateTime dateTime = timestamp.toDate(); // Converte Timestamp para DateTime
+    final DateFormat formatter = DateFormat('dd/MM/yyyy'); // Formato desejado
+    return formatter.format(dateTime); // Retorna a data formatada
+  }
+
+
   Widget _buildCards(double screenWidth) {
     if (user.userId == null) {
       return const Center(child: CircularProgressIndicator());
@@ -300,6 +309,7 @@ class _HomePageState extends State<HomePage> {
                 .doc(user.userId)
                 .collection('reciclado')
                 .where('status', isEqualTo: 'Em processo')
+                // .orderBy('timestamp', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -310,6 +320,7 @@ class _HomePageState extends State<HomePage> {
                 return _buildImageAndText(
                   screenWidth,
                   MediaQuery.of(context).size.height,
+                  MediaQuery.of(context).size.height,
                 );
               }
 
@@ -317,9 +328,11 @@ class _HomePageState extends State<HomePage> {
 
               return ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
                   final data = docs[index].data() as Map<String, dynamic>;
+
 
                   return Card(
                     color: const Color.fromARGB(255, 239, 239, 239),
@@ -327,7 +340,13 @@ class _HomePageState extends State<HomePage> {
                       vertical: screenWidth * 0.03,
                       horizontal: screenWidth * 0.01,
                     ),
+                    color: const Color.fromARGB(255, 239, 239, 239),
+                    margin: EdgeInsets.symmetric(
+                      vertical: screenWidth * 0.03,
+                      horizontal: screenWidth * 0.01,
+                    ),
                     shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 5,
@@ -445,7 +464,34 @@ class _HomePageState extends State<HomePage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0009),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectionScreenView(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF056517),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
+            icon: const Icon(Icons.add, color: Colors.white, size: 28),
+            label: const Text(
+              'Realize sua coleta',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ).animate().scale(duration: 300.ms).fadeIn(),
             icon: const Icon(Icons.add, color: Colors.white, size: 28),
             label: const Text(
               'Realize sua coleta',

@@ -18,6 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return AppBar(
+<<<<<<< HEAD
       backgroundColor: const Color.fromARGB(0, 76, 175, 79),
       elevation: 0,
       leading: showBackButton
@@ -37,12 +38,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               },
             )
           : null, // Sem botão caso `showBackButton` seja falso
+=======
+      backgroundColor: const Color(0xFF4CAF50), // Verde moderno e suave
+      automaticallyImplyLeading: false, // Remove a seta de voltar
+>>>>>>> 465162a7c8dbe5ad2afe7bd93750e0fdcbf29593
       title: Text(
-        'Olá, ${user.name ?? 'Usuário'}',
+        'Olá, ${user.name ?? 'Usuário'}!',
         style: TextStyle(
           fontSize: screenWidth * 0.05,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF38783B), // Verde suave
+          color: Colors.white, // Verde suave
         ),
       ),
       actions: [

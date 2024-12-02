@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
 import 'package:exemplo_firebase/screens/set_icon_screen_view.dart';
@@ -187,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => HomeAdmPage(),
+                builder: (context) => NearbyItemsPage(),
               ),
             );
           } else {
