@@ -1,8 +1,61 @@
-# Recolhe.ai
-repositório destinado para o projeto final do SENAI
+<br>
+<br>
+<br>
+<p align="center">
+   <img src="/exemplo_firebase/assets/recycle_icon.png" alt="logo" width=250px>
+</p>
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Classe" alt="Typing SVG" />
+<p align="center">
+   <img src="https://img.shields.io/badge/Backend-FEITO-blue?style=for-the-badge" alt="backend" />
+  <img src="https://img.shields.io/badge/Documentação-FEITA-blue?style=for-the-badge" alt="documentação" />
+  <img src="https://img.shields.io/badge/Protótipos-FEITO-blue?style=for-the-badge" alt="prototipos" />
+  <img src="https://img.shields.io/badge/Frontend-FEITO-blue?style=for-the-badge" alt="frontend" />
+</p>
+<hr>
+<br>
+<br><br><br>
 
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Sumário 📰" alt="Typing SVG" /></a>
+
+- [Contexto Inicial](#contexto-inicial)
+- [Problema Encontrado](#problema-encontrado)
+- [Nossa Solução](#nossa-solução)
+- [Protótipos](#protótipos)
+- [Diagramas](#diagramas)
+- [Funcionalidades do Aplicativo](#funcionalidades-do-aplicativo)
+- [Ferramentas de Desenvolvimento](#ferramentas-de-desenvolvimento)
+- [Referências](#referências)
+- [Equipe de Desenvolvimento](#equipe-de-desenvolvimento)
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Introdução" alt="Typing SVG" /></a>
+## Apresentação do Projeto: Desenvolvimento de Aplicativo sobre Coleta Seletiva de Óleo
+
+### Contexto Inicial
+Aqui vai a descrição do contexto inicial.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Buscando um Problema" alt="Typing SVG" /></a>
+## Problema Encontrado
+Aqui vai a descrição do problema encontrado.
+<br><br><br>
+
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Encontrando a Solução" alt="Typing SVG" /></a>
+## Nossa Solução
+Aqui vai a descrição da solução.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Nossa Prototipagem" alt="Typing SVG" /></a>
+## Protótipos
+Aqui vai a descrição dos protótipos.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Diagramas" alt="Typing SVG" /></a>
+## Diagramas
+
+### Diagrama de Classe:
 ```mermaid
 classDiagram
     class Usuario {
@@ -86,10 +139,8 @@ classDiagram
     Coletado --> UsuarioColetor : "cpf"
 
 ```
-<br><br><br><br><br>
-
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Fluxo" alt="Typing SVG" />
-
+<br><br>
+### Diagrama de Fluxo
 ``` mermaid
 
 flowchart TD
@@ -123,10 +174,8 @@ flowchart TD
     end
 
 ```
-<br><br><br><br><br>
-
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Uso" alt="Typing SVG" />
-
+<br><br>
+### Diagrama de Uso:
 ``` mermaid
 flowchart TD
     subgraph Usuario [Usuário]
@@ -158,9 +207,10 @@ flowchart TD
 
 ```
 
+<br><br><br>
 
-# Funcionalidades
-
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Aplicativo Funcionando" alt="Typing SVG" /></a>
+## Funcionalidades do Aplicativo
 <details>
 
 <summary> Cadastro de Usuário </summary>
@@ -319,6 +369,30 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 # Pontuação
 
 </details>
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Utilização de Ferramentas de Trabalho" alt="Typing SVG" /></a>
+## Ferramentas de Desenvolvimento
+Aqui vai a descrição das ferramentas.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Fontes de Pesquisa do Projeto" alt="Typing SVG" /></a>
+## Referências
+Aqui vai a descrição das referências.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Desenvolvedores" alt="Typing SVG" /></a>
+## Equipe de Desenvolvimento
+Aqui vai a descrição da equipe.
+
+
+
+
+
+<br><br><br><br><br>
+
+
+# Funcionalidades
 
 
 
