@@ -373,7 +373,41 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Utilização de Ferramentas de Trabalho" alt="Typing SVG" /></a>
 ## Ferramentas de Desenvolvimento
-Aqui vai a descrição das ferramentas.
+ <p>  
+      
+  <table>
+  <thead>
+    <tr>
+      <th> Linguagens </th>
+      <th> Frameworks </th>
+      <th> Outros </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"> <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart Badge"/> </td>
+       <td align="center"> <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter Badge" style="width: 100%"/> </td>
+        <td align="center"> <img src="https://img.shields.io/badge/Firebase-000?style=for-the-badge&logo=firebase&logoColor=ffca28" alt="Firebase Badge"/> </td>
+    </tr>
+     <tr>
+         <td align="center"> </td>
+         <td align="center">  </td>
+         <td align="center"> <img src="https://img.shields.io/badge/Visual_Studio_Code-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white" alt="VScode Badge"/> </td>
+      </tr>
+    <tr>
+      <td align="center"> </td>
+        <td align="center"> </td>
+        <td align="center"> <img src="https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white" alt="Git Badge"/> </td>
+    </tr>
+    <tr>
+      <td align="center">  </td>
+      <td align="center"> </td>
+       <td align="center"> <img src="https://img.shields.io/badge/Figma-696969?style=for-the-badge&logo=figma&logoColor=figma"/> </td>
+    </tr>
+  </tbody>
+</table>
+   </p>
+</p>
 <br><br><br>
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Fontes de Pesquisa do Projeto" alt="Typing SVG" /></a>
