@@ -143,12 +143,15 @@ class _HomePageState extends State<HomePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        // Imagem
         Image.asset(
           'assets/banner_inicial.png',
           height: screenHeight * 0.2,
           fit: BoxFit.cover,
         ),
         SizedBox(height: screenHeight * 0.02),
+
+        // Texto
         const Text(
           'Você ainda não realizou nenhuma coleta!',
           style: TextStyle(
@@ -158,9 +161,41 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: screenHeight * 0.06),
+
+        // ElevatedButton
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0009),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectionScreenView(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF056517),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            icon: const Icon(Icons.add, color: Colors.white, size: 28),
+            label: const Text(
+              'Realize sua coleta',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ).animate().scale(duration: 300.ms).fadeIn(),
+        ),
       ],
     );
   }
+
 
   Widget _buildWeekDays(double screenWidth) {
     DateTime now = DateTime.now();

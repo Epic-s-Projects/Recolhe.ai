@@ -19,7 +19,7 @@
 //   final user = UserSession();
 //
 //   final List<Widget> _pages = [
-//     NearbyItemsPage(),
+//     HomeAdmPage(),
 //     // AreaColetaPage(),
 //     EnderecosPage(),
 //     HomeColetaPage(),

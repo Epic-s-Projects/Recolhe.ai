@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/administrador/home_adm_page.dart';
 import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';
@@ -9,7 +10,6 @@ import 'package:flutter/services.dart';
 
 import '../controllers/user_data.dart';
 import '../service/auth_service.dart';
-import 'administrador/home_adm_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
