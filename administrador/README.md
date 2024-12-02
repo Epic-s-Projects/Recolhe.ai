@@ -1,6 +1,10 @@
 # administrador
 
+Link do apk:
 https://drive.google.com/file/d/1_HQqyJvoxpOfpvT34TsRLHRweIFQKfAU/view?usp=drive_link
+
+Link dos ícones de usuário:
+https://drive.google.com/drive/folders/1qAfQ7S3IEuoZW_HhO9mQyYj9EgxQ6GkP?hl=pt-br
 
 ## Getting Started
 
