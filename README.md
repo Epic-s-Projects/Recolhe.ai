@@ -383,7 +383,7 @@ Aqui vai a descrição das referências.
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Desenvolvedores" alt="Typing SVG" /></a>
 ## Equipe de Desenvolvimento
-Aqui vai a descrição da equipe.
+
 
 
 
