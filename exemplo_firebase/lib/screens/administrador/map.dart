@@ -10,8 +10,8 @@ class CollectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Realizar Coleta')),
-      body: Center(child: Text('Página de Coleta')),
+      appBar: AppBar(title: const Text('Realizar Coleta')),
+      body: const Center(child: Text('Página de Coleta')),
     );
   }
 }
@@ -56,7 +56,7 @@ class _MapPageState extends State<MapPage> {
 
     _geolocator
         .getPositionStream(
-      locationSettings: LocationSettings(
+      locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 10,
       ),
@@ -139,7 +139,7 @@ class _MapPageState extends State<MapPage> {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
-            padding: EdgeInsets.symmetric(vertical: 15),
+            padding: const EdgeInsets.symmetric(vertical: 15),
           ),
           onPressed: () {
             Navigator.push(context,
@@ -147,18 +147,18 @@ class _MapPageState extends State<MapPage> {
           },
           child: Text(
             'Fazer Coleta em ${_nearestLocation?['address']}',
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
         ),
       );
     }
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   @override
   Widget build(BuildContext context) {
     if (_currentPosition == null) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -187,7 +187,7 @@ class _MapPageState extends State<MapPage> {
           children: [
             TileLayer(
               urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: ['a', 'b', 'c'],
+              subdomains: const ['a', 'b', 'c'],
             ),
             MarkerLayer(
               markers: locations
@@ -195,7 +195,7 @@ class _MapPageState extends State<MapPage> {
                         point: loc['point'],
                         builder: (context) {
                           if (locations.indexOf(loc) == 0) {
-                            return Icon(
+                            return const Icon(
                               Icons.person_pin_circle,
                               color: Colors.purple,
                               size: 50,
@@ -228,7 +228,8 @@ class _MapPageState extends State<MapPage> {
           top: 40,
           right: 20,
           child: IconButton(
-            icon: Icon(Icons.close_fullscreen, color: Colors.black, size: 30),
+            icon: const Icon(Icons.close_fullscreen,
+                color: Colors.black, size: 30),
             onPressed: () {
               setState(() {
                 _isFullScreenMap = false;
@@ -242,7 +243,7 @@ class _MapPageState extends State<MapPage> {
 
   Widget _buildNormalView() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/background.png'),
           fit: BoxFit.cover,
@@ -250,7 +251,7 @@ class _MapPageState extends State<MapPage> {
       ),
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: 100,
             child: Stack(
               children: [
@@ -258,13 +259,14 @@ class _MapPageState extends State<MapPage> {
                   top: 20,
                   left: 20,
                   child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.green, size: 40),
+                    icon: const Icon(Icons.arrow_back,
+                        color: Colors.green, size: 40),
                     onPressed: () {
                       Navigator.pop(context);
                     },
                   ),
                 ),
-                Positioned(
+                const Positioned(
                   top: 10,
                   right: 20,
                   child: CircleAvatar(
@@ -288,7 +290,7 @@ class _MapPageState extends State<MapPage> {
                     TileLayer(
                       urlTemplate:
                           "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                      subdomains: ['a', 'b', 'c'],
+                      subdomains: const ['a', 'b', 'c'],
                     ),
                     MarkerLayer(
                       markers: locations
@@ -296,7 +298,7 @@ class _MapPageState extends State<MapPage> {
                                 point: loc['point'],
                                 builder: (context) {
                                   if (locations.indexOf(loc) == 0) {
-                                    return Icon(
+                                    return const Icon(
                                       Icons.person_pin_circle,
                                       color: Colors.purple,
                                       size: 50,
@@ -330,14 +332,15 @@ class _MapPageState extends State<MapPage> {
                   top: 10,
                   left: 10,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       "Distância: ${totalDistance.toStringAsFixed(2)} km",
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -349,7 +352,8 @@ class _MapPageState extends State<MapPage> {
                   top: 10,
                   right: 10,
                   child: IconButton(
-                    icon: Icon(Icons.fullscreen, color: Colors.black, size: 30),
+                    icon: const Icon(Icons.fullscreen,
+                        color: Colors.black, size: 30),
                     onPressed: () {
                       setState(() {
                         _isFullScreenMap = true;
@@ -360,7 +364,7 @@ class _MapPageState extends State<MapPage> {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: 200,
             child: PageView.builder(
               controller: _pageController,
@@ -374,13 +378,13 @@ class _MapPageState extends State<MapPage> {
               itemBuilder: (context, index) {
                 final location = locations[index];
                 return Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: index == _currentPageIndex
                         ? Colors.green
                         : Colors.white,
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black26,
                         blurRadius: 5,
@@ -405,7 +409,7 @@ class _MapPageState extends State<MapPage> {
                                 : Colors.black,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           "Endereço: ${location['address']}",
                           style: TextStyle(

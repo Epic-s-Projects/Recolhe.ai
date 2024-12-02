@@ -1,3 +1,4 @@
+import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:exemplo_firebase/screens/login_screen_view.dart';
 import 'package:flutter/material.dart';
 
@@ -111,12 +112,12 @@ class _SplashScreenState extends State<SplashScreen>
                 builder: (context, child) {
                   return Opacity(
                     opacity: _opacityAnimation.value,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 200),
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 200),
                       child: Text(
                         "Recicle para um amanhã melhor.",
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w400,
                           color: Colors.lightGreen,

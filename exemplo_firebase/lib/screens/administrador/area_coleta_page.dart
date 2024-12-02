@@ -1,11 +1,7 @@
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
-import 'package:exemplo_firebase/screens/administrador/endereco_page.dart';
 import 'package:exemplo_firebase/screens/administrador/map.dart';
 import 'package:flutter/material.dart';
-import 'home_adm_page.dart';
-import 'home_coleta_page.dart';
-import 'profile_adm_page.dart';
 
 class AreaColetaPage extends StatefulWidget {
   @override
@@ -28,7 +24,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/fundoHome.png'),
+                  image: const AssetImage('assets/fundoHome.png'),
                   fit: BoxFit.cover,
                   colorFilter: ColorFilter.mode(
                     Colors.white.withOpacity(0.7),
@@ -51,7 +47,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
 
           // Centered content with soft animations
           AnimatedSwitcher(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             child: !showMapCard ? _buildInitialContent() : _buildMapCard(),
           ),
         ],
@@ -74,14 +70,15 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
               letterSpacing: 1.1,
             ),
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           ElevatedButton.icon(
             onPressed: () => setState(() => showMapCard = true),
-            icon: Icon(Icons.location_pin, color: Colors.white),
-            label: Text('Ver Mapa', style: TextStyle(color: Colors.white)),
+            icon: const Icon(Icons.location_pin, color: Colors.white),
+            label:
+                const Text('Ver Mapa', style: TextStyle(color: Colors.white)),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green.shade600,
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -97,7 +94,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
     return Center(
       child: Container(
         width: 320,
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -105,7 +102,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
             BoxShadow(
               color: Colors.green.withOpacity(0.3),
               blurRadius: 15,
-              offset: Offset(0, 8),
+              offset: const Offset(0, 8),
             )
           ],
         ),
@@ -125,17 +122,17 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, color: Colors.grey),
+                  icon: const Icon(Icons.close, color: Colors.grey),
                   onPressed: () => setState(() => showMapCard = false),
                 ),
               ],
             ),
             Divider(color: Colors.green.shade100),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _buildInfoRow(Icons.electrical_services, 'Eletrônico'),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             _buildInfoRow(Icons.oil_barrel, 'Óleo'),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -147,12 +144,13 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green.shade50,
                   foregroundColor: Colors.green.shade800,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   'VER LOCAL',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -171,7 +169,7 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
     return Row(
       children: [
         Icon(icon, color: Colors.green.shade600),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Text(
           text,
           style: TextStyle(

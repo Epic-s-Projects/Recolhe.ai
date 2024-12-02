@@ -1,3 +1,4 @@
+import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:flutter/material.dart';
 import '../controllers/user_data.dart';
@@ -10,38 +11,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
     required this.user,
     this.showBackButton = false, // Por padrão, a seta não será exibida
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return AppBar(
-<<<<<<< HEAD
-      backgroundColor: const Color.fromARGB(0, 76, 175, 79),
-      elevation: 0,
-      leading: showBackButton
-          ? IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: const Color(0xFF38783B), // Verde suave
-                size: screenWidth * 0.06,
-              ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ),
-                ); // Volta para a página anterior
-              },
-            )
-          : null, // Sem botão caso `showBackButton` seja falso
-=======
       backgroundColor: const Color(0xFF4CAF50), // Verde moderno e suave
       automaticallyImplyLeading: false, // Remove a seta de voltar
->>>>>>> 465162a7c8dbe5ad2afe7bd93750e0fdcbf29593
       title: Text(
         'Olá, ${user.name ?? 'Usuário'}!',
         style: TextStyle(
@@ -55,12 +34,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: EdgeInsets.only(right: screenWidth * 0.04),
           child: GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
-                ),
-              );
+              print("O nome é: ${user.name}");
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const ProfileScreenADM(),
+              //   ),
+              // );
             },
             child: CircleAvatar(
               radius: screenWidth * 0.06,

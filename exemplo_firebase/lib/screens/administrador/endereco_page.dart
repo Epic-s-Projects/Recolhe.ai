@@ -6,11 +6,13 @@ import 'package:exemplo_firebase/screens/administrador/reciclado_por_endereco_pa
 import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 import 'package:flutter/material.dart';
 
-import 'home_adm_page.dart';
 import 'home_coleta_page.dart';
 
 class EnderecosPage extends StatefulWidget {
+  const EnderecosPage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _EnderecosPageState createState() => _EnderecosPageState();
 }
 
@@ -20,13 +22,12 @@ class _EnderecosPageState extends State<EnderecosPage> {
   int _selectedIndex = 1;
   final user = UserSession();
 
-
   final List<Widget> _pages = [
-    NearbyItemsPage(),
+    const NearbyItemsPage(),
     // AreaColetaPage(),
     EnderecosPage(),
     HomeColetaPage(),
-    ProfileScreenADM(),
+    const ProfileScreenADM(),
   ];
 
   void _onItemTapped(int index) {
@@ -68,11 +69,11 @@ class _EnderecosPageState extends State<EnderecosPage> {
 
     try {
       QuerySnapshot usersSnapshot =
-      await FirebaseFirestore.instance.collection("users").get();
+          await FirebaseFirestore.instance.collection("users").get();
 
       for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
         QuerySnapshot enderecoSnapshot =
-        await userDoc.reference.collection("endereco").get();
+            await userDoc.reference.collection("endereco").get();
 
         for (QueryDocumentSnapshot enderecoDoc in enderecoSnapshot.docs) {
           allEnderecos.add({
@@ -92,9 +93,9 @@ class _EnderecosPageState extends State<EnderecosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:(CustomAppBarADM(user: user)),
+      appBar: (CustomAppBarADM(user: user)),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/fundoHome.png'),
             fit: BoxFit.cover,
@@ -104,8 +105,8 @@ class _EnderecosPageState extends State<EnderecosPage> {
           child: isLoading
               ? _buildLoadingView()
               : enderecos.isEmpty
-              ? _buildEmptyView()
-              : _buildEnderecosList(),
+                  ? _buildEmptyView()
+                  : _buildEnderecosList(),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -135,11 +136,10 @@ class _EnderecosPageState extends State<EnderecosPage> {
         ],
       ),
     );
-
   }
 
   Widget _buildLoadingView() {
-    return Center(
+    return const Center(
       child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
       ),
@@ -147,7 +147,7 @@ class _EnderecosPageState extends State<EnderecosPage> {
   }
 
   Widget _buildEmptyView() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -199,7 +199,7 @@ class _EnderecosPageState extends State<EnderecosPage> {
         );
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -209,30 +209,28 @@ class _EnderecosPageState extends State<EnderecosPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               Text(
                 bairro,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF2E7D32),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 '${rua ?? "Rua não disponível"}, ${numero ?? "Número não disponível"}',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                 cep,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   color: Color(0xFF2E7D32),
                 ),
               ),
             ],
-
           ),
         ),
       ),

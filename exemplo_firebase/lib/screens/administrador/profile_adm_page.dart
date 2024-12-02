@@ -1,17 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/administrador/endereco_page.dart';
+import 'package:exemplo_firebase/screens/administrador/home_coleta_page.dart';
 import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
+import 'package:exemplo_firebase/screens/profile_screen_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:exemplo_firebase/service/auth_service.dart';
 
-import '../../controllers/user_data.dart';
-import 'area_coleta_page.dart';
-import 'endereco_page.dart';
-import 'home_adm_page.dart';
-import 'home_coleta_page.dart';
-
 class ProfileScreenADM extends StatefulWidget {
-
   const ProfileScreenADM({super.key});
 
   @override
@@ -20,7 +17,7 @@ class ProfileScreenADM extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreenADM> {
   final user = UserSession();
-  AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();
   int _selectedIndex = 3;
   String? _creationDate;
 
@@ -39,15 +36,27 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
 
     if (userLogado != null) {
       try {
+        // Busca o documento do usuário no Firestore
         final userData = await FirebaseFirestore.instance
             .collection('users')
             .doc(userLogado.uid)
             .get();
 
-        final Timestamp creationTimestamp = userData['createdAt'];
-        final DateTime creationDate = creationTimestamp.toDate();
+        // Verifica se o documento existe e contém dados
+        if (userData.exists && userData.data() != null) {
+          // Tenta recuperar o campo "createdAt"
+          final creationTimestamp = userData['createdAt'];
 
-        return '${creationDate.day}/${creationDate.month}/${creationDate.year}';
+          // Valida se o campo é do tipo Timestamp
+          if (creationTimestamp is Timestamp) {
+            final DateTime creationDate = creationTimestamp.toDate();
+            return '${creationDate.day}/${creationDate.month}/${creationDate.year}';
+          } else {
+            throw Exception('Campo "createdAt" não é um Timestamp válido.');
+          }
+        } else {
+          throw Exception('Usuário não encontrado no Firestore.');
+        }
       } catch (e) {
         print('Erro ao buscar data de criação: $e');
         return 'Desconhecida';
@@ -59,14 +68,12 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
     }
   }
 
-
-
   final List<Widget> _pages = [
-    NearbyItemsPage(),
+    const NearbyItemsPage(),
     // AreaColetaPage(),
     EnderecosPage(),
     HomeColetaPage(),
-    ProfileScreenADM(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -84,14 +91,12 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme
-        .of(context)
-        .textTheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(37),
+        preferredSize: const Size.fromHeight(37),
         // Define a altura desejada (50 é um exemplo)
         child: AppBar(
           backgroundColor: Colors.transparent,
@@ -111,16 +116,16 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
                   CircleAvatar(
                     radius: 80,
                     backgroundColor: Colors.white,
-                    backgroundImage: user.imagem != null &&
-                        user.imagem!.isNotEmpty
-                        ? NetworkImage(user.imagem!)
-                        : null,
+                    backgroundImage:
+                        user.imagem != null && user.imagem!.isNotEmpty
+                            ? NetworkImage(user.imagem!)
+                            : null,
                     child: user.imagem == null || user.imagem!.isEmpty
                         ? Icon(
-                      Icons.person,
-                      size: 80,
-                      color: Colors.green.shade700,
-                    )
+                            Icons.person,
+                            size: 80,
+                            color: Colors.green.shade700,
+                          )
                         : null,
                   ),
                   Positioned(
@@ -133,7 +138,8 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
                         border: Border.all(color: Colors.white, width: 2),
                       ),
                       child: IconButton(
-                        icon: Icon(Icons.edit, color: Colors.white, size: 20),
+                        icon: const Icon(Icons.edit,
+                            color: Colors.white, size: 20),
                         onPressed: () {},
                       ),
                     ),
@@ -147,20 +153,31 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    user.name!,
+                    user.name ??
+                        'Nome não disponível', // Define um valor padrão
                     style: textTheme.headlineMedium?.copyWith(
-                      color: Colors.green.shade700,
-                      fontWeight: FontWeight.w600,
-                    ),
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.w600,
+                        ) ??
+                        TextStyle(
+                          // Define um estilo padrão se headlineMedium for null
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize:
+                              20, // Ajuste o tamanho da fonte conforme necessário
+                        ),
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: Icon(
-                        Icons.edit, color: Colors.green.shade700, size: 20),
-                    onPressed: () {},
+                    icon: Icon(Icons.edit,
+                        color: Colors.green.shade700, size: 20),
+                    onPressed: () {
+                      // Adicione a lógica desejada para a ação do botão
+                    },
                   ),
                 ],
               ),
+
               const SizedBox(height: 24),
 
               // Informações de Perfil
@@ -178,7 +195,8 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
               if (_creationDate != null) ...[
                 Container(
                   margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -193,7 +211,8 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.calendar_today, color: Colors.green.shade700, size: 32),
+                      Icon(Icons.calendar_today,
+                          color: Colors.green.shade700, size: 32),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(

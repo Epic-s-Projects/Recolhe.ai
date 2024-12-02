@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 
 import '../controllers/user_data.dart';
 import '../service/auth_service.dart';
-import 'administrador/home_adm_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -184,11 +183,25 @@ class _LoginScreenState extends State<LoginScreen> {
         if (user != null) {
           // Verificação do email para redirecionamento diretamente no FirebaseAuth
           if (user.email != null && user.email!.contains('@coleta.com')) {
+            // Se o email não for de admin, continua o fluxo normal
+            var userDocument = await FirebaseFirestore.instance
+                .collection('users') // Sua coleção de usuários
+                .doc(user.uid) // Usa o UID do usuário logado
+                .get();
+            // Atualiza o UserSession com os dados do usuário
+            final userSession = UserSession();
+            userSession.email = user.email;
+            userSession.name = userDocument.data()?['nome'] ?? "Usuário";
+            userSession.cpf = userDocument.data()?['cpf'] ?? "123";
+            userSession.imagem = userDocument.data()?['imagem'];
+            userSession.userId = user.uid;
+
+            print(user.email);
             // Se o email for do tipo admin, redireciona para a página de administrador
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => NearbyItemsPage(),
+                builder: (context) => const NearbyItemsPage(),
               ),
             );
           } else {
