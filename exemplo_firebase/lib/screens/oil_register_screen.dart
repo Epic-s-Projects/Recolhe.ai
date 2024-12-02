@@ -1,3 +1,4 @@
+import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/oil_register_controller.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
@@ -48,6 +49,7 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      appBar: CustomAppBar(user: user),
       body: Stack(
         children: [
           // Fundo com a imagem
@@ -65,41 +67,34 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
           Positioned(
             top: screenHeight * 0.05,
             left: screenWidth * 0.05,
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.green,
-                size: screenWidth * 0.1,
-              ),
-              onPressed: () {
+            child: GestureDetector(
+              onTap: () {
                 Navigator.pop(context);
               },
-            ),
-          ),
-          // Avatar do usuário
-          Positioned(
-            top: screenHeight * 0.05,
-            right: screenWidth * 0.05,
-            child: CircleAvatar(
-              radius: screenWidth * 0.1,
-              backgroundColor: Colors.white,
-              child: user.imagem!.isNotEmpty
-                  ? ClipOval(
-                child: Image.network(
-                  user.imagem!,
-                  fit: BoxFit.cover,
-                  width: screenWidth * 0.2,
-                  height: screenWidth * 0.2,
+              child: Container(
+                width: screenWidth * 0.15,
+                height: screenWidth * 0.15,
+                decoration: BoxDecoration(
+                  color: Colors.white, // Fundo branco para contraste
+                  shape: BoxShape.circle, // Botão circular
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26, // Sombra suave
+                      blurRadius: 8,
+                      offset: Offset(2, 2), // Posição da sombra
+                    ),
+                  ],
                 ),
-              )
-                  : Icon(
-                Icons.person,
-                size: screenWidth * 0.1,
-                color: const Color(0xFF7B2CBF),
+                child: Center(
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: Colors.green, // Cor da seta
+                    size: screenWidth * 0.08, // Tamanho da seta
+                  ),
+                ),
               ),
             ),
           ),
-          // Conteúdo central
           Center(
             child: SingleChildScrollView(
               child: Column(
@@ -216,7 +211,7 @@ class _OilRegisterScreenState extends State<OilRegisterScreen> {
                       size: screenWidth * 0.06,
                     ),
                     label: Text(
-                      "Adicionar Item",
+                      "Adicionar Óleo",
                       style: TextStyle(
                         fontSize: screenWidth * 0.05,
                         color: Colors.white,

@@ -1,116 +1,122 @@
 import 'package:exemplo_firebase/controllers/selection_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../controllers/app_bar.dart';
 import '../controllers/user_data.dart';
 
 class SelectionScreenView extends StatelessWidget {
   final SelectionController controller = SelectionController();
   final user = UserSession();
 
-
   SelectionScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
+      appBar: CustomAppBar(user: user, showBackButton: true,),
       body: Stack(
         children: [
-          // Fundo com a imagem
+          // Imagem de fundo principal
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/background.png'), // Caminho da imagem
-                fit: BoxFit.cover, // Ajusta a imagem ao tamanho da tela
+                image: AssetImage('assets/background.png'), // Fundo principal
+                fit: BoxFit.cover,
               ),
             ),
           ),
 
           Positioned(
-            top: 40,
-            left: 10,
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.green,
-                size: 30,
-              ),
-              onPressed: () {
+            top: screenHeight * 0.05,
+            left: screenWidth * 0.05,
+            child: GestureDetector(
+              onTap: () {
                 Navigator.pop(context);
               },
+              child: Container(
+                width: screenWidth * 0.15,
+                height: screenWidth * 0.15,
+                decoration: BoxDecoration(
+                  color: Colors.white, // Fundo branco para contraste
+                  shape: BoxShape.circle, // Botão circular
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26, // Sombra suave
+                      blurRadius: 8,
+                      offset: Offset(2, 2), // Posição da sombra
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: Colors.green, // Cor da seta
+                    size: screenWidth * 0.08, // Tamanho da seta
+                  ),
+                ),
+              ),
             ),
           ),
 
+          // Título
           Positioned(
-            top: 50,
-            left: 50,
-            child: Text(
-              'Olá, ${user.name}!',
-              style: const TextStyle(
-                fontSize: 30,
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 40,
-            right: 20,
-            child: CircleAvatar(
-              radius: 45,
-              backgroundColor: Colors.white,
-              child: (user.imagem != null && user.imagem!.isNotEmpty)
-                  ? ClipOval(
-                child: Image.network(
-                  user.imagem!,
-                  fit: BoxFit.cover,
-                  width: 60,
-                  height: 60,
-                ),
-              )
-                  : const Icon(
-                Icons.person,
-                size: 30,
-                color: Color(0xFF7B2CBF),
-              ),
-            ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.2, // Ajusta a altura
+            top: screenHeight * 0.15, // Ajusta a altura do título
             left: 0,
             right: 0,
             child: const Text(
               'Selecione o tipo de coleta:',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 40,
+                fontSize: 28,
                 color: Colors.black,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                ],
               ),
             ),
           ),
 
-          // Botões lado a lado sobre a imagem
+          // Botões centralizados
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomButton(
                   imagePath: 'assets/icongalao.png',
+                  label: 'Óleo Usado',
                   onPressed: () => controller.navigateToOilUsed(context),
-                  label: '',
                 ),
                 const SizedBox(width: 20), // Espaçamento entre os botões
                 CustomButton(
                   imagePath: 'assets/iconcelularquebrado.png',
-                  label: '',
+                  label: 'Eletrônicos',
                   onPressed: controller.handleSecondButtonPress,
                 ),
               ],
             ),
           ),
+
+          // Botão flutuante para ajuda
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                // Lógica para o botão de ajuda
+              },
+              backgroundColor: Colors.green,
+              icon: const Icon(Icons.help_outline, color: Colors.white),
+              label: const Text(
+                "Ajuda",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
         ],
       ),
-      // Barra de navegação inferior
     );
   }
 }
@@ -132,20 +138,32 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor:
-            Colors.brown.withOpacity(0.5), // Fundo com transparência
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        elevation: 8, // Elevação para efeito de sombra
+        backgroundColor: Colors.white, // Fundo branco
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(15),
         ),
+        shadowColor: Colors.black45, // Sombra escura
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Ícone ou imagem
           Image.asset(
             imagePath,
-            width: 150, // Largura da imagem
-            height: 200, // Altura da imagem
+            width: 100, // Largura da imagem
+            height: 100, // Altura da imagem
+          ),
+          const SizedBox(height: 10),
+          // Texto do botão
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),

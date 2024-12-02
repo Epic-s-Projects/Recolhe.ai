@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 import 'package:flutter/material.dart';
 import 'detalhes_reciclado_page.dart';
+import 'endereco_page.dart';
 import 'profile_adm_page.dart';
 import 'home_adm_page.dart';
-import 'area_coleta_page.dart';
 
 class HomeColetaPage extends StatefulWidget {
   @override
@@ -21,8 +22,9 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
   bool isLoading = true;
 
   final List<Widget> _pages = [
-    HomeAdmPage(),
-    AreaColetaPage(),
+    NearbyItemsPage(),
+    // AreaColetaPage(),
+    EnderecosPage(),
     HomeColetaPage(),
     ProfileScreenADM(),
   ];
@@ -109,7 +111,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(user: user),
+      appBar: CustomAppBarADM(user: user),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(

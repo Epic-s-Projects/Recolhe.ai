@@ -1,5 +1,6 @@
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
+import 'package:exemplo_firebase/screens/administrador/endereco_page.dart';
 import 'package:exemplo_firebase/screens/administrador/map.dart';
 import 'package:flutter/material.dart';
 import 'home_adm_page.dart';
@@ -14,27 +15,6 @@ class AreaColetaPage extends StatefulWidget {
 class _AreaColetaPageState extends State<AreaColetaPage> {
   bool showMapCard = false;
   int _selectedIndex = 1;
-  final user = UserSession();
-
-  final List<Widget> _pages = [
-    HomeAdmPage(),
-    AreaColetaPage(),
-    HomeColetaPage(),
-    ProfileScreenADM(),
-  ];
-
-  void _onItemTapped(int index) {
-    if (index != _selectedIndex) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => _pages[index]),
-      ).then((_) {
-        setState(() {
-          _selectedIndex = index;
-        });
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +58,6 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -205,33 +184,4 @@ class _AreaColetaPageState extends State<AreaColetaPage> {
       ],
     );
   }
-
-  Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      backgroundColor: Color.fromARGB(255, 46, 50, 46),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white54,
-      type: BottomNavigationBarType.fixed,
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 40),
-          label: 'Início',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.location_on, size: 40),
-          label: 'Área de Coleta',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.assignment, size: 40),
-          label: 'Ver Itens',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person, size: 40),
-          label: 'Perfil',
-        ),
-      ],
-    );
   }
-}

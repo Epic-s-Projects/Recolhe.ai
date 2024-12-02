@@ -21,6 +21,8 @@ dependencies:
   intl: ^0.18.1
   http: ^0.13.6
   geolocator: ^13.0.2
+  flutter_animate: ^4.2.0
+  glassmorphism: ^3.0.0
 
 
 dev_dependencies:

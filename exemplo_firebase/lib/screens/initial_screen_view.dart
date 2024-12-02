@@ -103,6 +103,31 @@ class _SplashScreenState extends State<SplashScreen>
                 },
               ),
             ),
+            // Texto de boas-vindas com opacidade
+            Align(
+              alignment: Alignment.center,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _opacityAnimation.value,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 200),
+                      child: Text(
+                        "Recicle para um amanhã melhor.",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.lightGreen,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),

@@ -1,13 +1,13 @@
+import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:flutter/material.dart';
 import '../controllers/user_data.dart';
-import '../screens/profile_screen_view.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBarADM extends StatelessWidget implements PreferredSizeWidget {
   final UserSession user;
   final bool showBackButton;
 
-  const CustomAppBar({
+  const CustomAppBarADM({
     required this.user,
     this.showBackButton = false, // Por padrão, a seta não será exibida
     Key? key,
@@ -18,7 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return AppBar(
-      backgroundColor: const Color(0xFF4CAF50), // Verde moderno e suave
+      backgroundColor: Colors.green,
       automaticallyImplyLeading: false, // Remove a seta de voltar
       title: Text(
         'Olá, ${user.name ?? 'Usuário'}!',
@@ -36,7 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ProfileScreen(),
+                  builder: (context) => const ProfileScreenADM(),
                 ),
               );
             },

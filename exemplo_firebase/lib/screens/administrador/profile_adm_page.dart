@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:exemplo_firebase/service/auth_service.dart';
 
 import '../../controllers/user_data.dart';
 import 'area_coleta_page.dart';
+import 'endereco_page.dart';
 import 'home_adm_page.dart';
 import 'home_coleta_page.dart';
 
@@ -18,15 +22,52 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
   final user = UserSession();
   AuthService _authService = AuthService();
   int _selectedIndex = 3;
+  String? _creationDate;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserCreationDate().then((date) {
+      setState(() {
+        _creationDate = date;
+      });
+    });
+  }
+
+  Future<String> fetchUserCreationDate() async {
+    final userLogado = FirebaseAuth.instance.currentUser;
+
+    if (userLogado != null) {
+      try {
+        final userData = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userLogado.uid)
+            .get();
+
+        final Timestamp creationTimestamp = userData['createdAt'];
+        final DateTime creationDate = creationTimestamp.toDate();
+
+        return '${creationDate.day}/${creationDate.month}/${creationDate.year}';
+      } catch (e) {
+        print('Erro ao buscar data de criação: $e');
+        return 'Desconhecida';
+      }
+    } else {
+      // Caso o usuário não esteja autenticado
+      print('Nenhum usuário autenticado.');
+      return 'Desconhecida';
+    }
+  }
+
+
 
   final List<Widget> _pages = [
-    HomeAdmPage(),
-    AreaColetaPage(),
+    NearbyItemsPage(),
+    // AreaColetaPage(),
+    EnderecosPage(),
     HomeColetaPage(),
     ProfileScreenADM(),
   ];
-
-
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -43,93 +84,164 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
 
   @override
   Widget build(BuildContext context) {
-    // Obter as dimensões da tela
-    double screenWidth = MediaQuery
+    final textTheme = Theme
         .of(context)
-        .size
-        .width;
-    double screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+        .textTheme;
 
     return Scaffold(
-      extendBodyBehindAppBar: true, // Faz o AppBar sobrepor o conteúdo
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/background.png'), // Caminho da imagem
-            fit: BoxFit.cover, // Faz a imagem ocupar toda a tela
-          ),
+      backgroundColor: const Color.fromARGB(255, 223, 209, 186),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(37),
+        // Define a altura desejada (50 é um exemplo)
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false, // Remove a seta de voltar
         ),
+      ),
+      body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(16.0), // Garantir que o conteúdo tenha espaçamento
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center, // Centraliza os elementos
-              children: [
-                const SizedBox(height: 80), // Espaço para o AppBar
-                // Avatar e Nome
-                CircleAvatar(
-                  radius: screenWidth * 0.2, // Tamanho do avatar responsivo
-                  backgroundColor: Colors.white,
-                  child: user.imagem != null && user.imagem!.isNotEmpty
-                      ? ClipOval(
-                    child: Image.network(
-                      user.imagem!,
-                      fit: BoxFit.cover,
-                      width: screenWidth * 0.4, // Responsivo
-                      height: screenWidth * 0.4, // Responsivo
-                    ),
-                  )
-                      : const Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Color(0xFF7B2CBF),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Avatar
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  CircleAvatar(
+                    radius: 80,
+                    backgroundColor: Colors.white,
+                    backgroundImage: user.imagem != null &&
+                        user.imagem!.isNotEmpty
+                        ? NetworkImage(user.imagem!)
+                        : null,
+                    child: user.imagem == null || user.imagem!.isEmpty
+                        ? Icon(
+                      Icons.person,
+                      size: 80,
+                      color: Colors.green.shade700,
+                    )
+                        : null,
                   ),
-                ),
-                Text(
-                  user.name!,
-                  style: TextStyle(
-                    fontSize: screenWidth * 0.08, // Responsivo
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-                // Informações com ícones
-                infoTile(Icons.email, user.email!),
-                infoTile(Icons.person, user.cpf!),
-                infoTile(
-                  Icons.location_on,
-                  'R. Catatu dos Santos\nBarbados\n1090\n13486-229',
-                ),
-                const SizedBox(height: 20), // Espaçamento antes do botão
-                ElevatedButton(
-                  onPressed: () async {
-                    await _authService.signOut(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.2,
-                      vertical: screenHeight * 0.02,
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade700,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.edit, color: Colors.white, size: 20),
+                        onPressed: () {},
+                      ),
                     ),
                   ),
-                  child: const Text(
-                    'Sair do aplicativo',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Nome e Botão Editar
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    user.name!,
+                    style: textTheme.headlineMedium?.copyWith(
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(
+                        Icons.edit, color: Colors.green.shade700, size: 20),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Informações de Perfil
+              _buildInfoCard(
+                icon: Icons.email,
+                title: 'E-mail',
+                content: user.email!,
+              ),
+              _buildInfoCard(
+                icon: Icons.person,
+                title: 'CPF',
+                content: user.cpf!,
+              ),
+              const SizedBox(height: 32),
+              if (_creationDate != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 1,
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: Colors.green.shade700, size: 32),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Coletor desde',
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              _creationDate!,
+                              style: TextStyle(
+                                color: Colors.grey.shade800,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
-            ),
+
+              // Botão Sair
+              ElevatedButton(
+                onPressed: () => _authService.signOut(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade700,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 64,
+                    vertical: 16,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  'Sair do aplicativo',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -162,30 +274,41 @@ class _ProfileScreenState extends State<ProfileScreenADM> {
     );
   }
 
-  Widget infoTile(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.green, size: 50),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color:
-                Colors.grey.shade800.withOpacity(0.8), // Opacidade no fundo
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                text,
-                style: const TextStyle(color: Colors.white, fontSize: 18),
-                textAlign: TextAlign.left,
-              ),
-            ),
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
-          const Icon(Icons.edit, color: Colors.grey),
         ],
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: Colors.green.shade700, size: 32),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.green.shade700,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          content,
+          style: TextStyle(
+            color: Colors.grey.shade800,
+            fontSize: 16,
+          ),
+        ),
       ),
     );
   }
