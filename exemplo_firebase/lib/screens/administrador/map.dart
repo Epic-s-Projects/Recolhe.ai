@@ -1,28 +1,21 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'dart:math';
-
-class CollectionPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Realizar Coleta')),
-      body: Center(child: Text('Página de Coleta')),
-    );
-  }
-}
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 
 class MapPage extends StatefulWidget {
   @override
   _MapPageState createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
-  final String googleApiKey = "AIzaSyCptI-V7_XzK4wNMlHAwPRcwQK-chI-rRQ";
+class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
+  final String googleApiKey = "AIzaSyCptI-V7_XzK4wNMlHAwPRcwQK-chI-rRQ"; // Replace with your key
   final PageController _pageController = PageController();
   final MapController _mapController = MapController();
   final GeolocatorPlatform _geolocator = GeolocatorPlatform.instance;
@@ -35,14 +28,33 @@ class _MapPageState extends State<MapPage> {
   bool _isFullScreenMap = false;
   bool _isNearLocation = false;
   Map<String, dynamic>? _nearestLocation;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkLocationPermission();
+    _loadLocationsAndRoutes();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkLocationPermission();
+      _loadLocationsAndRoutes();
+    }
   }
 
   Future<void> _checkLocationPermission() async {
+
     bool serviceEnabled = await _geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;
 
@@ -54,31 +66,227 @@ class _MapPageState extends State<MapPage> {
 
     if (permission == LocationPermission.deniedForever) return;
 
+    try {
+      Position position = await _geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      setState(() {
+        _currentPosition = position;
+        _updateLocations();
+      });
+    } catch (e) {
+      print('Error getting current position: $e');
+    }
+
     _geolocator.getPositionStream(
       locationSettings: LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 10,
       ),
     ).listen((Position position) {
-      _checkNearestLocation(position);
       setState(() {
         _currentPosition = position;
         _updateLocations();
-        _fetchRoutePoints();
       });
     });
+  }
+
+  void _updateLocations() {
+    if (_currentPosition != null) {
+      // Remove existing current location if exists
+      locations.removeWhere((loc) => loc['address'] == "Localização Atual");
+
+      locations.insert(0, {
+        "point": LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+        "address": "Localização Atual",
+        "neighborhood": "Atual",
+        "city": "Minha Localização",
+        "cep": "N/A",
+        "imageUrl": null, // Current location will have a special marker
+        "isCurrentLocation": true
+      });
+
+      // Recalculate nearest location
+      if (_currentPosition != null) {
+        _checkNearestLocation(_currentPosition!);
+      }
+    }
+  }
+
+  Future<void> _loadLocationsAndRoutes() async {
+    try {
+      // Clear existing locations
+      locations.clear();
+
+      // Fetch all reciclado locations
+      List<Map<String, dynamic>> recicladoLocations = await fetchAllReciclado();
+
+      // Convert addresses to coordinates
+      for (var location in recicladoLocations) {
+        if (location['endereco'] != null) {
+          String cep = location['endereco']['cep'] ?? '';
+          String numero = location['endereco']['numero'] ?? '';
+
+          LatLng? coordinates = await _getCoordinatesFromAddress(cep, numero);
+
+          if (coordinates != null) {
+            locations.add({
+              "point": coordinates,
+              "address": "${location['endereco']['logradouro'] ?? ''}, ${numero}",
+              "neighborhood": location['endereco']['bairro'] ?? '',
+              "city": location['endereco']['cidade'] ?? '',
+              "cep": cep,
+              "imageUrl": location['imageUrl'],
+              "userId": location['userId'],
+              "isCurrentLocation": false
+            });
+          }
+        }
+      }
+
+      // Add current location if available
+      if (_currentPosition != null) {
+        _updateLocations();
+      }
+
+      // Fetch route points for all locations if more than one location
+      if (locations.length > 1) {
+        await _fetchRoutePointsForAllLocations();
+      }
+
+      // Check nearest location
+      if (_currentPosition != null) {
+        _checkNearestLocation(_currentPosition!);
+      }
+
+      // Trigger a rebuild to show locations
+      setState(() {
+        _isLoading = false;
+        if (locations.isNotEmpty) {
+          _centerMapOnLocation(locations.first['point']);
+        }
+      });
+    } catch (e) {
+      print('Error loading locations: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchRoutePointsForAllLocations() async {
+    try {
+      // Convert points to location strings
+      final locationStrings = locations.map((loc) =>
+      "${loc['point'].latitude},${loc['point'].longitude}").toList();
+
+      // Construct waypoints (all points except first and last)
+      final waypoints = locationStrings.skip(1).take(locationStrings.length - 2).join('|');
+
+      final url = Uri.parse(
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${locationStrings.first}&destination=${locationStrings.last}&waypoints=optimize:true|$waypoints&key=$googleApiKey'
+      );
+
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['routes'].isNotEmpty) {
+          final points = data['routes'][0]['overview_polyline']['points'];
+          final polyline = _decodePolyline(points);
+
+          // Calculate total distance
+          totalDistance = 0.0;
+          for (int i = 0; i < polyline.length - 1; i++) {
+            totalDistance += _calculateDistance(polyline[i], polyline[i + 1]);
+          }
+
+          setState(() {
+            routePoints = polyline;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error fetching route: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAllReciclado() async {
+    List<Map<String, dynamic>> allReciclado = [];
+
+    try {
+      QuerySnapshot usersSnapshot = await FirebaseFirestore.instance.collection("users").get();
+
+      for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
+        final userData = userDoc.data() as Map<String, dynamic>;
+        String? nome = userData['nome'];
+        String? cpf = userData['cpf'];
+        String? imageUrl = userData['imagem']; // Get user's image URL
+        String userId = userDoc.id;
+
+        QuerySnapshot recicladoSnapshot = await userDoc.reference
+            .collection("reciclado")
+            .where("status", isEqualTo: "Em processo")
+            .get();
+
+        QuerySnapshot enderecoSnapshot = await userDoc.reference.collection("endereco").get();
+
+        Map<String, dynamic>? endereco;
+        if (enderecoSnapshot.docs.isNotEmpty) {
+          endereco = enderecoSnapshot.docs.first.data() as Map<String, dynamic>;
+        }
+
+        for (QueryDocumentSnapshot recicladoDoc in recicladoSnapshot.docs) {
+          allReciclado.add({
+            ...recicladoDoc.data() as Map<String, dynamic>,
+            'nome': nome,
+            'cpf': cpf,
+            'endereco': endereco,
+            'userId': userId,
+            'recicladoId': recicladoDoc.id,
+            'imageUrl': imageUrl, // Add user's image URL to the location data
+          });
+        }
+      }
+    } catch (e) {
+      print('Erro ao buscar dados de reciclados: $e');
+    }
+
+    return allReciclado;
+  }
+
+  Future<LatLng?> _getCoordinatesFromAddress(String cep, String numero) async {
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/geocode/json?address=$cep+$numero&key=$googleApiKey',
+    );
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['results'] != null && data['results'].isNotEmpty) {
+          final location = data['results'][0]['geometry']['location'];
+          return LatLng(location['lat'], location['lng']);
+        }
+      }
+    } catch (e) {
+      print('Erro ao buscar coordenadas: $e');
+    }
+    return null;
   }
 
   void _checkNearestLocation(Position currentPosition) {
     _isNearLocation = false;
     _nearestLocation = null;
 
-    for (var location in locations.skip(1)) {
+    for (var location in locations) {
       double distance = Geolocator.distanceBetween(
-          currentPosition.latitude,
-          currentPosition.longitude,
-          location['point'].latitude,
-          location['point'].longitude
+        currentPosition.latitude,
+        currentPosition.longitude,
+        location['point'].latitude,
+        location['point'].longitude,
       );
 
       if (distance <= 4000) {
@@ -89,42 +297,42 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  void _updateLocations() {
-    if (_currentPosition != null) {
-      locations = [
-        {
-          "point": LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-          "address": "Localização Atual",
-          "neighborhood": "Atual",
-          "city": "Minha Localização",
-          "cep": "N/A"
-        },
-        {
-          "point": LatLng(-22.573794911859185, -47.378817687812614),
-          "address": "Avenida Secundária, 250",
-          "neighborhood": "Jardim Público",
-          "city": "Campinas",
-          "cep": "13015-002"
-        },
-        {
-          "point": LatLng(-22.678611640730214, -47.291028667977194),
-          "address": "Estrada Rural, 500",
-          "neighborhood": "Zona Rural",
-          "city": "Campinas",
-          "cep": "13020-003"
-        },
-        {
-          "point": LatLng(-22.55075624382153, -47.37921564413563),
-          "address": "Avenida Major José Levy Sobrinho, 2308",
-          "neighborhood": "Zona Rural",
-          "city": "Limeira - SP",
-          "cep": "13486-190"
-        }
-      ];
-    }
-  }
   void _centerMapOnLocation(LatLng location) {
     _mapController.move(location, 13.0);
+  }
+
+  Widget _buildLocationMarker(Map<String, dynamic> location) {
+    if (location['isCurrentLocation']) {
+      // Special marker for current location
+      return Icon(
+        Icons.my_location,
+        color: Colors.blue,
+        size: 40,
+      );
+    }
+
+    if (location['imageUrl'] != null) {
+      // User's profile image marker
+      return Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 2),
+          image: DecorationImage(
+            image: CachedNetworkImageProvider(location['imageUrl']),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
+
+    // Fallback marker
+    return Icon(
+      Icons.location_pin,
+      color: Colors.red,
+      size: 40,
+    );
   }
 
   Widget _buildCollectionButton() {
@@ -140,10 +348,8 @@ class _MapPageState extends State<MapPage> {
           ),
           onPressed: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CollectionPage()
-                )
+              context,
+              MaterialPageRoute(builder: (context) => NearbyItemsPage()),
             );
           },
           child: Text(
@@ -158,26 +364,27 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_currentPosition == null) {
+    if (_isLoading) {
       return Scaffold(
         body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (locations.isEmpty) {
+      return Scaffold(
+        body: Center(child: Text('Nenhuma localização encontrada')),
       );
     }
 
     return Scaffold(
       body: Stack(
         children: [
-          _isFullScreenMap
-              ? _buildFullScreenMap()
-              : _buildNormalView(),
-          _buildCollectionButton()
+          _isFullScreenMap ? _buildFullScreenMap() : _buildNormalView(),
+          _buildCollectionButton(),
         ],
       ),
     );
   }
-
-// Resto do código anterior permanece o mesmo (métodos _buildFullScreenMap, _buildNormalView, etc.)
-
 
   Widget _buildFullScreenMap() {
     return Stack(
@@ -186,7 +393,7 @@ class _MapPageState extends State<MapPage> {
           mapController: _mapController,
           options: MapOptions(
             center: locations[_currentPageIndex]['point'],
-            zoom: 13.0,
+            zoom: 10.0,
           ),
           children: [
             TileLayer(
@@ -197,22 +404,7 @@ class _MapPageState extends State<MapPage> {
               markers: locations.map((loc) =>
                   Marker(
                     point: loc['point'],
-                    builder: (context) {
-                      if (locations.indexOf(loc) == 0) {
-                        return Icon(
-                          Icons.person_pin_circle,
-                          color: Colors.purple,
-                          size: 50,
-                        );
-                      }
-                      return Icon(
-                        Icons.location_pin,
-                        color: locations.indexOf(loc) == _currentPageIndex
-                            ? Colors.red
-                            : Colors.blue,
-                        size: 40,
-                      );
-                    },
+                    builder: (context) => _buildLocationMarker(loc),
                   )
               ).toList(),
             ),
@@ -268,14 +460,6 @@ class _MapPageState extends State<MapPage> {
                     },
                   ),
                 ),
-                Positioned(
-                  top: 10,
-                  right: 20,
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/user_avatar.png'),
-                    radius: 30,
-                  ),
-                ),
               ],
             ),
           ),
@@ -286,7 +470,7 @@ class _MapPageState extends State<MapPage> {
                   mapController: _mapController,
                   options: MapOptions(
                     center: locations[_currentPageIndex]['point'],
-                    zoom: 13.0,
+                    zoom: 10.0,
                   ),
                   children: [
                     TileLayer(
@@ -298,13 +482,6 @@ class _MapPageState extends State<MapPage> {
                           Marker(
                             point: loc['point'],
                             builder: (context) {
-                              if (locations.indexOf(loc) == 0) {
-                                return Icon(
-                                  Icons.person_pin_circle,
-                                  color: Colors.purple,
-                                  size: 50,
-                                );
-                              }
                               return Icon(
                                 Icons.location_pin,
                                 color: locations.indexOf(loc) == _currentPageIndex
