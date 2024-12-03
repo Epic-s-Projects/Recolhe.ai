@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:exemplo_firebase/controllers/app_bar.dart';
+import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 
 import 'area_coleta_page.dart';
+import 'chatbot_page.dart';
+import 'detalhes_reciclado_page.dart';
 import 'endereco_page.dart';
 import 'home_coleta_page.dart';
 
@@ -159,7 +162,7 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(user: user), // Removido o parêntese extra
+      appBar: CustomAppBarADM(user: user), // Removido o parêntese extra
       body: Stack(
         children: [
           // Background Image
@@ -283,6 +286,16 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => ChatDialog(),
+          );
+        },
+        child: Icon(Icons.smart_toy, color: Colors.white),
+        backgroundColor: Colors.brown,
+      ),
     );
   }
 
