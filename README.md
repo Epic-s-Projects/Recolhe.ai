@@ -334,7 +334,56 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
 <summary> Cadastro de Itens </summary>
 
-# Cadastrar Óleo no Firebase
+# Cadastro de óleo no aplicativo
+A funcionalidade de cadastro de óleo permite que usuários registrem a quantidade de óleo reciclado no sistema. Além disso, ela verifica se o usuário possui um endereço cadastrado antes de concluir a operação. Caso não tenha, um diálogo é exibido para orientar o usuário a cadastrar um endereço.
+<br><br>
+## Fluxo da Funcionalidade:
+<br>
+
+### 1. Incremento/Decremento da Quantidade de Óleo:
+   - O usuário pode ajustar a quantidade de óleo a ser reciclado em incrementos ou decrementos de 500ml.
+<br>
+
+### 2. Verificação de Endereço:
+   - Antes de registrar o óleo reciclado, o sistema verifica se o usuário possui um endereço cadastrado.
+     
+   - Caso não haja um endereço cadastrado, um diálogo é exibido com duas opções:
+     
+     - **Cadastrar Endereço**: Redireciona para a página de cadastro de endereço.
+     - **Voltar**: Fecha o diálogo, permitindo que o usuário volte à tela anterior.
+<br>
+
+### 3. Registro dos Dados:
+   - Os dados são armazenados na subcoleção reciclado no Firestore, com as seguintes informações:
+     - Quantidade de óleo reciclado (**qtd**)
+     - Tipo de óleo reciclado (**tipo**)
+     - Data e hora do registro (**timestamp**)
+     - Status do registro (**status**)
+   - Após o registro, o ID do documento gerado automaticamente é adicionado ao próprio documento.
+<br>
+
+### 4. Feedback ao Usuário:
+   - Em caso de sucesso, é exibida uma mensagem de confirmação via **SnackBar** e o usuário é redirecionado para a tela inicial.
+   - Em caso de erro, uma mensagem apropriada é exibida ao usuário.
+<br><br>
+
+## Estrutura do Código
+
+### Classe: OilRegisterControllers
+Responsável por gerenciar a lógica do registro de óleo reciclado.
+
+### Métodos Principais:
+#### 1. increment()
+   - **Descrição**: Incrementa a quantidade de óleo reciclado em 500ml.
+   - **Retorno**: Atualiza a variável _oilAmount.
+
+#### 2. decrement()
+   - **Descrição**: Decrementa a quantidade de óleo reciclado em 500ml, garantindo que o valor não fique negativo.
+   - **Retorno**: Atualiza a variável _oilAmount.
+
+#### 3. getOilAmount()
+   - **Descrição**: Retorna a quantidade atual de óleo reciclado.
+   - **Retorno**: Inteiro representando a quantidade em mililitros.
 
 
 
