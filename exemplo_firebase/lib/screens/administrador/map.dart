@@ -6,7 +6,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+
+
 import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
+
 
 class MapPage extends StatefulWidget {
   @override
@@ -48,11 +51,13 @@ class _MapPageState extends State<MapPage> {
 
     if (permission == LocationPermission.deniedForever) return;
 
-    _geolocator.getPositionStream(
-      locationSettings: LocationSettings(
+    _geolocator
+        .getPositionStream(
+      locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 10,
       ),
+
     ).listen((Position position) {
       setState(() {
         _currentPosition = position;
@@ -267,22 +272,23 @@ class _MapPageState extends State<MapPage> {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.green,
-            padding: EdgeInsets.symmetric(vertical: 15),
+            padding: const EdgeInsets.symmetric(vertical: 15),
           ),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => NearbyItemsPage()),
             );
+
           },
           child: Text(
             'Fazer Coleta em ${_nearestLocation?['address']}',
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
         ),
       );
     }
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   @override
@@ -321,7 +327,7 @@ class _MapPageState extends State<MapPage> {
           children: [
             TileLayer(
               urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-              subdomains: ['a', 'b', 'c'],
+              subdomains: const ['a', 'b', 'c'],
             ),
             MarkerLayer(
               markers: locations.map((loc) =>
@@ -355,7 +361,8 @@ class _MapPageState extends State<MapPage> {
           top: 40,
           right: 20,
           child: IconButton(
-            icon: Icon(Icons.close_fullscreen, color: Colors.black, size: 30),
+            icon: const Icon(Icons.close_fullscreen,
+                color: Colors.black, size: 30),
             onPressed: () {
               setState(() {
                 _isFullScreenMap = false;
@@ -369,7 +376,7 @@ class _MapPageState extends State<MapPage> {
 
   Widget _buildNormalView() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/background.png'),
           fit: BoxFit.cover,
@@ -377,7 +384,7 @@ class _MapPageState extends State<MapPage> {
       ),
       child: Column(
         children: [
-          Container(
+          SizedBox(
             height: 100,
             child: Stack(
               children: [
@@ -385,7 +392,8 @@ class _MapPageState extends State<MapPage> {
                   top: 20,
                   left: 20,
                   child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.green, size: 40),
+                    icon: const Icon(Icons.arrow_back,
+                        color: Colors.green, size: 40),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -405,8 +413,9 @@ class _MapPageState extends State<MapPage> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                      subdomains: ['a', 'b', 'c'],
+                      urlTemplate:
+                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: const ['a', 'b', 'c'],
                     ),
                     MarkerLayer(
                       markers: locations.map((loc) =>
@@ -440,14 +449,15 @@ class _MapPageState extends State<MapPage> {
                   top: 10,
                   left: 10,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       "Distância: ${totalDistance.toStringAsFixed(2)} km",
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -459,7 +469,8 @@ class _MapPageState extends State<MapPage> {
                   top: 10,
                   right: 10,
                   child: IconButton(
-                    icon: Icon(Icons.fullscreen, color: Colors.black, size: 30),
+                    icon: const Icon(Icons.fullscreen,
+                        color: Colors.black, size: 30),
                     onPressed: () {
                       setState(() {
                         _isFullScreenMap = true;
@@ -470,7 +481,7 @@ class _MapPageState extends State<MapPage> {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: 200,
             child: PageView.builder(
               controller: _pageController,
@@ -484,11 +495,13 @@ class _MapPageState extends State<MapPage> {
               itemBuilder: (context, index) {
                 final location = locations[index];
                 return Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: index == _currentPageIndex ? Colors.green : Colors.white,
+                    color: index == _currentPageIndex
+                        ? Colors.green
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black26,
                         blurRadius: 5,
@@ -502,36 +515,48 @@ class _MapPageState extends State<MapPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          index == 0 ? "Localização Atual" : "Localização ${index + 1}",
+                          index == 0
+                              ? "Localização Atual"
+                              : "Localização ${index + 1}",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: index == _currentPageIndex ? Colors.white : Colors.black,
+                            color: index == _currentPageIndex
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           "Endereço: ${location['address']}",
                           style: TextStyle(
-                            color: index == _currentPageIndex ? Colors.white : Colors.black,
+                            color: index == _currentPageIndex
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                         Text(
                           "Bairro: ${location['neighborhood']}",
                           style: TextStyle(
-                            color: index == _currentPageIndex ? Colors.white : Colors.black,
+                            color: index == _currentPageIndex
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                         Text(
                           "Cidade: ${location['city']}",
                           style: TextStyle(
-                            color: index == _currentPageIndex ? Colors.white : Colors.black,
+                            color: index == _currentPageIndex
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                         Text(
                           "CEP: ${location['cep']}",
                           style: TextStyle(
-                            color: index == _currentPageIndex ? Colors.white : Colors.black,
+                            color: index == _currentPageIndex
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                       ],
@@ -553,13 +578,14 @@ class _MapPageState extends State<MapPage> {
 
     try {
       // Convert points to location strings
-      final locationStrings = locations.map((loc) =>
-      "${loc['point'].latitude},${loc['point'].longitude}").toList();
+      final locationStrings = locations
+          .map((loc) => "${loc['point'].latitude},${loc['point'].longitude}")
+          .toList();
 
-      final waypoints = locationStrings.skip(1).take(locationStrings.length - 2).join('|');
+      final waypoints =
+          locationStrings.skip(1).take(locationStrings.length - 2).join('|');
       final url = Uri.parse(
-          'https://maps.googleapis.com/maps/api/directions/json?origin=${locationStrings.first}&destination=${locationStrings.last}&waypoints=$waypoints&key=$googleApiKey'
-      );
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${locationStrings.first}&destination=${locationStrings.last}&waypoints=$waypoints&key=$googleApiKey');
 
       final response = await http.get(url);
 

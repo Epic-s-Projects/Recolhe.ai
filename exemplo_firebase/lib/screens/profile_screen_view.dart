@@ -98,7 +98,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(37), // Define a altura desejada (50 é um exemplo)
+        preferredSize:
+            Size.fromHeight(37), // Define a altura desejada (50 é um exemplo)
         child: AppBar(
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false, // Remove a seta de voltar
@@ -117,15 +118,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CircleAvatar(
                     radius: 80,
                     backgroundColor: Colors.white,
-                    backgroundImage: user.imagem != null && user.imagem!.isNotEmpty
-                        ? NetworkImage(user.imagem!)
-                        : null,
+                    backgroundImage:
+                        user.imagem != null && user.imagem!.isNotEmpty
+                            ? NetworkImage(user.imagem!)
+                            : null,
                     child: user.imagem == null || user.imagem!.isEmpty
                         ? Icon(
-                      Icons.person,
-                      size: 80,
-                      color: Colors.green.shade700,
-                    )
+                            Icons.person,
+                            size: 80,
+                            color: Colors.green.shade700,
+                          )
                         : null,
                   ),
                   Positioned(
@@ -160,7 +162,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: Icon(Icons.edit, color: Colors.green.shade700, size: 20),
+                    icon: Icon(Icons.edit,
+                        color: Colors.green.shade700, size: 20),
                     onPressed: () {},
                   ),
                 ],
@@ -183,7 +186,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 icon: Icons.location_on,
                 title: 'Endereço',
                 content:
-                '${_address['rua']}, ${_address['numero']}\n${_address['bairro']}\nCEP: ${_address['cep']}',
+                    '${_address['rua']}, ${_address['numero']}\n${_address['bairro']}\nCEP: ${_address['cep']}',
               ),
 
               const SizedBox(height: 32),
@@ -300,7 +303,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
       child: ListTile(
-        leading: Icon(Icons.location_on, color: Colors.green.shade700, size: 32),
+        leading:
+            Icon(Icons.location_on, color: Colors.green.shade700, size: 32),
         title: Text(
           title,
           style: TextStyle(

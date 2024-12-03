@@ -16,7 +16,10 @@ class SelectionScreenView extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: CustomAppBar(user: user, showBackButton: true,),
+      appBar: CustomAppBar(
+        user: user,
+        showBackButton: true,
+      ),
       body: Stack(
         children: [
           // Imagem de fundo principal
@@ -73,8 +76,7 @@ class SelectionScreenView extends StatelessWidget {
                 fontSize: 28,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                shadows: [
-                ],
+                shadows: [],
               ),
             ),
           ),
@@ -111,7 +113,8 @@ class SelectionScreenView extends StatelessWidget {
               icon: const Icon(Icons.help_outline, color: Colors.white),
               label: const Text(
                 "Ajuda",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),

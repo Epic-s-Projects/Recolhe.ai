@@ -8,14 +8,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 
 import 'area_coleta_page.dart';
-import 'detalhes_reciclado_page.dart';
 import 'endereco_page.dart';
 import 'home_coleta_page.dart';
 
 class NearbyItemsPage extends StatefulWidget {
-  const NearbyItemsPage({Key? key}) : super(key: key);
+  const NearbyItemsPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _NearbyItemsPageState createState() => _NearbyItemsPageState();
 }
 
@@ -28,14 +28,12 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
   final String googleApiKey = "AIzaSyCptI-V7_XzK4wNMlHAwPRcwQK-chI-rRQ";
 
   final List<Widget> _pages = [
-    NearbyItemsPage(),
+    const NearbyItemsPage(),
     // AreaColetaPage(),
     EnderecosPage(),
     HomeColetaPage(),
-    ProfileScreenADM(),
+    const ProfileScreenADM(),
   ];
-
-
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -70,7 +68,7 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
       }
 
       QuerySnapshot usersSnapshot =
-      await FirebaseFirestore.instance.collection("users").get();
+          await FirebaseFirestore.instance.collection("users").get();
 
       List<Map<String, dynamic>> allNearbyItems = [];
 
@@ -85,14 +83,14 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
             .get();
 
         QuerySnapshot enderecoSnapshot =
-        await userDoc.reference.collection("endereco").get();
+            await userDoc.reference.collection("endereco").get();
 
         for (QueryDocumentSnapshot recicladoDoc in recicladoSnapshot.docs) {
           final recicladoData = recicladoDoc.data() as Map<String, dynamic>;
 
           if (enderecoSnapshot.docs.isNotEmpty) {
             final enderecoData =
-            enderecoSnapshot.docs.first.data() as Map<String, dynamic>;
+                enderecoSnapshot.docs.first.data() as Map<String, dynamic>;
 
             final coordinates = await _getCoordinatesFromAddress(
               rua: enderecoData['rua'],
@@ -166,7 +164,7 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
         children: [
           // Background Image
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/background.png'),
                 fit: BoxFit.cover,
@@ -244,41 +242,41 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
               Expanded(
                 child: isLoading
                     ? const Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                    AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
-                  ),
-                )
-                    : nearbyItems.isEmpty
-                    ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.location_off,
-                        size: 100,
-                        color: Colors.white70,
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Nenhum item próximo encontrado.',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white70,
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-                    : ListView.builder(
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: nearbyItems.length,
-                  itemBuilder: (context, index) {
-                    final item = nearbyItems[index];
-                    return _buildNearbyCard(item);
-                  },
-                ),
+                      )
+                    : nearbyItems.isEmpty
+                        ? const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.location_off,
+                                  size: 100,
+                                  color: Colors.white70,
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  'Nenhum item próximo encontrado.',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.all(16.0),
+                            itemCount: nearbyItems.length,
+                            itemBuilder: (context, index) {
+                              final item = nearbyItems[index];
+                              return _buildNearbyCard(item);
+                            },
+                          ),
               ),
             ],
           ),
@@ -287,7 +285,6 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
-
 
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
@@ -317,7 +314,6 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
       ],
     );
   }
-
 
   Widget _buildNearbyCard(Map<String, dynamic> reciclado) {
     return Card(

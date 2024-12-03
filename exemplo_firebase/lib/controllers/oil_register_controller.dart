@@ -50,7 +50,8 @@ class OilRegisterControllers {
               return AlertDialog(
                 backgroundColor: const Color(0xFFF5F5F5), // Cor de fundo suave
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20), // Bordas arredondadas
+                  borderRadius:
+                      BorderRadius.circular(20), // Bordas arredondadas
                 ),
                 title: Row(
                   children: [
@@ -86,7 +87,8 @@ class OilRegisterControllers {
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: const Color(0xFF4CAF50), // Verde
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -104,7 +106,8 @@ class OilRegisterControllers {
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.white,
                       backgroundColor: const Color(0xFFD32F2F), // Vermelho
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -119,7 +122,6 @@ class OilRegisterControllers {
               );
             },
           );
-
 
           return; // Interrompe a execução do método
         }
@@ -158,7 +160,7 @@ class OilRegisterControllers {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
-              (route) => false,
+          (route) => false,
         );
       } else {
         print("Usuário não autenticado.");

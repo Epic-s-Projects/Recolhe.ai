@@ -24,135 +24,165 @@ class _RegistroScreenState extends State<RegistroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFE1C8A9),
-              Color(0xFFC59A64),
-            ],
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  // Botão Voltar
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.green,
-                        size: 28,
-                      ),
-                    ),
-                  ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Determina se o layout está em uma tela ampla ou estreita
+          bool isWideScreen = constraints.maxWidth > 600;
 
-                  // Logo e texto "Recolhe.ai"
-                  Column(
-                    children: [
-                      const Icon(
-                        Icons.recycling,
-                        size: 80,
-                        color: Colors.green,
-                      ),
-                      ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFF109410),
-                            Color(0xFF1AE91A),
-                          ],
-                        ).createShader(bounds),
-                        child: const Text(
-                          'Recolhe.ai',
-                          style: TextStyle(
-                            fontFamily: 'Mulish',
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Campos de texto
-                  CustomTextField(
-                    controller: _nameController,
-                    icon: Icons.person,
-                    hintText: 'Nome',
-                    validator: (value) =>
-                        value!.isEmpty ? 'Informe seu nome' : null,
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _emailController,
-                    icon: Icons.email,
-                    hintText: 'Email',
-                    validator: (value) =>
-                        value!.isEmpty ? 'Informe seu email' : null,
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _passwordController,
-                    icon: Icons.lock,
-                    hintText: 'Senha',
-                    isPassword: true,
-                    validator: (value) => value!.length < 6
-                        ? 'A senha deve ter pelo menos 6 caracteres'
-                        : null,
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _confirmPasswordController,
-                    icon: Icons.lock,
-                    hintText: 'Confirmar Senha',
-                    isPassword: true,
-                    validator: (value) => value != _passwordController.text
-                        ? 'As senhas não conferem'
-                        : null,
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _cpfController,
-                    icon: Icons.badge,
-                    hintText: 'CPF',
-                    validator: (value) =>
-                        value!.isEmpty ? 'Informe seu CPF' : null,
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Botão de Cadastro
-                  GradientButton(
-                    text: 'Cadastrar',
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _authController.registrar(
-                          context: context,
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                          confirmPassword: _confirmPasswordController.text,
-                          name: _nameController.text,
-                          cpf: _cpfController.text,
-                        );
-                      }
-                    },
-                  ),
+          return Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFFE1C8A9),
+                  Color(0xFFC59A64),
                 ],
               ),
             ),
-          ),
-        ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: isWideScreen ? 500 : double.infinity,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 40),
+                            child:
+                                // Botão Voltar
+                                Align(
+                              alignment: Alignment.topLeft,
+                              child: IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.green,
+                                  size: 28,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Logo e texto "Recolhe.ai"
+                          Column(
+                            children: [
+                              Image.asset(
+                                'assets/recycle_icon.png',
+                                width: isWideScreen ? 400 : 250,
+                                height: isWideScreen ? 400 : 250,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Campos de texto
+                          CustomTextField(
+                            controller: _nameController,
+                            icon: Icons.person,
+                            hintText: 'Nome',
+                            validator: (value) => value!.isEmpty
+                                ? 'Por favor, insira o seu nome completo.'
+                                : null,
+                            errorStyle: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            controller: _emailController,
+                            icon: Icons.email,
+                            hintText: 'Email',
+                            validator: (value) =>
+                                value!.isEmpty ? 'Informe seu email' : null,
+                            errorStyle: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            controller: _passwordController,
+                            icon: Icons.lock,
+                            hintText: 'Senha',
+                            isPassword: true,
+                            validator: (value) => value!.length < 6
+                                ? 'A senha deve ter pelo menos 6 caracteres'
+                                : null,
+                            errorStyle: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            controller: _confirmPasswordController,
+                            icon: Icons.lock,
+                            hintText: 'Confirmar Senha',
+                            isPassword: true,
+                            validator: (value) =>
+                                value != _passwordController.text
+                                    ? 'As senhas não conferem'
+                                    : null,
+                            errorStyle: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          CustomTextField(
+                            controller: _cpfController,
+                            icon: Icons.badge,
+                            hintText: 'CPF',
+                            validator: (value) =>
+                                value!.isEmpty ? 'Informe seu CPF' : null,
+                            errorStyle: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Botão de Cadastro
+                          GradientButton(
+                            text: 'Cadastrar',
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _authController.registrar(
+                                  context: context,
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                  confirmPassword:
+                                      _confirmPasswordController.text,
+                                  name: _nameController.text,
+                                  cpf: _cpfController.text,
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

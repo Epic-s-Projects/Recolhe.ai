@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const HistoricScreenView(),
-    RankingPage(),
+    const RankingPage(),
     const ProfileScreen(),
   ];
 
@@ -89,26 +89,95 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       appBar: CustomAppBar(user: UserSession(), showBackButton: true),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: screenHeight * 0.02),
-              _buildWeekDays(screenWidth),
-              SizedBox(height: screenHeight * 0.02),
-              SizedBox(
-                height: screenHeight * 0.69,
-                child: Center(
-                  child: showCards
-                      ? _buildCards(screenWidth)
-                      : _buildImageAndText(screenWidth, screenHeight),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: screenHeight * 0.002),
+                  _buildWeekDays(screenWidth),
+                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(
+                    height: screenHeight * 0.75,
+                    child: Center(
+                      child: showCards
+                          ? _buildCards(screenWidth)
+                          : _buildImageAndText(screenWidth, screenHeight),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.01,
+            right: MediaQuery.of(context).size.width * 0.05,
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Assistente ativado!')),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 5, 69, 101),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.07,
+                      MediaQuery.of(context).size.width * 0.12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * 0.04),
+                    side: BorderSide(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 4,
+                    ),
+                  ),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.smart_toy_outlined,
+                      color: Colors.white,
+                      size: MediaQuery.of(context).size.width * 0.06,
+                    ),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                    Text(
+                      'IA',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+            )
+                .animate()
+                .fadeIn(duration: 500.ms)
+                .shimmer(
+                    duration: 1500.ms, color: Colors.white.withOpacity(0.3))
+                .then()
+                .shake(duration: 500.ms, delay: 2000.ms),
           ),
-        ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 46, 50, 46),
@@ -232,7 +301,7 @@ class _HomePageState extends State<HomePage> {
 
     List<DateTime> monthDays = List.generate(
       lastDayOfMonth.day,
-          (index) => firstDayOfMonth.add(Duration(days: index)),
+      (index) => firstDayOfMonth.add(Duration(days: index)),
     );
 
     return Container(
@@ -262,7 +331,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.all(screenWidth * 0.02),
+              padding: EdgeInsets.all(screenWidth * 0.01),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: currentDay == selectedDate
@@ -276,8 +345,8 @@ class _HomePageState extends State<HomePage> {
                   color: currentDay == selectedDate
                       ? Colors.white
                       : (isToday
-                      ? const Color.fromARGB(255, 0, 208, 76)
-                      : const Color.fromARGB(255, 255, 255, 255)),
+                          ? const Color.fromARGB(255, 0, 208, 76)
+                          : const Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ),
@@ -289,11 +358,11 @@ class _HomePageState extends State<HomePage> {
 
   String _formatarData(Timestamp? timestamp) {
     if (timestamp == null) return 'N/A';
-    final DateTime dateTime = timestamp.toDate(); // Converte Timestamp para DateTime
+    final DateTime dateTime =
+        timestamp.toDate(); // Converte Timestamp para DateTime
     final DateFormat formatter = DateFormat('dd/MM/yyyy'); // Formato desejado
     return formatter.format(dateTime); // Retorna a data formatada
   }
-
 
   Widget _buildCards(double screenWidth) {
     if (user.userId == null) {
@@ -357,7 +426,7 @@ class _HomePageState extends State<HomePage> {
                               borderRadius: BorderRadius.circular(10),
                               child: Padding(
                                 padding:
-                                const EdgeInsets.symmetric(vertical: 30.0),
+                                    const EdgeInsets.symmetric(vertical: 30.0),
                                 child: Image.asset(
                                   _getImageForRecycleType(data['tipo']),
                                   width: screenWidth * 0.13,
@@ -365,8 +434,8 @@ class _HomePageState extends State<HomePage> {
                                   fit: BoxFit.cover,
                                 )
                                     .animate()
-                                    .fadeIn(duration: 500.ms)
-                                    .scale(duration: 500.ms),
+                                    .fadeIn(duration: 100.ms)
+                                    .scale(duration: 100.ms),
                               ),
                             ),
                             SizedBox(width: screenWidth * 0.02),
@@ -405,7 +474,7 @@ class _HomePageState extends State<HomePage> {
                                         _getIconForStatus(data['status']),
                                         size: screenWidth * 0.04,
                                         color:
-                                        _getColorForStatus(data['status']),
+                                            _getColorForStatus(data['status']),
                                       ),
                                       SizedBox(width: screenWidth * 0.02),
                                       Text(
@@ -419,30 +488,6 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ],
                                   ),
-
-
-                                  SizedBox(height: screenWidth * 0.02),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today,
-                                        size: screenWidth * 0.04,
-                                        color: Color(0xFF9E9E9E),
-                                      ),
-                                      SizedBox(width: screenWidth * 0.02),
-                                      Text(
-                                        'Data: ${_formatarData(data['timestamp'])}',
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.04,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-
-
-
                                   // SizedBox(height: screenWidth * 0.02),
                                 ],
                               ),
@@ -453,9 +498,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                     )
                         .animate()
-                        .slideX(duration: 300.ms)
+                        .slideX(duration: 100.ms)
                         .then()
-                        .shake(duration: 200.ms),
+                        .shake(duration: 100.ms),
                   );
                 },
               );
@@ -463,7 +508,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0009),
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0001),
           child: ElevatedButton.icon(
             onPressed: () {
               Navigator.push(
@@ -475,7 +520,7 @@ class _HomePageState extends State<HomePage> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF056517),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -489,7 +534,17 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
               ),
             ),
-          ).animate().scale(duration: 300.ms).fadeIn(),
+          ).animate().scale(duration: 100.ms).fadeIn(),
+          //     key: const Icon(Icons.add, color: Colors.white, size: 28),
+          //     label: const Text(
+          //       'Realize sua coleta',
+          //       style: TextStyle(
+          //         fontSize: 20,
+          //         fontWeight: FontWeight.bold,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ).animate().scale(duration: 300.ms).fadeIn(),
         ),
       ],
     );
@@ -543,7 +598,7 @@ class _HomePageState extends State<HomePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor:
-          const Color.fromARGB(255, 255, 255, 255), // Cor de fundo suave
+              const Color.fromARGB(255, 255, 255, 255), // Cor de fundo suave
           title: const Text(
             'Detalhes da Coleta',
             style: TextStyle(

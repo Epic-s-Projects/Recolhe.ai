@@ -27,12 +27,11 @@ class _RankingPageState extends State<RankingPage> {
   }
 
   final List<Widget> _pages = [
-    HomePage(),
-    HistoricScreenView(),
+    const HomePage(),
+    const HistoricScreenView(),
     RankingPage(),
-    ProfileScreen(),
+    const ProfileScreen(),
   ];
-
 
   void _onItemTapped(int index) {
     if (index != _selectedIndex) {
@@ -51,7 +50,8 @@ class _RankingPageState extends State<RankingPage> {
     List<Map<String, dynamic>> usersWithXp = [];
 
     try {
-      QuerySnapshot usersSnapshot = await FirebaseFirestore.instance.collection('users').get();
+      QuerySnapshot usersSnapshot =
+          await FirebaseFirestore.instance.collection('users').get();
 
       for (var userDoc in usersSnapshot.docs) {
         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
@@ -59,11 +59,12 @@ class _RankingPageState extends State<RankingPage> {
         String name = userData['nome'] ?? 'Usuário';
         String photo = userData['imagem'] ?? 'assets/default_profile.jpg';
 
-        QuerySnapshot recicladoSnapshot = await userDoc.reference.collection('reciclado').get();
+        QuerySnapshot recicladoSnapshot =
+            await userDoc.reference.collection('reciclado').get();
 
         int totalXp = recicladoSnapshot.docs.fold<int>(
           0,
-              (previousValue, recicladoDoc) {
+          (previousValue, recicladoDoc) {
             final data = recicladoDoc.data() as Map<String, dynamic>;
             return data['status'] == 'Concluído'
                 ? previousValue + ((data['xp_ganho'] as num?)?.toInt() ?? 0)
@@ -103,7 +104,9 @@ class _RankingPageState extends State<RankingPage> {
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   );
-                } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                } else if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    snapshot.data!.isEmpty) {
                   return Center(
                     child: Text(
                       'Nenhum dado encontrado',
@@ -137,7 +140,8 @@ class _RankingPageState extends State<RankingPage> {
               icon: const Icon(Icons.info_outline, color: Colors.white),
               label: const Text(
                 "Mais informações",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -171,7 +175,6 @@ class _RankingPageState extends State<RankingPage> {
       ),
     );
   }
-
 
   Widget _buildTopThreeSection(List<Map<String, dynamic>> topThree) {
     return Container(
@@ -325,7 +328,8 @@ class _RankingPageState extends State<RankingPage> {
               ],
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               leading: Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -419,11 +423,11 @@ void _showRewardsDialog(BuildContext context) {
               // Corpo da mensagem
               Text(
                 "Os 5 primeiros colocados no ranking de reciclagem ganham prêmios incríveis como:\n\n"
-                    "🥇 1º Lugar: Um vale-presente de R\$500 e uma medalha de ouro virtual!\n"
-                    "🥈 **2º Lugar: Um vale-presente de R\$300 e uma medalha de prata virtual!\n"
-                    "🥉 3º Lugar: Um vale-presente de R\$200 e uma medalha de bronze virtual!\n"
-                    "🏅 4º e 5º Lugar: Um kit sustentável exclusivo para continuar reciclando!\n\n"
-                    "Transforme seu óleo usado em conquistas e faça a diferença pelo meio ambiente! 🌿",
+                "🥇 1º Lugar: Um vale-presente de R\$500 e uma medalha de ouro virtual!\n"
+                "🥈 **2º Lugar: Um vale-presente de R\$300 e uma medalha de prata virtual!\n"
+                "🥉 3º Lugar: Um vale-presente de R\$200 e uma medalha de bronze virtual!\n"
+                "🏅 4º e 5º Lugar: Um kit sustentável exclusivo para continuar reciclando!\n\n"
+                "Transforme seu óleo usado em conquistas e faça a diferença pelo meio ambiente! 🌿",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -439,8 +443,10 @@ void _showRewardsDialog(BuildContext context) {
                   Navigator.of(context).pop(); // Fecha o diálogo
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 223, 209, 186), // Marrom escuro
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  backgroundColor:
+                      Color.fromARGB(255, 223, 209, 186), // Marrom escuro
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

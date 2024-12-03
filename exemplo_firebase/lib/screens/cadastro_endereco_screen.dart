@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 
 class ModernAddressRegistrationPage extends StatefulWidget {
-  const ModernAddressRegistrationPage({Key? key}) : super(key: key);
+  const ModernAddressRegistrationPage({super.key});
 
   @override
   _ModernAddressRegistrationPageState createState() =>
@@ -23,7 +23,9 @@ class _ModernAddressRegistrationPageState
   bool _hasAddress = false;
   bool _isEditing = false;
 
-  final Color _accentColor = const Color(0xFF4CAF50);
+  // Modern color palette
+  final Color _accentColor = const Color(0xFF4CAF50); // Earthy green
+  // final Color _backgroundColor = const Color(0xFFF5F5F5); // Soft gray
   final Color _backgroundColor = const Color(0xFFF5F5F5);
 
   @override
@@ -83,7 +85,10 @@ class _ModernAddressRegistrationPageState
       builder: (context) => AlertDialog(
         title: const Text(
           'Atenção',
-          style: TextStyle(color: Colors.red),
+          style: TextStyle(
+            color: Color.fromARGB(255, 223, 209, 186),
+          ),
+          // style: TextStyle(color: Colors.red),
         ),
         content: Text(message),
         actions: [
@@ -158,13 +163,13 @@ class _ModernAddressRegistrationPageState
       ),
       floatingActionButton: _hasAddress
           ? FloatingActionButton(
-        onPressed: () => setState(() => _isEditing = !_isEditing),
-        backgroundColor: _accentColor,
-        child: Icon(
-          _isEditing ? Icons.close : Icons.edit,
-          color: Colors.white,
-        ),
-      )
+              onPressed: () => setState(() => _isEditing = !_isEditing),
+              backgroundColor: _accentColor,
+              child: Icon(
+                _isEditing ? Icons.close : Icons.edit,
+                color: Colors.white,
+              ),
+            )
           : null,
     );
   }
@@ -186,10 +191,14 @@ class _ModernAddressRegistrationPageState
               ),
             ),
             const Divider(),
-            _buildAddressDetailRow(Icons.location_on, 'CEP', _cepController.text),
-            _buildAddressDetailRow(Icons.streetview, 'Rua', _ruaController.text),
-            _buildAddressDetailRow(Icons.location_city, 'Bairro', _bairroController.text),
-            _buildAddressDetailRow(Icons.home, 'Número', _numeroController.text),
+            _buildAddressDetailRow(
+                Icons.location_on, 'CEP', _cepController.text),
+            _buildAddressDetailRow(
+                Icons.streetview, 'Rua', _ruaController.text),
+            _buildAddressDetailRow(
+                Icons.location_city, 'Bairro', _bairroController.text),
+            _buildAddressDetailRow(
+                Icons.home, 'Número', _numeroController.text),
           ],
         ),
       ),
@@ -205,6 +214,13 @@ class _ModernAddressRegistrationPageState
           const SizedBox(width: 10),
           Text(
             '$label: ',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 223, 209, 186).withOpacity(0.8),
+            ),
+          ),
+          Text(
+            value,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           Flexible(
@@ -242,14 +258,14 @@ class _ModernAddressRegistrationPageState
             controller: _ruaController,
             label: 'Rua',
             validator: (value) =>
-            value?.isEmpty == true ? 'Rua obrigatória' : null,
+                value?.isEmpty == true ? 'Rua obrigatória' : null,
           ),
           const SizedBox(height: 15),
           _buildTextField(
             controller: _bairroController,
             label: 'Bairro',
             validator: (value) =>
-            value?.isEmpty == true ? 'Bairro obrigatório' : null,
+                value?.isEmpty == true ? 'Bairro obrigatório' : null,
           ),
           const SizedBox(height: 15),
           _buildTextField(
@@ -257,15 +273,14 @@ class _ModernAddressRegistrationPageState
             label: 'Número',
             keyboardType: TextInputType.number,
             validator: (value) =>
-            value?.isEmpty == true ? 'Número obrigatório' : null,
+                value?.isEmpty == true ? 'Número obrigatório' : null,
           ),
           const SizedBox(height: 25),
           ElevatedButton(
             onPressed: _saveAddress,
             style: ElevatedButton.styleFrom(
               backgroundColor: _accentColor,
-              padding:
-              const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -294,15 +309,26 @@ class _ModernAddressRegistrationPageState
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+        labelStyle: const TextStyle(
+          color: Color.fromARGB(255, 223, 209, 186),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: _accentColor),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: Color.fromARGB(255, 223, 209, 186),
+          ),
+          // filled: true,
+          // fillColor: Colors.white,
+          // border: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(12),
+          //   borderSide: BorderSide.none,
+          // ),
+          // focusedBorder: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(12),
+          // ),
+          // errorBorder: OutlineInputBorder(
+          //   borderSide: const BorderSide(color: Colors.red, width: 2),
+          //   borderRadius: BorderRadius.circular(12),
+          //   borderSide: BorderSide(color: _accentColor),
         ),
       ),
     );

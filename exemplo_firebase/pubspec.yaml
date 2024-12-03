@@ -1,7 +1,7 @@
 name: exemplo_firebase
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -26,13 +26,21 @@ dependencies:
 
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/
+
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#ffffff"
+  label: "Recolhe.ai"
+  min_sdk_android: 21 # android min sdk min:16, default 21

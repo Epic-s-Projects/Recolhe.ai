@@ -111,7 +111,8 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
 
   String _formatarData(Timestamp? timestamp) {
     if (timestamp == null) return 'N/A';
-    final DateTime dateTime = timestamp.toDate(); // Converte Timestamp para DateTime
+    final DateTime dateTime =
+        timestamp.toDate(); // Converte Timestamp para DateTime
     final DateFormat formatter = DateFormat('dd/MM/yyyy'); // Formato desejado
     return formatter.format(dateTime); // Retorna a data formatada
   }
@@ -123,6 +124,8 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
     return Scaffold(
       appBar: CustomAppBar(user: user),
       body: Container(
+        width: size.width, // Largura total da tela
+        height: size.height, // Altura total da tela
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFF5E6CC), Color(0xFFF1D9B4)],
@@ -138,7 +141,8 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
                 padding: const EdgeInsets.only(),
                 child: Image.asset(
                   'assets/folhas.png',
-                  width: MediaQuery.of(context).size.width,
+                  width: size.width,
+                  height: size.height * 0.3, // Ajuste opcional para o fundo
                   fit: BoxFit.cover,
                 ),
               ),
@@ -152,169 +156,166 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
                     child: isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : historicData.isEmpty
-                        ? Center(
-                      child: Text(
-                        "Nenhum histórico encontrado.",
-                        style: TextStyle(
-                          fontSize: size.width * 0.05,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    )
-                        : ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.05),
-                      itemCount: historicData.length,
-                      itemBuilder: (context, index) {
-                        final data = historicData[index];
-                        String status = data['status'] ?? 'N/A';
-                        return Padding(
-                          padding: EdgeInsets.only(
-                              bottom: size.height * 0.02),
-                          child: Card(
-                            color: const Color.fromARGB(
-                                255, 255, 255, 255), // Cor de fundo
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            elevation: 5,
-                            child: Padding(
-                              padding:
-                              EdgeInsets.all(size.width * 0.04),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius:
-                                    BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      'assets/img_product.png',
-                                      width: size.width * 0.2,
-                                      height: size.width * 0.2,
-                                      fit: BoxFit.cover,
-                                    ),
+                            ? Center(
+                                child: Text(
+                                  "Nenhum histórico encontrado.",
+                                  style: TextStyle(
+                                    fontSize: size.width * 0.05,
+                                    color: Colors.black54,
                                   ),
-                                  SizedBox(width: size.width * 0.03),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Tipo: ${data['tipo'] ?? 'N/A'}',
-                                          style: TextStyle(
-                                            fontSize:
-                                            size.width * 0.05,
-                                            fontWeight:
-                                            FontWeight.bold,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            height:
-                                            size.width * 0.02),
-                                        Text(
-                                          'Quantidade: ${data['qtd'] ?? 'N/A'}',
-                                          style: const TextStyle(
-                                              fontSize: 14),
-                                        ),
-                                        SizedBox(
-                                            height:
-                                            size.width * 0.02),
-                                        Text(
-                                          'Status: ',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: _getColorForStatus(
-                                                status),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            height:
-                                            size.width * 0.02),
-                                        Row(
+                                ),
+                              )
+                            : ListView.builder(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 0.05),
+                                itemCount: historicData.length,
+                                itemBuilder: (context, index) {
+                                  final data = historicData[index];
+                                  String status = data['status'] ?? 'N/A';
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        bottom: size.height * 0.02),
+                                    child: Card(
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255), // Cor de fundo
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      elevation: 5,
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.all(size.width * 0.04),
+                                        child: Row(
                                           children: [
-                                            Icon(
-                                              _getIconForStatus(
-                                                  status),
-                                              size: 20,
-                                              color:
-                                              _getColorForStatus(
-                                                  status),
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.asset(
+                                                'assets/img_product.png',
+                                                width: size.width * 0.2,
+                                                height: size.width * 0.2,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
-                                            SizedBox(
-                                                width: size.width *
-                                                    0.02),
-                                            Text(
-                                              status,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                                color:
-                                                _getColorForStatus(
-                                                    status),
+                                            SizedBox(width: size.width * 0.03),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    'Tipo: ${data['tipo'] ?? 'N/A'}',
+                                                    style: TextStyle(
+                                                      fontSize:
+                                                          size.width * 0.05,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Text(
+                                                    'Quantidade: ${data['qtd'] ?? 'N/A'}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Text(
+                                                    'Status: ',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: _getColorForStatus(
+                                                          status),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        _getIconForStatus(
+                                                            status),
+                                                        size: 20,
+                                                        color:
+                                                            _getColorForStatus(
+                                                                status),
+                                                      ),
+                                                      SizedBox(
+                                                          width: size.width *
+                                                              0.02),
+                                                      Text(
+                                                        status,
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              _getColorForStatus(
+                                                                  status),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        _getIconForStatus(
+                                                            status),
+                                                        size: 20,
+                                                        color:
+                                                            _getColorForStatus(
+                                                                status),
+                                                      ),
+                                                      SizedBox(
+                                                          width: size.width *
+                                                              0.02),
+                                                      Text(
+                                                        'Data: ${_formatarData(data['data_coleta'])}',
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                      height:
+                                                          size.width * 0.02),
+                                                  Row(
+                                                    children: [
+                                                      const Icon(
+                                                          Icons.wind_power,
+                                                          size: 20,
+                                                          color: Colors.amber),
+                                                      SizedBox(
+                                                          width: size.width *
+                                                              0.02),
+                                                      Text(
+                                                        'XP: ${(data['xp_ganho'])}',
+                                                        style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
-                                            height:
-                                            size.width * 0.02),
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              _getIconForStatus(
-                                                  status),
-                                              size: 20,
-                                              color:
-                                              _getColorForStatus(
-                                                  status),
-                                            ),
-                                            SizedBox(
-                                                width: size.width *
-                                                    0.02),
-                                            Text(
-                                              'Data: ${_formatarData(data['data_coleta'])}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                            height:
-                                            size.width * 0.02),
-                                        Row(
-                                          children: [
-                                            Icon(
-                                                Icons.wind_power,
-                                                size: 20,
-                                                color: Colors.amber
-                                            ),
-                                            SizedBox(
-                                                width: size.width *
-                                                    0.02),
-                                            Text(
-                                              'XP: ${(data['xp_ganho'])}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-
-                                          ],
-
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
                   ),
                 ],
               ),

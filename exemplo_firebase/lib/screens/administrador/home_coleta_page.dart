@@ -55,7 +55,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
 
     try {
       QuerySnapshot usersSnapshot =
-      await FirebaseFirestore.instance.collection("users").get();
+          await FirebaseFirestore.instance.collection("users").get();
 
       for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
         final userData = userDoc.data() as Map<String, dynamic>;
@@ -69,7 +69,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
             .get();
 
         QuerySnapshot enderecoSnapshot =
-        await userDoc.reference.collection("endereco").get();
+            await userDoc.reference.collection("endereco").get();
 
         Map<String, dynamic>? endereco;
         if (enderecoSnapshot.docs.isNotEmpty) {
@@ -123,8 +123,8 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
           child: isLoading
               ? _buildLoadingView()
               : reciclados.isEmpty
-              ? _buildEmptyView()
-              : _buildRecicladosList(),
+                  ? _buildEmptyView()
+                  : _buildRecicladosList(),
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -148,7 +148,8 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
             SizedBox(height: 16),
             Text(
               'Carregando reciclados...',
-              style: TextStyle(color: Color(0xFF795548), fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: Color(0xFF795548), fontWeight: FontWeight.w600),
             )
           ],
         ),
