@@ -91,7 +91,6 @@ classDiagram
     class Reciclado {
       +int id_reciclado PK
       +Double qtd_oleo
-      +int id_eletronico FK
       +String cpf FK
     }
 
@@ -107,18 +106,8 @@ classDiagram
     class Coletado {
       +int id_coletado PK
       +Double qtd_oleo
-      +int id_eletronico FK
       +Date data
       +String cpf FK
-    }
-
-    class Eletronico {
-      +int id_eletronico PK
-      +Double qtd
-      +String tipo
-      +String img
-      +Decimal altura
-      +Decimal comprimento
     }
 
     class IniciarColeta {
@@ -132,10 +121,8 @@ classDiagram
     Usuario --> Reciclado : "id_reciclado"
     UsuarioColetor --> Coletado : "id_coletado"
     UsuarioColetor --> Pontuacao : "id_pontuacao"
-    Reciclado --> Eletronico : "id_eletronico"
     Reciclado --> Usuario : "cpf"
     Pontuacao --> Usuario : "cpf"
-    Coletado --> Eletronico : "id_eletronico"
     Coletado --> UsuarioColetor : "cpf"
 
 ```
@@ -467,20 +454,3 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
   </table>
 </div>
-
-
-
-
-
-
-<br><br><br><br><br>
-
-
-- Página ADM (Pré Cadastro)
-- Design Cards()
-- Histórico de Cards()
-- Testes()
-- Apresentação()
-- Integração entre ADM e Locais
-- Apenas um endereço por pessoa e cadastrar longitude e latitude também
-- Responsividade
