@@ -124,6 +124,8 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
     return Scaffold(
       appBar: CustomAppBar(user: user),
       body: Container(
+        width: size.width, // Largura total da tela
+        height: size.height, // Altura total da tela
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFFF5E6CC), Color(0xFFF1D9B4)],
@@ -139,7 +141,8 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
                 padding: const EdgeInsets.only(),
                 child: Image.asset(
                   'assets/folhas.png',
-                  width: MediaQuery.of(context).size.width,
+                  width: size.width,
+                  height: size.height * 0.3, // Ajuste opcional para o fundo
                   fit: BoxFit.cover,
                 ),
               ),
@@ -287,7 +290,8 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
                                                           size.width * 0.02),
                                                   Row(
                                                     children: [
-                                                      Icon(Icons.wind_power,
+                                                      const Icon(
+                                                          Icons.wind_power,
                                                           size: 20,
                                                           color: Colors.amber),
                                                       SizedBox(

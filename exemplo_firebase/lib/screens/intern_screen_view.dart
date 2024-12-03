@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const HistoricScreenView(),
-    RankingPage(),
+    const RankingPage(),
     const ProfileScreen(),
   ];
 
@@ -93,15 +93,15 @@ class _HomePageState extends State<HomePage> {
         children: [
           SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.002),
                   _buildWeekDays(screenWidth),
                   SizedBox(height: screenHeight * 0.02),
                   SizedBox(
-                    height: screenHeight * 0.69,
+                    height: screenHeight * 0.75,
                     child: Center(
                       child: showCards
                           ? _buildCards(screenWidth)
@@ -113,28 +113,69 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            bottom: 20,
-            right: 20,
-            child: ElevatedButton(
-              onPressed: () {
-                // Adicione aqui a ação do botão
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Botão pressionado!')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF056517),
-                minimumSize: const Size(30, 30),
-                shape: const BeveledRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(40))),
-                padding: const EdgeInsets.all(20),
+            bottom: MediaQuery.of(context).size.height * 0.01,
+            right: MediaQuery.of(context).size.width * 0.05,
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: const Icon(
-                Icons.smart_toy,
-                color: Colors.white,
-                size: 24,
+              child: ElevatedButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Assistente ativado!')),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 5, 69, 101),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.07,
+                      MediaQuery.of(context).size.width * 0.12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * 0.04),
+                    side: BorderSide(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 4,
+                    ),
+                  ),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.smart_toy_outlined,
+                      color: Colors.white,
+                      size: MediaQuery.of(context).size.width * 0.06,
+                    ),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                    Text(
+                      'IA',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            )
+                .animate()
+                .fadeIn(duration: 500.ms)
+                .shimmer(
+                    duration: 1500.ms, color: Colors.white.withOpacity(0.3))
+                .then()
+                .shake(duration: 500.ms, delay: 2000.ms),
           ),
         ],
       ),
@@ -290,7 +331,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.all(screenWidth * 0.02),
+              padding: EdgeInsets.all(screenWidth * 0.01),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: currentDay == selectedDate
@@ -393,8 +434,8 @@ class _HomePageState extends State<HomePage> {
                                   fit: BoxFit.cover,
                                 )
                                     .animate()
-                                    .fadeIn(duration: 500.ms)
-                                    .scale(duration: 500.ms),
+                                    .fadeIn(duration: 100.ms)
+                                    .scale(duration: 100.ms),
                               ),
                             ),
                             SizedBox(width: screenWidth * 0.02),
@@ -457,9 +498,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                     )
                         .animate()
-                        .slideX(duration: 300.ms)
+                        .slideX(duration: 100.ms)
                         .then()
-                        .shake(duration: 200.ms),
+                        .shake(duration: 100.ms),
                   );
                 },
               );
@@ -467,7 +508,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0009),
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0001),
           child: ElevatedButton.icon(
             onPressed: () {
               Navigator.push(
@@ -479,7 +520,7 @@ class _HomePageState extends State<HomePage> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF056517),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -493,7 +534,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
               ),
             ),
-          ).animate().scale(duration: 300.ms).fadeIn(),
+          ).animate().scale(duration: 100.ms).fadeIn(),
           //     key: const Icon(Icons.add, color: Colors.white, size: 28),
           //     label: const Text(
           //       'Realize sua coleta',

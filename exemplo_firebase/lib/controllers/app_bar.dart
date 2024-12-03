@@ -19,14 +19,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return AppBar(
-      backgroundColor: const Color(0xFF4CAF50), // Verde moderno e suave
+      backgroundColor: Colors.transparent, // Fundo transparente
+      elevation: 0, // Remove a sombra da AppBar
       automaticallyImplyLeading: false, // Remove a seta de voltar
       title: Text(
         'Olá, ${user.name ?? 'Usuário'}!',
         style: TextStyle(
           fontSize: screenWidth * 0.05,
           fontWeight: FontWeight.w600,
-          color: Colors.white, // Verde suave
+          color: const Color.fromARGB(
+              255, 33, 117, 0), // Ajuste de cor do texto para contraste
         ),
       ),
       actions: [
@@ -34,13 +36,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: EdgeInsets.only(right: screenWidth * 0.04),
           child: GestureDetector(
             onTap: () {
-              print("O nome é: ${user.name}");
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const ProfileScreenADM(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfileScreen(),
+                ),
+              );
             },
             child: CircleAvatar(
               radius: screenWidth * 0.06,
