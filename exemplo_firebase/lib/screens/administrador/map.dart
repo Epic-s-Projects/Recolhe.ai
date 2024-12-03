@@ -6,7 +6,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 
 class MapPage extends StatefulWidget {
@@ -14,7 +13,7 @@ class MapPage extends StatefulWidget {
   _MapPageState createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
+class _MapPageState extends State<MapPage> {
   final String googleApiKey = "AIzaSyCptI-V7_XzK4wNMlHAwPRcwQK-chI-rRQ"; // Replace with your key
   final PageController _pageController = PageController();
   final MapController _mapController = MapController();
@@ -33,28 +32,11 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _checkLocationPermission();
     _loadLocationsAndRoutes();
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _checkLocationPermission();
-      _loadLocationsAndRoutes();
-    }
-  }
-
   Future<void> _checkLocationPermission() async {
-
     bool serviceEnabled = await _geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;
 
@@ -65,19 +47,6 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     }
 
     if (permission == LocationPermission.deniedForever) return;
-
-    try {
-      Position position = await _geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      setState(() {
-        _currentPosition = position;
-        _updateLocations();
-      });
-    } catch (e) {
-      print('Error getting current position: $e');
-    }
 
     _geolocator.getPositionStream(
       locationSettings: LocationSettings(
@@ -103,22 +72,12 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         "neighborhood": "Atual",
         "city": "Minha Localização",
         "cep": "N/A",
-        "imageUrl": null, // Current location will have a special marker
-        "isCurrentLocation": true
       });
-
-      // Recalculate nearest location
-      if (_currentPosition != null) {
-        _checkNearestLocation(_currentPosition!);
-      }
     }
   }
 
   Future<void> _loadLocationsAndRoutes() async {
     try {
-      // Clear existing locations
-      locations.clear();
-
       // Fetch all reciclado locations
       List<Map<String, dynamic>> recicladoLocations = await fetchAllReciclado();
 
@@ -137,17 +96,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               "neighborhood": location['endereco']['bairro'] ?? '',
               "city": location['endereco']['cidade'] ?? '',
               "cep": cep,
-              "imageUrl": location['imageUrl'],
-              "userId": location['userId'],
-              "isCurrentLocation": false
             });
           }
         }
-      }
-
-      // Add current location if available
-      if (_currentPosition != null) {
-        _updateLocations();
       }
 
       // Fetch route points for all locations if more than one location
@@ -217,44 +168,50 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     List<Map<String, dynamic>> allReciclado = [];
 
     try {
+      // Obtém todos os documentos da coleção "users"
       QuerySnapshot usersSnapshot = await FirebaseFirestore.instance.collection("users").get();
 
       for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
+        // Dados do usuário atual
         final userData = userDoc.data() as Map<String, dynamic>;
         String? nome = userData['nome'];
         String? cpf = userData['cpf'];
-        String? imageUrl = userData['imagem']; // Get user's image URL
         String userId = userDoc.id;
 
+        // Busca documentos na subcoleção "reciclado" com status "Em processo"
         QuerySnapshot recicladoSnapshot = await userDoc.reference
             .collection("reciclado")
             .where("status", isEqualTo: "Em processo")
             .get();
 
+        // Busca documentos na subcoleção "endereco"
         QuerySnapshot enderecoSnapshot = await userDoc.reference.collection("endereco").get();
 
+        // Obtém o primeiro endereço, se existir
         Map<String, dynamic>? endereco;
         if (enderecoSnapshot.docs.isNotEmpty) {
           endereco = enderecoSnapshot.docs.first.data() as Map<String, dynamic>;
         }
 
+        // Itera pelos documentos da subcoleção "reciclado"
         for (QueryDocumentSnapshot recicladoDoc in recicladoSnapshot.docs) {
+          // Adiciona os dados consolidados à lista
           allReciclado.add({
-            ...recicladoDoc.data() as Map<String, dynamic>,
+            ...recicladoDoc.data() as Map<String, dynamic>, // Dados do reciclado
             'nome': nome,
             'cpf': cpf,
             'endereco': endereco,
             'userId': userId,
             'recicladoId': recicladoDoc.id,
-            'imageUrl': imageUrl, // Add user's image URL to the location data
           });
         }
       }
     } catch (e) {
+      // Captura erros e imprime no console
       print('Erro ao buscar dados de reciclados: $e');
     }
 
-    return allReciclado;
+    return allReciclado; // Retorna a lista de reciclados
   }
 
   Future<LatLng?> _getCoordinatesFromAddress(String cep, String numero) async {
@@ -299,40 +256,6 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   void _centerMapOnLocation(LatLng location) {
     _mapController.move(location, 13.0);
-  }
-
-  Widget _buildLocationMarker(Map<String, dynamic> location) {
-    if (location['isCurrentLocation']) {
-      // Special marker for current location
-      return Icon(
-        Icons.my_location,
-        color: Colors.blue,
-        size: 40,
-      );
-    }
-
-    if (location['imageUrl'] != null) {
-      // User's profile image marker
-      return Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2),
-          image: DecorationImage(
-            image: CachedNetworkImageProvider(location['imageUrl']),
-            fit: BoxFit.cover,
-          ),
-        ),
-      );
-    }
-
-    // Fallback marker
-    return Icon(
-      Icons.location_pin,
-      color: Colors.red,
-      size: 40,
-    );
   }
 
   Widget _buildCollectionButton() {
@@ -404,7 +327,15 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               markers: locations.map((loc) =>
                   Marker(
                     point: loc['point'],
-                    builder: (context) => _buildLocationMarker(loc),
+                    builder: (context) {
+                      return Icon(
+                        Icons.location_pin,
+                        color: locations.indexOf(loc) == _currentPageIndex
+                            ? Colors.red
+                            : Colors.blue,
+                        size: 40,
+                      );
+                    },
                   )
               ).toList(),
             ),
