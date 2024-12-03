@@ -334,7 +334,9 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
 <summary> Cadastro de Itens </summary>
 
-# Cadastrar Itens(Óleo e/ou Eletrônico) no Firebase
+# Cadastrar Óleo no Firebase
+
+
 
 </details>
 
@@ -342,9 +344,7 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
 <summary> Traçar Rotas </summary>
 
-# Traçar Rotas entre pontos(flutter_osm_plugin 1.3.5)
-
-  - https://www.youtube.com/watch?v=1tG93RjDP-E
+# Traçar Rotas entre pontos com Google Maps
 
 </details>
 
