@@ -68,7 +68,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
     try {
       Position position = await _geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       setState(() {
@@ -79,8 +81,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       print('Error getting current position: $e');
     }
 
+
     _geolocator.getPositionStream(
-      locationSettings: LocationSettings(
+      locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 10,
       ),

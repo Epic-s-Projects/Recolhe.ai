@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 
 import 'area_coleta_page.dart';
+import 'chatbot_page.dart';
 import 'detalhes_reciclado_page.dart';
 import 'endereco_page.dart';
 import 'home_coleta_page.dart';
@@ -286,7 +287,18 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => ChatDialog(),
+          );
+        },
+        child: Icon(Icons.smart_toy, color: Colors.white),
+        backgroundColor: Colors.brown,
+      ),
     );
+
   }
 
 
