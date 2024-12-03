@@ -1,8 +1,61 @@
-# Recolhe.ai
-repositório destinado para o projeto final do SENAI
+<br>
+<br>
+<br>
+<p align="center">
+   <img src="/exemplo_firebase/assets/recycle_icon.png" alt="logo" width=250px>
+</p>
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Classe" alt="Typing SVG" />
+<p align="center">
+   <img src="https://img.shields.io/badge/Backend-FEITO-blue?style=for-the-badge" alt="backend" />
+  <img src="https://img.shields.io/badge/Documentação-FEITA-blue?style=for-the-badge" alt="documentação" />
+  <img src="https://img.shields.io/badge/Protótipos-FEITO-blue?style=for-the-badge" alt="prototipos" />
+  <img src="https://img.shields.io/badge/Frontend-FEITO-blue?style=for-the-badge" alt="frontend" />
+</p>
+<hr>
+<br>
+<br><br><br>
 
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Sumário 📰" alt="Typing SVG" /></a>
+
+- [Contexto Inicial](#contexto-inicial)
+- [Problema Encontrado](#problema-encontrado)
+- [Nossa Solução](#nossa-solução)
+- [Protótipos](#protótipos)
+- [Diagramas](#diagramas)
+- [Funcionalidades do Aplicativo](#funcionalidades-do-aplicativo)
+- [Ferramentas de Desenvolvimento](#ferramentas-de-desenvolvimento)
+- [Referências](#referências)
+- [Equipe de Desenvolvimento](#equipe-de-desenvolvimento)
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Introdução" alt="Typing SVG" /></a>
+## Apresentação do Projeto: Desenvolvimento de Aplicativo sobre Coleta Seletiva de Óleo
+
+### Contexto Inicial
+Aqui vai a descrição do contexto inicial.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Buscando um Problema" alt="Typing SVG" /></a>
+## Problema Encontrado
+Aqui vai a descrição do problema encontrado.
+<br><br><br>
+
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Encontrando a Solução" alt="Typing SVG" /></a>
+## Nossa Solução
+Aqui vai a descrição da solução.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Nossa Prototipagem" alt="Typing SVG" /></a>
+## Protótipos
+Aqui vai a descrição dos protótipos.
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Diagramas" alt="Typing SVG" /></a>
+## Diagramas
+
+### Diagrama de Classe:
 ```mermaid
 classDiagram
     class Usuario {
@@ -38,7 +91,6 @@ classDiagram
     class Reciclado {
       +int id_reciclado PK
       +Double qtd_oleo
-      +int id_eletronico FK
       +String cpf FK
     }
 
@@ -54,18 +106,8 @@ classDiagram
     class Coletado {
       +int id_coletado PK
       +Double qtd_oleo
-      +int id_eletronico FK
       +Date data
       +String cpf FK
-    }
-
-    class Eletronico {
-      +int id_eletronico PK
-      +Double qtd
-      +String tipo
-      +String img
-      +Decimal altura
-      +Decimal comprimento
     }
 
     class IniciarColeta {
@@ -79,17 +121,13 @@ classDiagram
     Usuario --> Reciclado : "id_reciclado"
     UsuarioColetor --> Coletado : "id_coletado"
     UsuarioColetor --> Pontuacao : "id_pontuacao"
-    Reciclado --> Eletronico : "id_eletronico"
     Reciclado --> Usuario : "cpf"
     Pontuacao --> Usuario : "cpf"
-    Coletado --> Eletronico : "id_eletronico"
     Coletado --> UsuarioColetor : "cpf"
 
 ```
-<br><br><br><br><br>
-
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Fluxo" alt="Typing SVG" />
-
+<br><br>
+### Diagrama de Fluxo
 ``` mermaid
 
 flowchart TD
@@ -123,10 +161,8 @@ flowchart TD
     end
 
 ```
-<br><br><br><br><br>
-
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=9c20f5&center=false&vCenter=false&repeat=false&width=435&lines=Diagrama de Uso" alt="Typing SVG" />
-
+<br><br>
+### Diagrama de Uso:
 ``` mermaid
 flowchart TD
     subgraph Usuario [Usuário]
@@ -158,9 +194,10 @@ flowchart TD
 
 ```
 
+<br><br><br>
 
-# Funcionalidades
-
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Aplicativo Funcionando" alt="Typing SVG" /></a>
+## Funcionalidades do Aplicativo
 <details>
 
 <summary> Cadastro de Usuário </summary>
@@ -297,7 +334,9 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
 <summary> Cadastro de Itens </summary>
 
-# Cadastrar Itens(Óleo e/ou Eletrônico) no Firebase
+# Cadastrar Óleo no Firebase
+
+
 
 </details>
 
@@ -305,9 +344,7 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 
 <summary> Traçar Rotas </summary>
 
-# Traçar Rotas entre pontos(flutter_osm_plugin 1.3.5)
-
-  - https://www.youtube.com/watch?v=1tG93RjDP-E
+# Traçar Rotas entre pontos com Google Maps
 
 </details>
 
@@ -319,14 +356,101 @@ Exibe mensagens claras de erro (como CEP inválido ou falha na conexão) e confi
 # Pontuação
 
 </details>
+<br><br><br>
 
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Utilização de Ferramentas de Trabalho" alt="Typing SVG" /></a>
+## Ferramentas de Desenvolvimento
+ <p>  
+      
+  <table>
+  <thead>
+    <tr>
+      <th> Linguagens </th>
+      <th> Frameworks </th>
+      <th> Outros </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"> <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white" alt="Dart Badge"/> </td>
+       <td align="center"> <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter Badge" style="width: 100%"/> </td>
+        <td align="center"> <img src="https://img.shields.io/badge/Firebase-000?style=for-the-badge&logo=firebase&logoColor=ffca28" alt="Firebase Badge"/> </td>
+    </tr>
+     <tr>
+         <td align="center"> </td>
+         <td align="center">  </td>
+         <td align="center"> <img src="https://img.shields.io/badge/Visual_Studio_Code-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white" alt="VScode Badge"/> </td>
+      </tr>
+    <tr>
+      <td align="center"> </td>
+        <td align="center"> </td>
+        <td align="center"> <img src="https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white" alt="Git Badge"/> </td>
+    </tr>
+    <tr>
+      <td align="center">  </td>
+      <td align="center"> </td>
+       <td align="center"> <img src="https://img.shields.io/badge/Figma-696969?style=for-the-badge&logo=figma&logoColor=figma"/> </td>
+    </tr>
+  </tbody>
+</table>
+   </p>
+</p>
+<br><br><br>
 
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Fontes de Pesquisa do Projeto" alt="Typing SVG" /></a>
+## Referências
 
-- Página ADM (Pré Cadastro)
-- Design Cards()
-- Histórico de Cards()
-- Testes()
-- Apresentação()
-- Integração entre ADM e Locais
-- Apenas um endereço por pessoa e cadastrar longitude e latitude também
-- Responsividade
+* ### Fontes de Pesquisa para Desenvolvimento do Problema:
+    - [G1 - Notícia sobre acúmulo de lixo e mato alto na praça de Limeira](https://g1.globo.com/sp/piracicaba-regiao/noticia/2023/12/25/sem-manutencao-praca-de-limeira-tem-mato-alto-acumulo-de-lixo-e-gera-transtornos-a-moradores.ghtml)
+    - [Prefeitura faz Contrato Emergencial para limpeza pública](https://diariodejustica.com.br/prefeitura-de-limeira-faz-contrato-emergencial-de-r-209-milhoes-para-limpeza-publica/)
+    - [Resíduos no Brasil não são reaproveitados](https://g1.globo.com/jornal-nacional/noticia/2023/05/17/dia-mundial-da-reciclagem-96percent-dos-residuos-produzidos-no-brasil-nao-sao-reaproveitados.ghtml)
+    - [Vídeo sobre a Coleta Seletiva de Limeira](https://www.facebook.com/prefeituralimeira/videos/a-coleta-seletiva-realizada-em-limeira-percorre-v%C3%A1rias-regi%C3%B5es-da-cidade-o-servi/754470765802787/)
+
+* ### IA's Utilizadas:
+    - [ChatGPT 3.5](https://chat.openai.com/)
+    - [Claude AI](https://claude.ai/login?returnTo=%2F%3F)
+    - [Gama App](https://gamma.app/pt-br)
+    - [Bing - Image Creator](https://www.bing.com/images/create)
+ 
+* ### UX/UI:
+  - [Figma](https://www.figma.com/)
+  
+<br><br><br>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Desenvolvedores" alt="Typing SVG" /></a>
+## Equipe de Desenvolvimento
+<div align=center>
+  <table style="width: 100%">
+    <tbody>
+      <tr align=center>
+        <th><strong> Heitor Rodrigo de Melo Silva </br> Hunter7210 </strong></th>
+        <th><strong> João Victor de Lima </br> JoaovlLima </strong></th>
+        <th><strong> Rafael Souza de Moura </br> rafaelmoura23</strong></th>
+         <th><strong> Vinícius Granço Feitoza </br> epicestudar </strong></th>
+      </tr>
+      <tr align=center>
+        <td>
+          <a href="https://github.com/Hunter7210">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/Hunter7210">
+          </a>
+        </td>
+        <td>
+          <a href="https://github.com/JoaovlLima">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/JoaovlLima">
+          </a>
+        </td>
+         <td>
+          <a href="https://github.com/rafaelmoura23">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/rafaelmoura23">
+          </a>
+        </td>
+         <td>
+          <a href="https://github.com/epicestudar">
+            <img width="250" height="200" style="border-radius: 50%;" src="https://avatars.githubusercontent.com/epicestudar">
+          </a>
+        </td>
+      </tr>
+    </tbody>
+
+  </table>
+</div>
