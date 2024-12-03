@@ -89,26 +89,54 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 223, 209, 186),
       appBar: CustomAppBar(user: UserSession(), showBackButton: true),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: screenHeight * 0.02),
-              _buildWeekDays(screenWidth),
-              SizedBox(height: screenHeight * 0.02),
-              SizedBox(
-                height: screenHeight * 0.69,
-                child: Center(
-                  child: showCards
-                      ? _buildCards(screenWidth)
-                      : _buildImageAndText(screenWidth, screenHeight),
-                ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: screenHeight * 0.02),
+                  _buildWeekDays(screenWidth),
+                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(
+                    height: screenHeight * 0.69,
+                    child: Center(
+                      child: showCards
+                          ? _buildCards(screenWidth)
+                          : _buildImageAndText(screenWidth, screenHeight),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          Positioned(
+            bottom: 20,
+            right: 20,
+            child: ElevatedButton(
+              onPressed: () {
+                // Adicione aqui a ação do botão
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Botão pressionado!')),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF056517),
+                minimumSize: const Size(30, 30),
+                shape: const BeveledRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(40))),
+                padding: const EdgeInsets.all(20),
+              ),
+              child: const Icon(
+                Icons.smart_toy,
+                color: Colors.white,
+                size: 24,
+              ),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 46, 50, 46),
