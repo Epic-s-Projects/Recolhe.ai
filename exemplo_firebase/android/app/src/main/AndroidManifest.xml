@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="exemplo_firebase"
+        android:label="Recolhe.ai"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
