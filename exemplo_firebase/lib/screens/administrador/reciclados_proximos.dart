@@ -4,6 +4,7 @@ import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
@@ -162,7 +163,7 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarADM(user: user), // Removido o parêntese extra
+      appBar: CustomAppBarADM(user: user),
       body: Stack(
         children: [
           // Background Image
@@ -283,19 +284,73 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
               ),
             ],
           ),
+          // IA Button with animations
+          Positioned(
+            bottom: MediaQuery.of(context).size.height * 0.01,
+            right: MediaQuery.of(context).size.width * 0.05,
+            child: Container(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  showDialog( context: context, builder: (BuildContext context) => ChatDialog(), );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 5, 69, 101),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  minimumSize: Size(MediaQuery.of(context).size.width * 0.07,
+                      MediaQuery.of(context).size.width * 0.12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        MediaQuery.of(context).size.width * 0.04),
+                    side: BorderSide(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 4,
+                    ),
+                  ),
+                  padding:
+                  EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.smart_toy_outlined,
+                      color: Colors.white,
+                      size: MediaQuery.of(context).size.width * 0.06,
+                    ),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                    Text(
+                      'IA',
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+                .animate()
+                .fadeIn(duration: 500.ms)
+                .shimmer(
+                duration: 1500.ms, color: Colors.white.withOpacity(0.3))
+                .then()
+                .shake(duration: 500.ms, delay: 2000.ms),
+          ),
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => ChatDialog(),
-          );
-        },
-        child: Icon(Icons.smart_toy, color: Colors.white),
-        backgroundColor: Colors.brown,
-      ),
     );
   }
 
