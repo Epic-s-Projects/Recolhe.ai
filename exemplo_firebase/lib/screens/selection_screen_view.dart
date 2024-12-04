@@ -42,7 +42,7 @@ class SelectionScreenView extends StatelessWidget {
               child: Container(
                 width: screenWidth * 0.15,
                 height: screenWidth * 0.15,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white, // Fundo branco para contraste
                   shape: BoxShape.circle, // Botão circular
                   boxShadow: [

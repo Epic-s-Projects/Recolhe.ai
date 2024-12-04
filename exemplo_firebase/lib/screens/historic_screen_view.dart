@@ -23,10 +23,10 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
   int _selectedIndex = 1;
 
   final List<Widget> _pages = [
-    HomePage(),
-    HistoricScreenView(),
-    RankingPage(),
-    ProfileScreen(),
+    const HomePage(),
+    const HistoricScreenView(),
+    const RankingPage(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -121,19 +121,19 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: CustomAppBar(user: user),
-      body: Container(
-        width: size.width, // Largura total da tela
-        height: size.height, // Altura total da tela
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFF5E6CC), Color(0xFFF1D9B4)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFFF5E6CC), Color(0xFFF1D9B4)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        child: Stack(
+      ),
+      child: Scaffold(
+        backgroundColor:
+            Colors.transparent, // Fundo transparente para o gradiente aparecer
+        appBar: CustomAppBar(user: user, showBackButton: true),
+        body: Stack(
           children: [
             Align(
               alignment: Alignment.bottomCenter,
@@ -148,7 +148,7 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: size.height * 0.06),
+              padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -322,32 +322,33 @@ class _HistoricScreenViewState extends State<HistoricScreenView> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 40),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history, size: 40),
-            label: 'Histórico',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.checklist, size: 40),
-            label: 'Pontuação',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 40),
-            label: 'Perfil',
-          ),
-        ],
+
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white54,
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, size: 40),
+              label: 'Início',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.history, size: 40),
+              label: 'Histórico',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.checklist, size: 40),
+              label: 'Pontuação',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person, size: 40),
+              label: 'Perfil',
+            ),
+          ],
+        ),
       ),
     );
   }

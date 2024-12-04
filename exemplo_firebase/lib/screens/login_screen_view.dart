@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:exemplo_firebase/screens/administrador/home_adm_page.dart';
 import 'package:exemplo_firebase/screens/administrador/reciclados_proximos.dart';
 import 'package:exemplo_firebase/screens/intern_screen_view.dart';
 import 'package:exemplo_firebase/screens/registro_screen.dart';

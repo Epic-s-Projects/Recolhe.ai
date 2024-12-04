@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../controllers/chatbot_controller.dart';
 
-
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('RecolheBot'),
+        title: const Text('RecolheBot'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Bem-vindo ao Recolha.ai!'),
       ),
       floatingActionButton: FloatingActionButton(
@@ -19,20 +18,20 @@ class HomeScreen extends StatelessWidget {
             builder: (BuildContext context) => ChatDialog(),
           );
         },
-        child: Icon(Icons.info, color: Colors.white),
+        child: const Icon(Icons.info, color: Colors.white),
         backgroundColor: Colors.blue,
       ),
     );
   }
 }
 
-
 class ChatDialog extends StatefulWidget {
   @override
   _ChatDialogState createState() => _ChatDialogState();
 }
 
-class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateMixin {
+class _ChatDialogState extends State<ChatDialog>
+    with SingleTickerProviderStateMixin {
   late ChatController _chatController;
   late AnimationController _animationController;
   late Animation<double> _inputHeightAnimation;
@@ -45,16 +44,10 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
 
     // Configuração da animação
     _animationController = AnimationController(
-        duration: Duration(milliseconds: 300),
-        vsync: this
-    );
+        duration: const Duration(milliseconds: 300), vsync: this);
 
     _inputHeightAnimation = Tween<double>(begin: 60, end: 120).animate(
-        CurvedAnimation(
-            parent: _animationController,
-            curve: Curves.easeInOut
-        )
-    );
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
 
     // Adiciona listener para o controlador de texto
     _chatController.textController.addListener(_onTextChanged);
@@ -99,7 +92,7 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
           decoration: BoxDecoration(
             color: backgroundDark,
             borderRadius: BorderRadius.circular(25),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black45,
                 blurRadius: 10,
@@ -111,10 +104,11 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
             children: [
               // Cabeçalho com botão de fechar
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: accentGreen,
-                  borderRadius: BorderRadius.vertical(
+                  borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(25),
                   ),
                 ),
@@ -124,14 +118,14 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
                     CircleAvatar(
                       radius: 20,
                       backgroundColor: brownAccent,
-                      child: Icon(
+                      child: const Icon(
                         Icons.chat_bubble_outline,
                         color: Colors.white,
                         size: 22,
                       ),
                     ),
 
-                    Text(
+                    const Text(
                       'RecolheBot',
                       style: TextStyle(
                         color: Colors.white,
@@ -146,7 +140,7 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
                       radius: 20,
                       backgroundColor: Colors.red.withOpacity(0.7),
                       child: IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.close,
                           color: Colors.white,
                           size: 20,
@@ -164,17 +158,19 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
               // Área de mensagens
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.all(12),
+                  margin: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: accentGreen.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: ListView.builder(
                     controller: _chatController.scrollController,
-                    padding: EdgeInsets.all(10),
-                    itemCount: _chatController.messages.length + (_chatController.isLoading ? 1 : 0),
+                    padding: const EdgeInsets.all(10),
+                    itemCount: _chatController.messages.length +
+                        (_chatController.isLoading ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (index == _chatController.messages.length && _chatController.isLoading) {
+                      if (index == _chatController.messages.length &&
+                          _chatController.isLoading) {
                         return Center(
                           child: CircularProgressIndicator(
                             color: brownAccent,
@@ -187,19 +183,21 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
                       final isUser = message.containsKey('user');
 
                       return Align(
-                        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                        alignment: isUser
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
                         child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 6),
-                          padding: EdgeInsets.all(10),
+                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: isUser
                                 ? brownAccent.withOpacity(0.7)
-                                : Color(0xFF2C5E2C).withOpacity(0.7),
+                                : const Color(0xFF2C5E2C).withOpacity(0.7),
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: Text(
                             isUser ? message['user']! : message['bot']!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
@@ -217,7 +215,7 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
                 animation: _animationController,
                 builder: (context, child) {
                   return Container(
-                    margin: EdgeInsets.all(12),
+                    margin: const EdgeInsets.all(12),
                     height: _inputHeightAnimation.value,
                     decoration: BoxDecoration(
                       color: accentGreen.withOpacity(0.3),
@@ -228,11 +226,11 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
                       children: [
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: TextField(
                               controller: _chatController.textController,
                               maxLines: _isTyping ? 3 : 1,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Mensagem...',
                                 hintStyle: TextStyle(
                                   color: Colors.white54,
@@ -243,7 +241,7 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
                                   vertical: 12,
                                 ),
                               ),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -252,19 +250,20 @@ class _ChatDialogState extends State<ChatDialog> with SingleTickerProviderStateM
                           ),
                         ),
                         Container(
-                          margin: EdgeInsets.only(right: 6, top: 6),
+                          margin: const EdgeInsets.only(right: 6, top: 6),
                           decoration: BoxDecoration(
                             color: brownAccent,
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.send,
                               color: Colors.white,
                               size: 20,
                             ),
                             onPressed: () {
-                              final text = _chatController.textController.text.trim();
+                              final text =
+                                  _chatController.textController.text.trim();
                               if (text.isNotEmpty) {
                                 _chatController.sendMessage(text, _updateUI);
                                 _chatController.textController.clear();

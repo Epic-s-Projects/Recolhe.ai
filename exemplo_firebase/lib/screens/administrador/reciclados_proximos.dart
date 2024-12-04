@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/controllers/app_bar_adm.dart';
 import 'package:exemplo_firebase/controllers/user_data.dart';
 import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
@@ -11,7 +10,6 @@ import 'package:http/http.dart' as http;
 
 import 'area_coleta_page.dart';
 import 'chatbot_page.dart';
-import 'detalhes_reciclado_page.dart';
 import 'endereco_page.dart';
 import 'home_coleta_page.dart';
 
@@ -34,7 +32,7 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
   final List<Widget> _pages = [
     const NearbyItemsPage(),
     // AreaColetaPage(),
-    EnderecosPage(),
+    const EnderecosPage(),
     HomeColetaPage(),
     const ProfileScreenADM(),
   ];
@@ -162,195 +160,209 @@ class _NearbyItemsPageState extends State<NearbyItemsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBarADM(user: user),
-      body: Stack(
-        children: [
-          // Background Image
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          // Content
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Header Section
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(
-                  child: Column(
-                    children: [
-                      // Botão "Iniciar Coleta"
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AreaColetaPage(),
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/background.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: CustomAppBarADM(user: user),
+        body: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 20.0),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Botão "Iniciar Coleta"
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AreaColetaPage()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.teal.shade400,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 15,
+                            elevation: 5,
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                          icon: const Icon(Icons.play_arrow, size: 24),
+                          label: const Text(
+                            'Iniciar Coleta',
+                            style: TextStyle(fontSize: 18),
                           ),
                         ),
-                        child: const Text(
-                          'Iniciar Coleta',
-                          style: TextStyle(fontSize: 18),
+                        const SizedBox(height: 20),
+                        // Botão "Ver Itens"
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomeColetaPage()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepOrangeAccent.shade200,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            elevation: 5,
+                          ),
+                          icon: const Icon(Icons.list, size: 24),
+                          label: const Text(
+                            'Ver Itens',
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Lista de itens próximos
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: ClipRRect(
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(30)),
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                        child: isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xFF795548)),
+                                ),
+                              )
+                            : nearbyItems.isEmpty
+                                ? const Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.location_off,
+                                          size: 100,
+                                          color: Colors.white70,
+                                        ),
+                                        SizedBox(height: 16),
+                                        Text(
+                                          'Nenhum item próximo encontrado.',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : ListView.builder(
+                                    padding: const EdgeInsets.all(16.0),
+                                    itemCount: nearbyItems.length,
+                                    itemBuilder: (context, index) {
+                                      final item = nearbyItems[index];
+                                      return _buildNearbyCard(item);
+                                    },
+                                  ),
                       ),
-                      const SizedBox(height: 20),
-                      // Botão "Ver Itens"
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeColetaPage(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 15,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text(
-                          'Ver Itens',
-                          style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // IA Button with animations
+            Positioned(
+              bottom: MediaQuery.of(context).size.height * 0.01,
+              right: MediaQuery.of(context).size.width * 0.05,
+              child: Container(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => ChatDialog(),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 5, 69, 101),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    minimumSize: Size(MediaQuery.of(context).size.width * 0.07,
+                        MediaQuery.of(context).size.width * 0.12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          MediaQuery.of(context).size.width * 0.04),
+                      side: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 4,
+                      ),
+                    ),
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * 0.03),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.smart_toy_outlined,
+                        color: Colors.white,
+                        size: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+                      Text(
+                        'IA',
+                        style: TextStyle(
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              // Lista de itens próximos
-              Expanded(
-                child: isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
-                        ),
-                      )
-                    : nearbyItems.isEmpty
-                        ? const Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.location_off,
-                                  size: 100,
-                                  color: Colors.white70,
-                                ),
-                                SizedBox(height: 16),
-                                Text(
-                                  'Nenhum item próximo encontrado.',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.all(16.0),
-                            itemCount: nearbyItems.length,
-                            itemBuilder: (context, index) {
-                              final item = nearbyItems[index];
-                              return _buildNearbyCard(item);
-                            },
-                          ),
-              ),
-            ],
-          ),
-          // IA Button with animations
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.01,
-            right: MediaQuery.of(context).size.width * 0.05,
-            child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    spreadRadius: 2,
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  showDialog( context: context, builder: (BuildContext context) => ChatDialog(), );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 5, 69, 101),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  minimumSize: Size(MediaQuery.of(context).size.width * 0.07,
-                      MediaQuery.of(context).size.width * 0.12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.of(context).size.width * 0.04),
-                    side: BorderSide(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 4,
-                    ),
-                  ),
-                  padding:
-                  EdgeInsets.all(MediaQuery.of(context).size.width * 0.03),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.smart_toy_outlined,
-                      color: Colors.white,
-                      size: MediaQuery.of(context).size.width * 0.06,
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-                    Text(
-                      'IA',
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.width * 0.04,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-                .animate()
-                .fadeIn(duration: 500.ms)
-                .shimmer(
-                duration: 1500.ms, color: Colors.white.withOpacity(0.3))
-                .then()
-                .shake(duration: 500.ms, delay: 2000.ms),
-          ),
-        ],
+              )
+                  .animate()
+                  .fadeIn(duration: 500.ms)
+                  .shimmer(
+                      duration: 1500.ms, color: Colors.white.withOpacity(0.3))
+                  .then()
+                  .shake(duration: 500.ms, delay: 2000.ms),
+            ),
+          ],
+        ),
+        bottomNavigationBar: _buildBottomNavigationBar(),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 

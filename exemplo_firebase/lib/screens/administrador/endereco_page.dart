@@ -25,7 +25,7 @@ class _EnderecosPageState extends State<EnderecosPage> {
   final List<Widget> _pages = [
     const NearbyItemsPage(),
     // AreaColetaPage(),
-    EnderecosPage(),
+    const EnderecosPage(),
     HomeColetaPage(),
     const ProfileScreenADM(),
   ];
@@ -92,48 +92,61 @@ class _EnderecosPageState extends State<EnderecosPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: (CustomAppBarADM(user: user)),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/fundoHome.png'),
-            fit: BoxFit.cover,
-          ),
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/background.png'),
+          fit: BoxFit.cover,
         ),
-        child: SafeArea(
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: CustomAppBarADM(user: user),
+        body: SafeArea(
           child: isLoading
               ? _buildLoadingView()
               : enderecos.isEmpty
                   ? _buildEmptyView()
                   : _buildEnderecosList(),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 46, 50, 46),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white54,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 40),
-            label: 'Início',
+        bottomNavigationBar: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 46, 50, 46),
+                Color.fromARGB(255, 28, 30, 28),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.location_on, size: 40),
-            label: 'Área de Coleta',
+          child: BottomNavigationBar(
+            backgroundColor: const Color.fromARGB(255, 46, 50, 46),
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white54,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home, size: 40),
+                label: 'Início',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.location_on, size: 40),
+                label: 'Área de Coleta',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.assignment, size: 40),
+                label: 'Ver Itens',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person, size: 40),
+                label: 'Perfil',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment, size: 40),
-            label: 'Ver Itens',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 40),
-            label: 'Perfil',
-          ),
-        ],
+        ),
       ),
     );
   }

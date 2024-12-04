@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'detalhes_reciclado_page.dart';
 import 'endereco_page.dart';
 import 'profile_adm_page.dart';
-import 'home_adm_page.dart';
 
 class HomeColetaPage extends StatefulWidget {
+  const HomeColetaPage({super.key});
+
   @override
   _HomeColetaPageState createState() => _HomeColetaPageState();
 }
@@ -22,11 +23,11 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
   bool isLoading = true;
 
   final List<Widget> _pages = [
-    NearbyItemsPage(),
+    const NearbyItemsPage(),
     // AreaColetaPage(),
-    EnderecosPage(),
+    const EnderecosPage(),
     HomeColetaPage(),
-    ProfileScreenADM(),
+    const ProfileScreenADM(),
   ];
 
   @override
@@ -113,9 +114,9 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
       extendBodyBehindAppBar: true,
       appBar: CustomAppBarADM(user: user),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/fundoHome.png'),
+            image: AssetImage('assets/background.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -134,12 +135,12 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
   Widget _buildLoadingView() {
     return Center(
       child: Container(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.9),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Column(
+        child: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(
@@ -158,7 +159,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
   }
 
   Widget _buildEmptyView() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -203,7 +204,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
         );
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -214,7 +215,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildCardHeader(reciclado),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               _buildCardDetails(reciclado),
             ],
           ),
@@ -230,7 +231,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
         Expanded(
           child: Text(
             reciclado['tipo'] ?? 'Tipo não disponível',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF2E7D32),
@@ -239,14 +240,14 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
           ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Color(0xFF4CAF50).withOpacity(0.2),
+            color: const Color(0xFF4CAF50).withOpacity(0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
             reciclado['status'] ?? 'Não informado',
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF2E7D32),
               fontWeight: FontWeight.w600,
             ),
@@ -265,7 +266,7 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
           label: 'Quantidade',
           value: reciclado['qtd']?.toString() ?? 'Não disponível',
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         _buildDetailRow(
           icon: Icons.person,
           label: 'Usuário',
@@ -291,18 +292,18 @@ class _HomeColetaPageState extends State<HomeColetaPage> {
       children: [
         Icon(
           icon,
-          color: Color(0xFF795548),
+          color: const Color(0xFF795548),
           size: 20,
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: RichText(
             text: TextSpan(
-              style: TextStyle(color: Colors.black87),
+              style: const TextStyle(color: Colors.black87),
               children: [
                 TextSpan(
                   text: '$label: ',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 TextSpan(text: value),
               ],

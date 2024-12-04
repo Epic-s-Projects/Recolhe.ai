@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:exemplo_firebase/controllers/app_bar.dart';
 import 'package:exemplo_firebase/screens/historic_screen_view.dart';
+import 'package:exemplo_firebase/screens/oil_register_screen.dart';
 import 'package:exemplo_firebase/screens/pontuacao_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../controllers/user_data.dart';
 import 'profile_screen_view.dart';
-import 'selection_screen_view.dart';
 import 'package:flutter_animate/flutter_animate.dart'; // Para animações (adicionar no pubspec.yaml).
 
 class HomePage extends StatefulWidget {
@@ -97,11 +97,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: screenHeight * 0.002),
+                  SizedBox(height: screenHeight * 0.009),
                   _buildWeekDays(screenWidth),
-                  SizedBox(height: screenHeight * 0.02),
+                  SizedBox(height: screenHeight * 0.009),
                   SizedBox(
-                    height: screenHeight * 0.75,
+                    height: screenHeight * 0.72,
                     child: Center(
                       child: showCards
                           ? _buildCards(screenWidth)
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.01,
+            bottom: MediaQuery.of(context).size.height * 0.08,
             right: MediaQuery.of(context).size.width * 0.05,
             child: Container(
               decoration: BoxDecoration(
@@ -212,15 +212,12 @@ class _HomePageState extends State<HomePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Imagem
         Image.asset(
           'assets/banner_inicial.png',
           height: screenHeight * 0.2,
           fit: BoxFit.cover,
         ),
         SizedBox(height: screenHeight * 0.02),
-
-        // Texto
         const Text(
           'Você ainda não realizou nenhuma coleta!',
           style: TextStyle(
@@ -230,22 +227,21 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: screenHeight * 0.06),
-
-        // ElevatedButton
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0009),
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
           child: ElevatedButton.icon(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SelectionScreenView(),
+                  // builder: (context) => SelectionScreenView(),
+                  builder: (context) => const OilRegisterScreen(),
                 ),
               );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF056517),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -259,12 +255,21 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.white,
               ),
             ),
-          ).animate().scale(duration: 300.ms).fadeIn(),
+          ).animate().scale(duration: 100.ms).fadeIn(),
+          //     key: const Icon(Icons.add, color: Colors.white, size: 28),
+          //     label: const Text(
+          //       'Realize sua coleta',
+          //       style: TextStyle(
+          //         fontSize: 20,
+          //         fontWeight: FontWeight.bold,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ).animate().scale(duration: 300.ms).fadeIn(),
         ),
       ],
     );
   }
-
 
   Widget _buildWeekDays(double screenWidth) {
     DateTime now = DateTime.now();
@@ -274,55 +279,116 @@ class _HomePageState extends State<HomePage> {
       return firstDayOfWeek.add(Duration(days: index));
     });
 
+    // Mapeamento de dias da semana para abreviações
+    final weekdayNames = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.all(screenWidth * 0.02),
+          padding: EdgeInsets.symmetric(
+              vertical: screenWidth * 0.03, horizontal: screenWidth * 0.02),
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 1, 131, 34),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              mainAxisSpacing: screenWidth * 0.02,
-              crossAxisSpacing: screenWidth * 0.02,
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF2E7D32),
+                Color(0xFF388E3C),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            itemCount: weekDays.length,
-            itemBuilder: (context, index) {
-              DateTime currentDay = weekDays[index];
-              bool isToday = currentDay.day == now.day;
-
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedDate = currentDay;
-                    isCalendarExpanded = !isCalendarExpanded;
-                  });
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(screenWidth * 0.02),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: currentDay == selectedDate
-                        ? Colors.blue
-                        : Colors.transparent,
-                  ),
-                  child: Text(
-                    '${currentDay.day}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isToday
-                          ? const Color.fromARGB(255, 0, 255, 47)
-                          : Colors.white,
-                    ),
-                  ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              // Cabeçalho com nomes dos dias
+              Padding(
+                padding: EdgeInsets.only(bottom: screenWidth * 0.02),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: weekdayNames
+                      .map((name) => Text(
+                            name,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold,
+                              fontSize: screenWidth * 0.03,
+                            ),
+                          ))
+                      .toList(),
                 ),
-              );
-            },
+              ),
+              // Grid de dias
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  mainAxisSpacing: screenWidth * 0.02,
+                  crossAxisSpacing: screenWidth * 0.02,
+                ),
+                itemCount: weekDays.length,
+                itemBuilder: (context, index) {
+                  DateTime currentDay = weekDays[index];
+                  bool isToday = _isDateToday(currentDay);
+                  bool isSelected = _isDateSelected(currentDay);
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedDate = currentDay;
+                        isCalendarExpanded = !isCalendarExpanded;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _getDateColor(isToday, isSelected),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.blue.withOpacity(0.5),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                )
+                              ]
+                            : null,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${currentDay.day}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: _getTextColor(isToday, isSelected),
+                              fontSize: screenWidth * 0.04,
+                            ),
+                          ),
+                          if (isToday)
+                            Container(
+                              width: 5,
+                              height: 5,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
         if (isCalendarExpanded) _buildFullMonthCalendar(now, screenWidth),
@@ -339,56 +405,148 @@ class _HomePageState extends State<HomePage> {
       (index) => firstDayOfMonth.add(Duration(days: index)),
     );
 
-    return Container(
-      padding: EdgeInsets.all(screenWidth * 0.02),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 1, 131, 34),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 7,
-          mainAxisSpacing: screenWidth * 0.02,
-          crossAxisSpacing: screenWidth * 0.02,
-        ),
-        itemCount: monthDays.length,
-        itemBuilder: (context, index) {
-          DateTime currentDay = monthDays[index];
-          bool isToday = currentDay.day == now.day;
+    // Nome dos meses em português
+    final monthNames = [
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro'
+    ];
 
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedDate = currentDay;
-              });
-            },
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.all(screenWidth * 0.01),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentDay == selectedDate
-                    ? Colors.blue
-                    : Colors.transparent,
-              ),
-              child: Text(
-                '${currentDay.day}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: currentDay == selectedDate
-                      ? Colors.white
-                      : (isToday
-                          ? const Color.fromARGB(255, 0, 208, 76)
-                          : const Color.fromARGB(255, 255, 255, 255)),
-                ),
+    return Container(
+      margin: EdgeInsets.only(top: screenWidth * 0.03),
+      padding: EdgeInsets.all(screenWidth * 0.03),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF1B5E20),
+            Color(0xFF2E7D32),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Título do mês
+          Padding(
+            padding: EdgeInsets.only(bottom: screenWidth * 0.03),
+            child: Text(
+              '${monthNames[now.month - 1]} ${now.year}',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: screenWidth * 0.05,
               ),
             ),
-          );
-        },
+          ),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: screenWidth * 0.02,
+              crossAxisSpacing: screenWidth * 0.02,
+            ),
+            itemCount: monthDays.length,
+            itemBuilder: (context, index) {
+              DateTime currentDay = monthDays[index];
+              bool isToday = _isDateToday(currentDay);
+              bool isSelected = _isDateSelected(currentDay);
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedDate = currentDay;
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _getDateColor(isToday, isSelected),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: Colors.blue.withOpacity(0.5),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            )
+                          ]
+                        : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${currentDay.day}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: _getTextColor(isToday, isSelected),
+                          fontSize: screenWidth * 0.04,
+                        ),
+                      ),
+                      if (isToday)
+                        Container(
+                          width: 5,
+                          height: 5,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
+  }
+
+// Funções auxiliares para estilização
+  bool _isDateToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
+  }
+
+  bool _isDateSelected(DateTime date) {
+    return date.year == selectedDate.year &&
+        date.month == selectedDate.month &&
+        date.day == selectedDate.day;
+  }
+
+  Color _getDateColor(bool isToday, bool isSelected) {
+    if (isSelected) return Colors.blue;
+    if (isToday) return Colors.green.withOpacity(0.2);
+    return Colors.transparent;
+  }
+
+  Color _getTextColor(bool isToday, bool isSelected) {
+    if (isSelected) return Colors.white;
+    if (isToday) return const Color.fromARGB(255, 0, 208, 76);
+    return Colors.white;
   }
 
   String _formatarData(Timestamp? timestamp) {
@@ -543,13 +701,14 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.0001),
+          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
           child: ElevatedButton.icon(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SelectionScreenView(),
+                  // builder: (context) => SelectionScreenView(),
+                  builder: (context) => const OilRegisterScreen(),
                 ),
               );
             },
@@ -628,54 +787,93 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showDetailDialog(BuildContext context, Map<String, dynamic> data) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor:
-              const Color.fromARGB(255, 255, 255, 255), // Cor de fundo suave
-          title: const Text(
-            'Detalhes da Coleta',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1B5E20), // Cor verde para o título
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: const BorderSide(
-                color: Color(0xFF388E3C), width: 2), // Borda verde
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          backgroundColor: Colors.white,
+          elevation: 10,
+          title: Row(
             children: [
-              _buildDetailRow('Tipo', data['tipo'] ?? 'N/A', Icons.category,
-                  const Color(0xFF388E3C)),
-              _buildDetailRow('Quantidade', '${data['qtd'] ?? 'N/A'} kg',
-                  Icons.storage, const Color(0xFF1976D2)),
-              _buildDetailRow('Status', data['status'] ?? 'N/A',
-                  Icons.check_circle, const Color(0xFFFF9800)),
-              _buildDetailRow(
-                  'Data de Atualização',
-                  data['dataAtualizacao'] ?? 'Desconhecido',
-                  Icons.calendar_today,
-                  const Color(0xFF9E9E9E)),
-              if (data['observacoes'] != null)
-                _buildDetailRow('Observações', data['observacoes'],
-                    Icons.comment, const Color(0xFF0288D1)),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Fechar',
+              Icon(
+                Icons.recycling,
+                color: const Color(0xFF1B5E20),
+                size: screenWidth * 0.08,
+              ),
+              SizedBox(width: screenWidth * 0.03),
+              Text(
+                'Detalhes da Coleta',
                 style: TextStyle(
-                  color: Color(0xFF388E3C), // Cor verde para o botão
                   fontWeight: FontWeight.bold,
+                  color: const Color(0xFF1B5E20),
+                  fontSize: screenWidth * 0.05,
                 ),
               ),
+            ],
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: const BorderSide(color: Color(0xFF388E3C), width: 2),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildDetailRow('Tipo', data['tipo'] ?? 'Não especificado',
+                    Icons.category, const Color(0xFF388E3C)),
+                _buildDetailRow('Quantidade', '${data['qtd'] ?? 'N/A'} ml',
+                    Icons.scale, const Color(0xFF1976D2)),
+                _buildDetailRow(
+                    'Status',
+                    data['status'] ?? 'Não definido',
+                    _getIconForStatus(data['status']),
+                    _getColorForStatus(data['status'])),
+                _buildDetailRow(
+                    'Data de Atualização',
+                    data['dataAtualizacao'] ?? 'Desconhecido',
+                    Icons.calendar_month,
+                    const Color(0xFF9E9E9E)),
+                if (data['observacoes'] != null)
+                  _buildDetailRow('Observações', data['observacoes'],
+                      Icons.comment, const Color(0xFF0288D1)),
+              ],
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton.icon(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: Color(0xFF388E3C)),
+                  label: const Text(
+                    'Fechar',
+                    style: TextStyle(
+                      color: Color(0xFF388E3C),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                // if (data['status'] == 'Em processo')
+                //   ElevatedButton.icon(
+                //     onPressed: () {
+                //       // Ação para acompanhar a coleta
+                //       Navigator.of(context).pop();
+                //       // Adicione aqui a navegação para tela de acompanhamento
+                //     },
+                //     icon: const Icon(Icons.track_changes, color: Colors.white),
+                //     label: const Text(
+                //       'Acompanhar',
+                //       style: TextStyle(color: Colors.white),
+                //     ),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: const Color(0xFF1B5E20),
+                //     ),
+                //   ),
+              ],
             ),
           ],
         );
@@ -686,31 +884,45 @@ class _HomePageState extends State<HomePage> {
   Widget _buildDetailRow(
       String label, String value, IconData icon, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 18.0),
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 24,
-          ),
-          const SizedBox(width: 10),
-          Text(
-            '$label:',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: color, // Cor para o título da linha
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 22,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                color: color
-                    .withOpacity(0.7), // Cor do valor com opacidade ajustada
-              ),
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                    fontSize: 14,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: color.withOpacity(0.7),
+                    fontSize: 16,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],

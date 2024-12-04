@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import 'detalhes_reciclado_page.dart';
 
-
 class RecicladosPorEnderecoPage extends StatefulWidget {
   final Map<String, dynamic> endereco;
 
@@ -29,7 +28,8 @@ class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
 
   Future<void> _loadReciclados() async {
     try {
-      List<Map<String, dynamic>> data = await fetchRecicladosPorEndereco(widget.endereco);
+      List<Map<String, dynamic>> data =
+          await fetchRecicladosPorEndereco(widget.endereco);
       setState(() {
         reciclados = data;
         isLoading = false;
@@ -42,27 +42,31 @@ class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
     }
   }
 
-
   Future<List<Map<String, dynamic>>> fetchRecicladosPorEndereco(
       Map<String, dynamic> enderecoFiltro) async {
     List<Map<String, dynamic>> allReciclados = [];
 
     try {
       QuerySnapshot usersSnapshot =
-      await FirebaseFirestore.instance.collection("users").get();
+          await FirebaseFirestore.instance.collection("users").get();
 
       for (QueryDocumentSnapshot userDoc in usersSnapshot.docs) {
-        DocumentSnapshot enderecoDoc =
-        await userDoc.reference.collection("endereco").doc("main_address").get();
+        DocumentSnapshot enderecoDoc = await userDoc.reference
+            .collection("endereco")
+            .doc("main_address")
+            .get();
 
         if (enderecoDoc.exists) {
           final enderecoData = enderecoDoc.data() as Map<String, dynamic>;
 
-          final bool enderecoCorresponde =
-              (enderecoFiltro['bairro'] == null || enderecoData['bairro'] == enderecoFiltro['bairro']) &&
-                  (enderecoFiltro['cep'] == null || enderecoData['cep'] == enderecoFiltro['cep']) &&
-                  (enderecoFiltro['numero'] == null || enderecoData['numero'] == enderecoFiltro['numero']) &&
-                  (enderecoFiltro['rua'] == null || enderecoData['rua'] == enderecoFiltro['rua']);
+          final bool enderecoCorresponde = (enderecoFiltro['bairro'] == null ||
+                  enderecoData['bairro'] == enderecoFiltro['bairro']) &&
+              (enderecoFiltro['cep'] == null ||
+                  enderecoData['cep'] == enderecoFiltro['cep']) &&
+              (enderecoFiltro['numero'] == null ||
+                  enderecoData['numero'] == enderecoFiltro['numero']) &&
+              (enderecoFiltro['rua'] == null ||
+                  enderecoData['rua'] == enderecoFiltro['rua']);
 
           if (enderecoCorresponde) {
             // Adiciona o filtro para "status" no query para reciclado
@@ -89,37 +93,37 @@ class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
     return allReciclados;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarADM(user: user),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/fundoHome.png'),
+            image: AssetImage('assets/backgound.png'),
             fit: BoxFit.cover,
           ),
         ),
         child: SafeArea(
           child: isLoading
-              ? Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
-            ),
-          )
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF795548)),
+                  ),
+                )
               : reciclados.isEmpty
-              ? Center(
-            child: Text(
-              'Nenhum reciclado encontrado para este endereço.',
-              style: TextStyle(
-                fontSize: 18,
-                color: Color(0xFF795548),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
-              : _buildRecicladosList(),
+                  ? const Center(
+                      child: Text(
+                        'Nenhum reciclado encontrado para este endereço.',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xFF795548),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  : _buildRecicladosList(),
         ),
       ),
     );
@@ -136,12 +140,13 @@ class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetalhesRecicladoPage(reciclado: reciclado),
+                builder: (context) =>
+                    DetalhesRecicladoPage(reciclado: reciclado),
               ),
             );
           },
           child: Card(
-            margin: EdgeInsets.symmetric(vertical: 8),
+            margin: const EdgeInsets.symmetric(vertical: 8),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -153,21 +158,22 @@ class _RecicladosPorEnderecoPageState extends State<RecicladosPorEnderecoPage> {
                 children: [
                   Text(
                     reciclado['tipo'] ?? 'Tipo não disponível',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF2E7D32),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     reciclado['status'] ?? 'Status não disponível',
-                    style: TextStyle(fontSize: 16),
+                    style: const TextStyle(fontSize: 16),
                   ),
                   if (reciclado['qtd'] != null)
                     Text(
                       'Quantidade: ${reciclado['qtd']}',
-                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                      style:
+                          const TextStyle(fontSize: 16, color: Colors.black87),
                     ),
                 ],
               ),

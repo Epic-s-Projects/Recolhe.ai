@@ -298,13 +298,13 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     if (locations.isEmpty) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(child: Text('Nenhuma localização encontrada')),
       );
     }
@@ -389,15 +389,15 @@ class _MapPageState extends State<MapPage> {
       child: Column(
         children: [
           SizedBox(
-            height: 100,
+            height: 90,
             child: Stack(
               children: [
                 Positioned(
-                  top: 20,
+                  top: 30,
                   left: 20,
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back,
-                        color: Colors.green, size: 40),
+                    icon: const Icon(Icons.highlight_remove_outlined,
+                        color: Colors.green, size: 45),
                     onPressed: () {
                       Navigator.pop(context);
                     },

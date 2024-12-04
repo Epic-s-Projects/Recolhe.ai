@@ -19,7 +19,8 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
 
   final user = UserSession();
 
-  Future<void> confirmarReciclado(String docId, Map<String, dynamic> reciclado, String uid) async {
+  Future<void> confirmarReciclado(
+      String docId, Map<String, dynamic> reciclado, String uid) async {
     try {
       // Obter usuário autenticado
       final userCurrent = FirebaseAuth.instance.currentUser;
@@ -45,7 +46,8 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
 
       // Fornecer valores padrão
       final timestamp = Timestamp.now();
-      final xpGanho = (reciclado['qtd'] as num?)?.toInt() ?? 0; // Valor padrão: 0
+      final xpGanho =
+          (reciclado['qtd'] as num?)?.toInt() ?? 0; // Valor padrão: 0
       print("XP ganho calculado: $xpGanho");
 
       // Referência ao documento no Firestore
@@ -92,7 +94,6 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
     }
   }
 
-
   void _handleConfirmation() async {
     setState(() {
       _isLoading = true;
@@ -105,7 +106,7 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
       // Verificar se os campos obrigatórios estão presentes
       if (id == null || userId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Erro: Dados do reciclado incompletos.'),
             backgroundColor: Colors.redAccent,
           ),
@@ -120,7 +121,7 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
       await confirmarReciclado(id, widget.reciclado, userId);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Reciclado confirmado com sucesso!'),
           backgroundColor: Color(0xFF4CAF50),
         ),
@@ -129,12 +130,12 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => HomeColetaPage()),
-            (route) => false,
+        (route) => false,
       );
     } catch (e) {
       print("Erro ao confirmar reciclado: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Erro ao confirmar reciclado. Tente novamente.'),
           backgroundColor: Colors.redAccent,
         ),
@@ -146,7 +147,6 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,47 +154,46 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
+        title: const Text(
           'Detalhes do Reciclado',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/fundoHome.png'),
+            image: AssetImage('assets/background.png'),
             fit: BoxFit.cover,
           ),
         ),
         child: SafeArea(
-          child: _isLoading
-              ? _buildLoadingView()
-              : _buildDetailsView(),
+          child: _isLoading ? _buildLoadingView() : _buildDetailsView(),
         ),
       ),
     );
   }
 
-
   Widget _buildLoadingView() {
     return Center(
       child: Container(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.9),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Column(
+        child: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF795548)), // Brown progress indicator
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  Color(0xFF795548)), // Brown progress indicator
             ),
             SizedBox(height: 16),
             Text(
               'Confirmando reciclagem...',
-              style: TextStyle(color: Color(0xFF795548), fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: Color(0xFF795548), fontWeight: FontWeight.w600),
             )
           ],
         ),
@@ -208,14 +207,14 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Card(
                 elevation: 8,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -223,13 +222,15 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
                       _buildDetailItem(
                         icon: Icons.category,
                         title: 'Tipo',
-                        value: widget.reciclado['tipo'] ?? 'Tipo não disponível',
+                        value:
+                            widget.reciclado['tipo'] ?? 'Tipo não disponível',
                         isImportant: true,
                       ),
                       _buildDetailItem(
                         icon: Icons.scale,
                         title: 'Quantidade',
-                        value: widget.reciclado['qtd']?.toString() ?? 'Não disponível',
+                        value: widget.reciclado['qtd']?.toString() ??
+                            'Não disponível',
                       ),
                       _buildDetailItem(
                         icon: Icons.check_circle_outline,
@@ -252,7 +253,8 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
                         _buildDetailItem(
                           icon: Icons.location_on,
                           title: 'Endereço',
-                          value: 'CEP: ${widget.reciclado['endereco']['cep'] ?? 'Não informado'}\n'
+                          value:
+                              'CEP: ${widget.reciclado['endereco']['cep'] ?? 'Não informado'}\n'
                               'Bairro: ${widget.reciclado['endereco']['bairro'] ?? 'Não informado'}',
                         ),
                       ],
@@ -271,30 +273,30 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey[300],
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Não Confirmar',
                       style: TextStyle(color: Color(0xFF795548)),
                     ),
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _handleConfirmation,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF4CAF50),
-                      foregroundColor: Color(0xFFFFFFFF),
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color(0xFF4CAF50),
+                      foregroundColor: const Color(0xFFFFFFFF),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text('Confirmar'),
+                    child: const Text('Confirmar'),
                   ),
                 ),
               ],
@@ -305,7 +307,6 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
     );
   }
 
-
   Widget _buildDetailItem({
     required IconData icon,
     required String title,
@@ -313,7 +314,7 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
     bool isImportant = false,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -322,14 +323,14 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
             color: Color(0xFF795548),
             size: 24,
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFF795548),
                     fontWeight: FontWeight.w600,
                   ),
@@ -338,8 +339,10 @@ class _DetalhesRecicladoPageState extends State<DetalhesRecicladoPage> {
                   value,
                   style: TextStyle(
                     fontSize: isImportant ? 18 : 16,
-                    fontWeight: isImportant ? FontWeight.bold : FontWeight.normal,
-                    color: isImportant ? Color(0xFF2E7D32) : Colors.black87,
+                    fontWeight:
+                        isImportant ? FontWeight.bold : FontWeight.normal,
+                    color:
+                        isImportant ? const Color(0xFF2E7D32) : Colors.black87,
                   ),
                 ),
               ],

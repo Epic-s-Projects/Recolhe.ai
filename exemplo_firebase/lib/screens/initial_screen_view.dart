@@ -1,4 +1,3 @@
-import 'package:exemplo_firebase/screens/administrador/profile_adm_page.dart';
 import 'package:exemplo_firebase/screens/login_screen_view.dart';
 import 'package:flutter/material.dart';
 

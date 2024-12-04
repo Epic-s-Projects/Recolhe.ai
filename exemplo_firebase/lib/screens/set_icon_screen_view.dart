@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../controllers/user_data.dart';
 import 'intern_screen_view.dart';
 
+// ignore: must_be_immutable
 class SetIconScreen extends StatefulWidget {
   String userId;
 
