@@ -6,10 +6,10 @@
 </p>
 
 <p align="center">
+   <img src="https://img.shields.io/badge/Protótipos-FEITO-blue?style=for-the-badge" alt="prototipos" />
    <img src="https://img.shields.io/badge/Backend-FEITO-blue?style=for-the-badge" alt="backend" />
-  <img src="https://img.shields.io/badge/Documentação-FEITA-blue?style=for-the-badge" alt="documentação" />
-  <img src="https://img.shields.io/badge/Protótipos-FEITO-blue?style=for-the-badge" alt="prototipos" />
-  <img src="https://img.shields.io/badge/Frontend-FEITO-blue?style=for-the-badge" alt="frontend" />
+   <img src="https://img.shields.io/badge/Frontend-FEITO-blue?style=for-the-badge" alt="frontend" />
+   <img src="https://img.shields.io/badge/Documentação-FEITA-blue?style=for-the-badge" alt="documentação" />
 </p>
 <hr>
 <br>
@@ -77,7 +77,17 @@ Nosso aplicativo será uma ferramenta prática e educativa, que combina tecnolog
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Nossa Prototipagem" alt="Typing SVG" /></a>
 ## Protótipos
-Aqui vai a descrição dos protótipos.
+Nossa prototipagem foi feita pelo Figma e fizemos as screens de alta fidelidade tanto da parte do usuário comum (aquele que irá reciclar o seu óleo) quanto do coletor (aquele que irá coletar o óleo do usuário).
+
+**Screens do Usuário:**
+<div align="center">
+    <img src="src/figma/screen_usuario.png" alt="Wireframes de Alta Fidelidade" width="800vh">
+</div>
+
+**Screens do Coletor:**
+<div align="center">
+    <img src="src/figma/screen_coletor.png" alt="Wireframes de Alta Fidelidade" width="800vh">
+</div>
 <br><br><br>
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Diagramas" alt="Typing SVG" /></a>
