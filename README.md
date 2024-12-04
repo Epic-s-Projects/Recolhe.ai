@@ -112,7 +112,7 @@ Para os coletores, as telas foram projetadas com foco na logística e na eficiê
 </div>
 <br><br><br>
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Diagramas" alt="Typing SVG" /></a>
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Esquematização do Banco e App" alt="Typing SVG" /></a>
 ## Diagramas
 
 ### Diagrama de Classe:
