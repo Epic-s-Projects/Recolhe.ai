@@ -61,28 +61,23 @@ Esses fatores combinados resultam em um ciclo prejudicial no qual toneladas de �
 ## Nossa Solução
 O projeto propõe o desenvolvimento de um aplicativo inovador focado na **coleta seletiva de óleo**, com o objetivo de educar, facilitar e incentivar a reciclagem do óleo de cozinha usado. Nossa solução busca transformar um problema ambiental em uma oportunidade de engajamento sustentável, oferecendo ferramentas práticas e educativas que conectam tecnologia, gamificação e responsabilidade social. As principais funcionalidades do aplicativo incluem:
 
-### 1. Educação Ambiental Interativa:
-   - **Conteúdo Dinâmico**: Informações detalhadas sobre os impactos do descarte inadequado do óleo no meio ambiente, como poluição de águas e entupimentos de esgoto.
-   - **Dicas Práticas**: Orientações claras e acessíveis sobre como armazenar o óleo usado de maneira segura e eficaz, utilizando materiais recicláveis e evitando vazamentos.
-   - **Campanhas de Conscientização**: Eventos e desafios dentro do aplicativo para promover a reciclagem e engajar os usuários a adotar hábitos mais sustentáveis.
-
-### 2. Mapa de Pontos de Coleta: 
+### 1. Mapa de Pontos de Coleta: 
    - **Localização em Tempo Real**: Um mapa interativo que exibe os pontos de coleta mais próximos, com detalhes como endereço, horários de funcionamento e capacidade de armazenamento.
    - **Rotas Facilitadas**: Integração com sistemas de navegação para traçar rotas rápidas e eficientes até os pontos de coleta.
    - **Alertas e Notificações**: Lembretes personalizados para avisar os usuários sobre a necessidade de esvaziar os recipientes de óleo armazenado.
 
-### 3. Sistema de Gamificação e Recompensas:
+### 2. Sistema de Gamificação e Recompensas:
    - **Ranking de Usuários**: Um sistema de pontuação baseado na quantidade de óleo reciclado, incentivando uma competição saudável entre os participantes.
    - **Prêmios Sustentáveis**: Recompensas como vale-presentes, descontos em produtos ecológicos e kits sustentáveis para os usuários mais engajados.
    - **Medalhas e Troféus Virtuais**: Reconhecimentos para quem atingir marcos importantes na reciclagem, promovendo um senso de conquista e pertencimento.
 
-### 4. Facilidade na Comunicação:
+### 3. Facilidade na Comunicação:
    - **Plataforma de Parcerias**: Espaço para cooperativas e recicladores divulgarem seus serviços e expandirem suas redes de coleta.
    - **Benefícios para a Comunidade**: Criação de um ecossistema que promove a economia circular, gerando renda e oportunidades locais.
    - **Feedback em Tempo Real**: Canal para que os usuários possam relatar experiências e sugerir melhorias para os serviços de reciclagem.
 
      
-### 5. Impacto Social e Ambiental:
+### 4. Impacto Social e Ambiental:
    - **Redução da Poluição Hídrica**: Ajudando a evitar que o óleo seja despejado nos ralos e cause danos ao ecossistema aquático.
    - **Estímulo a Hábitos Sustentáveis**: Educando as gerações atuais e futuras sobre a importância da reciclagem no cuidado com o planeta.
    - **Engajamento Comunitário**: Incentivando um movimento coletivo em prol da preservação ambiental, unindo indivíduos, empresas e organizações.
@@ -95,14 +90,23 @@ Por meio dessa solução, buscamos transformar o descarte do óleo usado em um a
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Nossa Prototipagem" alt="Typing SVG" /></a>
 ## Protótipos
-Nossa prototipagem foi feita pelo Figma e fizemos as screens de alta fidelidade tanto da parte do usuário comum (aquele que irá reciclar o seu óleo) quanto do coletor (aquele que irá coletar o óleo do usuário).
+O processo de prototipagem do nosso aplicativo foi realizado utilizando a ferramenta Figma, que nos permitiu desenvolver wireframes de alta fidelidade para todas as interfaces principais. O objetivo foi criar uma experiência visualmente atraente e intuitiva, tanto para o usuário comum (aquele que recicla o óleo usado) quanto para o coletor (responsável por recolher o óleo nos pontos de entrega).
 
-**Screens do Usuário:**
+**Screens do Usuário:** <br>
+As telas projetadas para o usuário foram pensadas para garantir facilidade no uso e acessibilidade, promovendo uma navegação simples e funcional. Algumas das funcionalidades principais representadas nos protótipos incluem:
+
+**Tela Inicial**: Exibição dos óleos que o usuário registrou no aplicativo e botão de redirecionamento para registro de óleo. <br><br>
+**Perfil e Histórico**: Registro de todas as entregas realizadas, pontuação acumulada e conquistas desbloqueadas. <br><br>
+**Sistema de Gamificação**: Exibição de rankings e prêmios disponíveis, incentivando a reciclagem de forma divertida e motivadora. <br><br>
 <div align="center">
     <img src="src/figma/screen_usuario.png" alt="Wireframes de Alta Fidelidade" width="800vh">
-</div>
+</div> <br><br>
 
-**Screens do Coletor:**
+**Screens do Coletor:** <br>
+Para os coletores, as telas foram projetadas com foco na logística e na eficiência do trabalho de coleta. O layout prioriza funcionalidades que simplificam a comunicação com os usuários e a gestão dos pontos de coleta. Entre as principais telas destacam-se:
+
+**Rotas Otimizadas**: Ferramenta para planejar trajetos eficientes entre os locais de coleta. <br> <br>
+**Histórico de Coletas**: Registro das operações realizadas, com métricas sobre quantidade de óleo coletado e impacto ambiental gerado.
 <div align="center">
     <img src="src/figma/screen_coletor.png" alt="Wireframes de Alta Fidelidade" width="800vh">
 </div>
