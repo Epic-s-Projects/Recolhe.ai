@@ -19,6 +19,7 @@ class _ModernAddressRegistrationPageState
   final TextEditingController _ruaController = TextEditingController();
   final TextEditingController _bairroController = TextEditingController();
   final TextEditingController _numeroController = TextEditingController();
+  final TextEditingController _complementoController = TextEditingController();
 
   bool _hasAddress = false;
   bool _isEditing = false;
@@ -199,6 +200,8 @@ class _ModernAddressRegistrationPageState
                 Icons.location_city, 'Bairro', _bairroController.text),
             _buildAddressDetailRow(
                 Icons.home, 'Número', _numeroController.text),
+            _buildAddressDetailRow(
+                Icons.home, 'Complemento', _complementoController.text),
           ],
         ),
       ),
@@ -274,6 +277,11 @@ class _ModernAddressRegistrationPageState
             keyboardType: TextInputType.number,
             validator: (value) =>
                 value?.isEmpty == true ? 'Número obrigatório' : null,
+          ),
+          _buildTextField(
+            controller: _complementoController,
+            label: 'Número',
+            keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 25),
           ElevatedButton(

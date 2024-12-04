@@ -114,7 +114,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: const Padding(
                       padding: EdgeInsets.only(top: 200),
                       child: Text(
-                        "Recicle para um amanhã melhor.",
+                        "Recicle",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
