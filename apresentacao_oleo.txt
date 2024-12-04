@@ -1,0 +1,81 @@
+Introdução
+- Perguntar se alguém já ouviu o som do carro do óleo
+- Induzir as pessoas a concordar com os problemas(som alto, devagar...).
+
+Problemas
+- Poluição sonora
+- Pegada de carbono(rotas otimizadas)
+
+- Dano ao meio ambiente, aos rios e a água, por conta do descarte incorreto do óleo.
+- Impacto na saúde pública
+
+- Pessoa não sabe a data em que o óleo será recolhido e acaba descartando o óleo incorretamente.
+- Falta de incentivo para realização da coleta de maneira correta.
+
+Transição( Bom, meu nome é João, esse é o Heitor, esse o Vinícius e esse é o Rafael e desenvolvemos um app 
+chamado Recolhe.ai que visa mitigar os problemas apresentados...)
+.
+.
+.
+
+^^^
+João
+
+
+Descrição do app Usuario
+^
+Vinicius 
+
+Descrição do app Coletor
+
+
+RecolheBot
+- Treinamos uma IA com os dados referentes ao app e seu funcionamento.
+- Inicialmente apenas para o coletor, mas podemos expandir para usuários normais do app.
+- Responde apenas a perguntas relacionadas ao app e sua utilização e foge de perguntas que não tenham relação ao tema.
+
+
+Rotas
+- Rotas geradas de acordo com as casas que estão com óleo disponível para coleta. 
+- Coletor inicia a rota e acompanha em tempo real a sua movimentação para o ponto da coleta.
+- Coletor só confirma o recebimento do óleo se estiver próximo ao local da coleta. 
+
+Pontuação
+- Ranking com as pessoas que mais reciclaram óleo
+- Premiação para as pessoas que mais reciclarem óleo no ano.
+^
+Rafa
+
+
+Melhorias
+- Parceria com empresas para prêmios para ganhadores do ranking.
+- Expansão Geográfica
+- Futuramente expandir para coleta de lixo, lixo eletrônico...
+
+
+
+Benefícios
+- 
+-
+-
+
+
+
+VIDEO APP COMPLETO
+
+^
+Heitor
+
+
+Possíveis perguntas:
+- Confiança no coletor para descarte correto?
+	- Formulário para o coletor cadastrar e será analisado e caso for aceito, 
+	ele receberá o e-mail e senha de coletor.
+- Apartamentos
+	- Campo de Complemento para inserção do número do apartamento e navegar para .
+
+
+
+
+
+
