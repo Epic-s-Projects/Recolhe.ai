@@ -33,18 +33,46 @@
 ## Apresentação do Projeto: Desenvolvimento de Aplicativo sobre Coleta Seletiva de Óleo
 
 ### Contexto Inicial
-Aqui vai a descrição do contexto inicial.
+A crescente produção de resíduos, especialmente de óleo de cozinha usado, tem causado impactos negativos significativos no meio ambiente. Quando descartado de forma inadequada, o óleo usado pode contaminar grandes volumes de água, prejudicar a vida aquática e sobrecarregar os sistemas de tratamento de esgoto. Apesar de existirem iniciativas de reciclagem, muitos consumidores desconhecem os procedimentos corretos para armazenar e entregar o óleo usado. Isso cria a necessidade de ferramentas que facilitem a conscientização, a logística e a reciclagem de forma eficiente.
 <br><br><br>
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Buscando um Problema" alt="Typing SVG" /></a>
 ## Problema Encontrado
-Aqui vai a descrição do problema encontrado.
+O descarte inadequado do óleo de cozinha é uma prática comum devido à falta de informação e acesso a alternativas viáveis. Entre os principais problemas identificados estão:
+
+   - **Falta de conscientização**: Muitos consumidores não entendem os impactos ambientais do descarte incorreto ou os benefícios da reciclagem do óleo.
+   - **Dificuldade no armazenamento e separação**: Não existem diretrizes claras ou práticas fáceis para armazenar o óleo usado de forma segura.
+   - **Falta de pontos de coleta acessíveis**: Em várias regiões, a ausência de locais próximos para descarte dificulta a adesão à reciclagem.
+   - **Baixa visibilidade de incentivos**: Programas de recompensa por reciclagem são pouco divulgados, desmotivando a participação ativa da população.
+
+Esses fatores contribuem para que toneladas de óleo sejam descartadas diretamente no ambiente, agravando os problemas ecológicos e sociais.
 <br><br><br>
 
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Encontrando a Solução" alt="Typing SVG" /></a>
 ## Nossa Solução
-Aqui vai a descrição da solução.
+O projeto propõe o desenvolvimento de um aplicativo sobre **coleta seletiva de óleo**, que tem como objetivo principal educar, facilitar e incentivar a reciclagem do óleo de cozinha usado. Nossa solução oferece:
+
+### 1. Educação Ambiental Interativa:
+   - Informações sobre o impacto ambiental do descarte inadequado.
+   - Dicas práticas sobre como armazenar o óleo usado de forma segura.
+
+### 2. Mapa de Pontos de Coleta: 
+   - Localização de pontos de coleta seletiva próximos, com rotas e horários disponíveis.
+   - Integração com notificações para lembrar os usuários de entregar o óleo acumulado.
+
+### 3. Sistema de Gamificação e Recompensas:
+   - Ranking de usuários que reciclam mais, promovendo uma competição saudável.
+   - Prêmios e incentivos, como descontos ou vale-presentes, para os usuários mais engajados.
+
+### 4. Facilidade na Comunicação:
+   - Plataforma para se conectar com cooperativas e recicladores locais, promovendo uma economia circular sustentável.
+
+### 5. Impacto Social e Ambiental:
+   - Redução da poluição hídrica e dos impactos ambientais do descarte inadequado.
+   - Estímulo à conscientização e à construção de hábitos mais sustentáveis.
+
+Nosso aplicativo será uma ferramenta prática e educativa, que combina tecnologia, gamificação e conscientização para transformar o descarte do óleo em uma oportunidade de cuidar do planeta.
 <br><br><br>
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=440&size=22&pause=1000&color=38F77CFF&center=false&vCenter=false&repeat=false&width=435&lines=Nossa Prototipagem" alt="Typing SVG" /></a>
