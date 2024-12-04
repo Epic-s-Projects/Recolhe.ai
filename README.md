@@ -393,17 +393,123 @@ Responsável por gerenciar a lógica do registro de óleo reciclado.
 
 <summary> Traçar Rotas </summary>
 
-# Traçar Rotas entre pontos com Google Maps
+# Traço de rotas no aplicativo com Google Maps
+A funcionalidade de traço de rotas permite que o coletor identifique os pontos de coleta que estão mais próximos dele com base na sua localização atual. Além disso, ela insere abaixo do mapa algumas informações dos usuários do qual o coletor está indo buscar o óleo em formato de cards.
 
+
+<br><br>
+## Fluxo da Funcionalidade:
+<br>
+
+### 1. Exibição:
+   - Exibir locais de interesse (como endereços de reciclagem) em um mapa interativo.
+<br>
+
+### 2. Rotas:
+   - Traçar rotas entre os pontos utilizando a API de Direções do Google Maps.
+     
+   - Mostrar a distância total da rota calculada.
+
+   - Indicar locais mais próximos do usuário com base em sua localização atual.
+<br><br>
+
+## Principais recursos:
+
+**Google Maps Directions API:** Para traçar rotas e calcular distâncias. <br>
+**Geolocator**: Para obter a localização atual do dispositivo. <br>
+**Flutter Map**: Para renderizar o mapa interativo e mostrar pontos/rotas. <br>
+**Cloud Firestore**: Para buscar locais (endereços) salvos no banco de dados. <br>
+**Geocoding API**: Para converter endereços em coordenadas geográficas (latitude e longitude). <br>
+<br><br>
+
+## Estrutura do Código
+
+### 1. Permissões de Localização
+   - O método **_checkLocationPermission** solicita permissões ao usuário para acessar sua localização, verificando também se o serviço de localização está ativo no dispositivo.
+
+### 2. Localização Atual do Usuário
+   - O método **_updateLocations** atualiza a posição atual no mapa e a adiciona à lista de locais monitorados.
+   - A localização é obtida dinamicamente através do Geolocator.
+
+### 3. Carregamento de Locais do Firestore
+   - O método **_loadLocationsAndRoutes** busca dados de locais de reciclagem armazenados no Firestore:
+      - Dados de endereço são convertidos em coordenadas geográficas usando a API de Geocodificação.
+      - Os locais são adicionados a uma lista para serem exibidos no mapa.
+
+### 4. Traçar Rotas no Google Maps
+   - O método **_fetchRoutePointsForAllLocations** faz requisições à API de Direções do Google Maps para traçar rotas entre os pontos:
+      - Ponto de origem: Localização atual ou primeiro ponto na lista.
+      - Destino: Último ponto na lista.
+      - Pontos intermediários: Locais no meio da lista.
+      - O polígono (rota) é decodificado e desenhado no mapa usando PolylineLayer.
+
+### 5. Cálculo de Distância Total
+   - O método **_calculateDistance** utiliza a fórmula de Haversine para calcular a distância entre dois pontos de latitude/longitude.
+   - O total das distâncias entre os pontos consecutivos é calculado.
 </details>
 
 
 <details>
 
-<summary> Pontuação </summary>
+<summary> Ranking </summary>
 
-# Pontuação
+# Sistema de Pontuação e Ranking
+O sistema de ranking é responsável por organizar e exibir os usuários de acordo com sua pontuação de experiência (XP), obtida através de atividades concluídas relacionadas à reciclagem. A funcionalidade inclui:
+   - Identificação e ordenação dos usuários com base no XP acumulado.
+   - Destaque visual para os três primeiros colocados (pódio).
+   - Exibição de prêmios para os melhores colocados, incentivando o engajamento.
+<br><br>
+## Fluxo da Funcionalidade:
+<br>
 
+### 1. Carregamento dos Dados
+   - Os dados dos usuários são extraídos da coleção users no **Firebase Firestore**.
+   - Para cada usuário, é feita a soma do XP de atividades concluídas presentes na subcoleção reciclado.
+   - Usuários são ordenados em ordem decrescente de XP.
+<br>
+
+### 2. Exibição no Ranking
+   - **Top 3**: Os três primeiros usuários são exibidos em destaque no formato de um pódio.
+   - **Resto do Ranking**: Demais usuários aparecem em uma lista organizada e estilizada.
+   - Dados apresentados: Nome do usuário, foto de perfil e quantidade de XP.
+<br>
+
+### 3. Navegação:
+   - O ranking faz parte de um sistema de abas controlado por uma barra de navegação inferior.
+   - Ao trocar de aba, a página correspondente é exibida.
+<br>
+
+### 4. Botão "Mais Informações"
+   - Exibe um diálogo modal com detalhes dos prêmios oferecidos para os cinco primeiros colocados.
+<br><br>
+
+## Estrutura do Código
+
+### 1. Classe Principal
+**Classe**: RankingPage <br>
+**Estado**: _RankingPageState <br>
+Controla a inicialização, carregamento e organização dos dados para o ranking.
+
+## 2. Carregamento dos Dados
+**Método**: fetchUserXpData() <br>
+Responsabilidade: Busca os dados no **Firestore**, calcula o XP acumulado e ordena os usuários por pontuação.
+
+## 3. Construção da Interface
+**Método Principal**: build(BuildContext context) <br>
+Usa um FutureBuilder para aguardar os dados de XP. <br>
+Exibe as seções: pódio e lista de usuários restantes.
+
+## 4. Destaque dos Três Primeiros
+**Método**: _buildTopThreeSection() <br>
+Monta o pódio com estilos diferenciados para os três primeiros colocados.
+
+## 5. Lista dos Demais Usuários
+**Método**: _buildRemainingRanking() <br>
+Renderiza os usuários do 4º lugar em diante, com informações em um estilo de lista personalizada.
+
+## 6. Diálogo de Prêmios
+**Método**: _showRewardsDialog() <br>
+Apresenta uma mensagem animada com os prêmios para os 5 melhores.
 </details>
 <br><br><br>
 
